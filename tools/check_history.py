@@ -16,6 +16,7 @@ from mceg import load_contract
 
 ROOT = Path(__file__).resolve().parents[1]
 COLLECTIONS = ("quantities", "equations", "mathematical_models")
+CATALOG_SUFFIXES = {".yaml", ".yml", ".json"}
 
 
 def git(root: Path, *arguments: str) -> bytes:
@@ -51,7 +52,6 @@ def check_history(root: Path, base: str) -> list[str]:
                      f"{base}^{{commit}}").decode().strip()
         entries = git(root, "ls-tree", "-rz", "--full-tree", commit, "--", "catalog")
         with TemporaryDirectory(prefix="planetlib-history-") as directory:
-            path = Path(directory) / "contract.yaml"
             for entry in entries.split(b"\0"):
                 if not entry:
                     continue
@@ -60,10 +60,13 @@ def check_history(root: Path, base: str) -> list[str]:
                 label = os.fsdecode(name)
                 if mode == b"120000":
                     raise ValueError(f"Base catalog contains a symlink: {label}")
-                if not label.endswith(".yaml"):
+                suffix = Path(label).suffix
+                if suffix not in CATALOG_SUFFIXES:
                     continue
                 if kind != b"blob":
                     raise ValueError(f"Base catalog entry is not a file: {label}")
+                # Native loading uses the suffix to enforce strict JSON syntax.
+                path = Path(directory) / ("contract" + suffix)
                 path.write_bytes(git(root, "cat-file", "blob", object_id.decode()))
                 collect(before, path, f"base:{label}")
 
@@ -73,7 +76,7 @@ def check_history(root: Path, base: str) -> list[str]:
         for path in sorted(catalog.rglob("*")):
             if path.is_symlink():
                 raise ValueError(f"Current catalog contains a symlink: {path.relative_to(root)}")
-            if path.suffix == ".yaml" and path.is_file():
+            if path.suffix in CATALOG_SUFFIXES and path.is_file():
                 collect(after, path, f"current:{path.relative_to(root)}")
     except (OSError, ValueError) as exc:
         return [str(exc)]

@@ -14,7 +14,8 @@ ROOT = Path(__file__).resolve().parents[1]
 ADOPTIONS = [
     pytest.param(lock, template, id=template.relative_to(ROOT).as_posix())
     for lock in sorted((ROOT / "examples").rglob("imports.lock.json"))
-    for template in sorted(lock.parent.glob("*.yaml"))
+    for template in sorted(lock.parent.iterdir())
+    if template.is_file() and template != lock and template.suffix in {".yaml", ".yml", ".json"}
 ]
 
 

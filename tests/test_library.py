@@ -93,6 +93,34 @@ def test_conflicting_local_definition_rejected(library):
         adoption(library)
 
 
+@pytest.mark.parametrize("collection", ["quantities", "equations", "mathematical_models"])
+def test_native_equivalent_local_definition_is_accepted(library, collection):
+    original = adoption(library)
+    record = getattr(original, collection)[0].model_dump(mode="json")
+    if collection == "quantities":
+        record.pop("coordinates")  # Omitted native default means the same thing.
+    elif collection == "equations":
+        record["latex"] = "Ignored display; SymPy is authoritative."
+    else:
+        for relation in record["relations"]:
+            relation.pop("kind")  # Native default is an equation relation.
+    path = library / "examples/sun_yao/provider.yaml"
+    data = read_document(path)
+    data[collection] = [record]
+    write_yaml(path, data)
+    assert adoption(library).model_dump(mode="json") == original.model_dump(mode="json")
+
+
+def test_duplicate_local_definitions_are_still_rejected(library):
+    path = library / "examples/sun_yao/provider.yaml"
+    data = read_document(path)
+    quantity = adoption(library).quantities[0].model_dump(mode="json")
+    data["quantities"] = [quantity, deepcopy(quantity)]
+    write_yaml(path, data)
+    with pytest.raises(ValueError, match="Conflicting quantities"):
+        adoption(library)
+
+
 def test_repeated_identical_import_is_idempotent(library):
     original = adoption(library).model_dump(mode="json")
     lock_path = library / "examples/sun_yao/imports.lock.json"

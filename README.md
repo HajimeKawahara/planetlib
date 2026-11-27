@@ -15,7 +15,7 @@ nor MCEG at runtime.
 ## Initial catalog
 
 All catalog files are ordinary MCEG schema `0.6` contracts. Each current Equation
-is maintained only in the YAML catalog's `sympy` field as a serialized SymPy expression;
+is maintained only in its catalog record's `sympy` field as a serialized SymPy expression;
 MCEG derives display LaTeX from those expressions and the declared symbol labels.
 The SymPy backend is a development dependency for authoring and checking.
 
@@ -101,12 +101,12 @@ MCEG can render the definitions without Planetlib-specific rendering code:
   --model planetlib.solubility.sun_yao2026.binary_water --revision 2 --format tex
 ```
 
-The YAML catalog is the sole maintained source of each equation. MCEG schema
+The catalog is the sole maintained source of each equation. MCEG schema
 `0.6` stores SymPy constructor expressions in `Equation.sympy`; it does not
 require a companion Python definition module or a generation step.
 For interactive editing, use `mceg.symbolic.to_sympy(equation.sympy)` to recover
 the expression and `mceg.symbolic.from_sympy(expression).model_dump(mode="json")`
-to serialize an edited SymPy object into the selected YAML record. Keep the
+to serialize an edited SymPy object into the selected contract record. Keep the
 resulting definition in the catalog. Tests read that same record, and MCEG
 derives its displayed LaTeX. Review definition revisions and adoption pins
 when changing an equation or its meaning.
@@ -156,6 +156,8 @@ copied definitions or their evidence, rather than only in catalog-level prose.
 Catalog Subjects, Contexts, Claims, Assessments, implementation bindings and
 unselected models are not adopted implicitly. Conflicting definitions under
 the same ID and revision fail; identical repeated imports are idempotent.
+Comparison uses MCEG-normalized records, so omitted native defaults and ignored
+LaTeX on a SymPy Equation do not create false conflicts.
 
 The provider template declares an `EquationBinding` to a source-hashed
 ExoGibbs function. The consumer template records the same partial model with
@@ -219,7 +221,12 @@ editing operations do not become a parallel formula registry.
 
 The guards use MCEG's loader, serializers, model digests and assessment checks.
 Planetlib adds the Git comparison and adoption workflow, not a second scientific
-schema or expression parser:
+schema or expression parser.
+
+Catalog discovery covers `.yaml`, `.yml` and `.json` contracts, and rejects an
+empty catalog. Each example lock applies to sibling contract files in these
+formats; `imports.lock.json` itself is excluded. All formats use MCEG's native
+loader, including its strict JSON handling.
 
 | Guard | Enforcement |
 | --- | --- |

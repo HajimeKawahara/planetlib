@@ -1,6 +1,7 @@
 """Check released definition preservation against actual Git snapshots."""
 
 from copy import deepcopy
+import json
 import shutil
 import subprocess
 import sys
@@ -23,7 +24,8 @@ def git(root, *arguments):
 
 def write(path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
+    text = json.dumps(data, indent=2) if path.suffix == ".json" else yaml.safe_dump(data, sort_keys=False)
+    path.write_text(text, encoding="utf-8")
 
 
 def commit(root):
@@ -34,18 +36,19 @@ def commit(root):
 
 
 @pytest.fixture
-def repository(tmp_path):
+def repository(tmp_path, request):
     git(tmp_path, "init", "-q")
     git(tmp_path, "config", "user.name", "Planetlib test")
     git(tmp_path, "config", "user.email", "test@example.invalid")
     (tmp_path / "README.md").write_text("Test repository.\n")
     empty = commit(tmp_path)
-    path = tmp_path / "catalog/original.yaml"
+    path = tmp_path / ("catalog/original" + getattr(request, "param", ".yaml"))
     write(path, read_document(SOURCE))
     base = commit(tmp_path)
     return tmp_path, path, base, empty
 
 
+@pytest.mark.parametrize("repository", [".yaml", ".yml", ".json"], indirect=True)
 @pytest.mark.parametrize("change,collection", [
     ("meaning", "quantities"), ("expression", "equations"),
     ("connection", "mathematical_models"),
@@ -103,16 +106,19 @@ def test_new_revisions_preserve_previous_records(repository):
     assert check_history(root, base) == []
 
 
-def test_native_normalization_and_file_moves_preserve_identity(repository):
+@pytest.mark.parametrize("repository,destination", [
+    (".yaml", ".json"), (".json", ".yml"), (".yml", ".yaml"),
+], indirect=["repository"])
+def test_native_normalization_and_file_moves_preserve_identity(repository, destination):
     root, path, base, _ = repository
     data = read_document(path)
     data["quantities"][0]["coordinates"] = []  # Native default.
     data["equations"][0]["latex"] = "Ignored display for a SymPy Equation."
     for collection in ("quantities", "equations", "mathematical_models"):
         data[collection].reverse()
-    moved = root / "catalog/reorganized/new name.yaml"
+    moved = root / ("catalog/reorganized/new name" + destination)
     write(moved, data)
-    moved.write_text("# A formatting-only addition.\n" + moved.read_text())
+    moved.write_text("\n" + moved.read_text())
     path.unlink()
     assert check_history(root, base) == []
 
@@ -139,6 +145,7 @@ def test_valid_empty_base_allows_initial_catalog(repository):
     assert check_history(root, empty) == []
 
 
+@pytest.mark.parametrize("repository", [".yaml", ".yml", ".json"], indirect=True)
 @pytest.mark.parametrize("side", ["current", "base"])
 def test_native_validation_rejects_invalid_contracts(repository, side):
     root, path, base, _ = repository
@@ -149,8 +156,23 @@ def test_native_validation_rejects_invalid_contracts(repository, side):
         base = commit(root)
         write(path, read_document(SOURCE))
     failures = check_history(root, base)
-    assert any(f"{side}:catalog/original.yaml" in failure and "Undeclared" in failure
+    assert any(f"{side}:{path.relative_to(root)}" in failure and "Undeclared" in failure
                for failure in failures)
+
+
+@pytest.mark.parametrize("repository", [".json"], indirect=True)
+@pytest.mark.parametrize("side", ["current", "base"])
+def test_json_suffix_preserves_native_syntax_validation(repository, side):
+    root, path, base, _ = repository
+    # YAML syntax in a .json file must fail on either side of the comparison.
+    path.write_text(yaml.safe_dump(read_document(SOURCE), sort_keys=False))
+    with pytest.raises(ValueError, match="Expecting value"):
+        load_contract(path)
+    if side == "base":
+        base = commit(root)
+        write(path, read_document(SOURCE))
+    assert any(f"{side}:{path.relative_to(root)}" in failure and "Expecting value" in failure
+               for failure in check_history(root, base))
 
 
 @pytest.mark.parametrize("side", ["current", "base"])

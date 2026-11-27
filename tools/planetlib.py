@@ -9,7 +9,7 @@ from pathlib import Path
 import sys
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, TypeAdapter
 import yaml
 
 from mceg import ContractV06, load_contract, mathematical_model_digest, trace_provenance
@@ -22,6 +22,7 @@ from mceg.validator import read_document
 
 
 ROOT = Path(__file__).resolve().parents[1]
+CATALOG_SUFFIXES = {".yaml", ".yml", ".json"}
 COLLECTIONS = {"quantity": "quantities", "equation": "equations",
                "mathematical_model": "mathematical_models"}
 
@@ -62,10 +63,14 @@ def pinned_contract(root: Path, pin: Import) -> ContractV06:
 
 
 def merge_record(document: dict, collection: str, record: dict) -> None:
+    """Compare records using MCEG's defaults and mathematical-source priority."""
+    adapter = TypeAdapter(ContractV06.model_fields[collection].annotation)
+    record, = adapter.dump_python(adapter.validate_python([record]), mode="json")
     records = document.setdefault(collection, [])
     key = record["id"], record.get("revision")
     matches = [r for r in records if (r["id"], r.get("revision")) == key]
     if matches:
+        matches = adapter.dump_python(adapter.validate_python(matches), mode="json")
         if len(matches) != 1 or matches[0] != record:
             raise ValueError(f"Conflicting {collection} definition: {key}")
     else:
@@ -126,7 +131,11 @@ def check(root: Path = ROOT) -> list[str]:
     """Check native catalog records and every local example adoption."""
     failures = []
     definitions = {}
-    for path in sorted((root / "catalog").rglob("*.yaml")):
+    paths = sorted(path for path in (root / "catalog").rglob("*")
+                   if path.is_file() and path.suffix in CATALOG_SUFFIXES)
+    if not paths:
+        failures.append("No catalog contracts found under catalog/")
+    for path in paths:
         try:
             contract = load_contract(path)
             if contract.schema_version != "0.6":
@@ -144,7 +153,9 @@ def check(root: Path = ROOT) -> list[str]:
         except (OSError, ValueError, yaml.YAMLError) as exc:
             failures.append(f"{path.relative_to(root)}: {exc}")
     for lock in sorted((root / "examples").rglob("imports.lock.json")):
-        for template in sorted(lock.parent.glob("*.yaml")):
+        templates = sorted(path for path in lock.parent.iterdir()
+                           if path.is_file() and path != lock and path.suffix in CATALOG_SUFFIXES)
+        for template in templates:
             try:
                 assemble(template, lock, root)
             except (OSError, ValueError, yaml.YAMLError) as exc:

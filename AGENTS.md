@@ -18,7 +18,7 @@ model digests and assessment checks; do not implement a parallel schema or
 formula parser. When updating MCEG, inspect its changes and update these
 references and the relevant compatibility checks.
 
-Planetlib policy is to maintain each current equation only in the catalog YAML's
+Planetlib policy is to maintain each current equation only in its catalog record's
 `Equation.sympy` field. Do not add permanent Python formula registries or
 generators beside those records. Temporary `to_sympy` / `from_sympy` editing is
 allowed. Tests read catalog expressions and may construct independent reference
