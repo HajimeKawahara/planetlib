@@ -88,8 +88,9 @@ python -m venv .venv
 
 With an existing local MCEG development environment that includes its
 `symbolic` extra (SymPy 1.14.x), use that environment's Python instead.
-The inspected MCEG revision is
-`5a46c3ec59cc1f4b7f90c156e4b3233933f45ac9`.
+The development dependency pins MCEG revision
+`4034c9259c9c2e7d55243d69f3ab2f22c9cc7d88`, including the clarified authoring
+guidance. Archived run records retain the MCEG revision actually used for that run.
 
 MCEG can render the definitions without Planetlib-specific rendering code:
 
@@ -206,6 +207,42 @@ MCEG registration metadata and Subjects identify definition
 files, not numerical implementations. Null or absent self-file hashes avoid a
 self-hash cycle; adopter locks fix the actual bytes. Scientific support remains
 attached to a Claim, Subject and Context, rather than to library membership.
+
+## Development guards
+
+The [development rules](AGENTS.md) and [PR template](.github/pull_request_template.md)
+separate MCEG's required record behavior, its optional examples and Planetlib's
+own policies. For structural or tooling changes, identify the pinned specification
+and native APIs first, then justify any glue that MCEG does not supply. In
+Planetlib, each equation is maintained in its catalog record; temporary SymPy
+editing operations do not become a parallel formula registry.
+
+The guards use MCEG's loader, serializers, model digests and assessment checks.
+Planetlib adds the Git comparison and adoption workflow, not a second scientific
+schema or expression parser:
+
+| Guard | Enforcement |
+| --- | --- |
+| Native records and review pins | `python tools/planetlib.py check` uses the pinned MCEG implementation |
+| Published definition history | `python tools/check_history.py --base origin/main` compares native-normalized Quantity, Equation and MathematicalModel records by collection, ID and revision |
+| Standalone adoption | Tests run the build CLI, load the output through native MCEG outside the repository, and check model digests and adopter judgments |
+| One maintained definition and scoped scientific claims | Development rules and PR review; arbitrary mathematical duplication or physical applicability cannot be decided by these checks |
+
+The history guard rejects changed or removed definitions already present in the
+chosen Git base. New IDs and revisions may be added while retaining old records;
+formatting changes and file moves are allowed. This append-only catalog policy
+belongs to Planetlib, not to the MCEG schema. It also catches definition changes
+when import locks or assessment pins have been updated in the same PR. Rewriting
+an old assessment or its evidence still requires review; history checking here
+covers the three definition record types, not every kind of scientific record.
+
+CI compares PRs with the exact target base commit, pushes to `main` with its
+previous commit, and other branch pushes with `origin/main`. Unpublished additions
+on a feature branch can therefore be revised before merging. An invalid or
+unavailable base fails; a valid commit before the catalog existed allows the
+initial catalog to be added. Updating
+MCEG itself requires reviewing the upstream change and rerunning the guards; do
+not replace native validation with a locally relaxed schema to make an upgrade pass.
 
 ## What the repository survey changed
 
