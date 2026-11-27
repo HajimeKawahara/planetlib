@@ -1,0 +1,143 @@
+{
+  "review_date": "2026-11-27",
+  "executed_at": "2026-11-27T22:40:36.795487+09:00",
+  "command": [
+    ".venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "tests/test_escape_relations.py",
+    "tests/test_atomic_relations.py",
+    "tests/test_thermodynamics.py",
+    "--junitxml=build/symbolic-review.xml"
+  ],
+  "exit_code": 0,
+  "environment": {
+    "python": "3.12.7",
+    "sympy": "1.14.0",
+    "pytest": "9.2.0",
+    "mceg_commit": "5a46c3ec59cc1f4b7f90c156e4b3233933f45ac9"
+  },
+  "scope": "Conditional symbolic identities from serialized definitions. The test derivations and their stated domains were reviewed. No numerical provider was run; no empirical, full-model or formal-kernel proof is asserted.",
+  "files": {
+    "tests/test_escape_relations.py": "671d44df7c783e747f17cc0069d1dc581797edfca4eefa6eb46784765f110c89",
+    "tests/test_atomic_relations.py": "41045b86a1bb163296986efbf6993340e3981a9c23c98a1613ece14a3cd0ec6b",
+    "tests/test_thermodynamics.py": "165ef2ecda35f1a983aab8c00fb73cddb4d9ae4ea11d1db727eb4fad72148780",
+    "catalog/radiation/line_coefficients.yaml": "ce64f95b887e2f39864173409b35de169a4c75348ab3c68cd59195cd014ddffe"
+  },
+  "mathematical_models": [
+    {
+      "catalog": "catalog/atomic/coulomb_recurrence.yaml",
+      "id": "planetlib.atomic.coulomb.step",
+      "revision": "1",
+      "sha256": "23c4646cc575c9f364f477b001ed112877178ca14b9d63f692cb11ce4af34c00"
+    },
+    {
+      "catalog": "catalog/atomic/coulomb_recurrence.yaml",
+      "id": "planetlib.atomic.coulomb.seeds",
+      "revision": "1",
+      "sha256": "207ae78f3c10c4caf84cdfc74f5e1c62d7252106df9e2b49fd889d8af3aed7cd"
+    },
+    {
+      "catalog": "catalog/atomic/rate_balance.yaml",
+      "id": "planetlib.atomic.balance.two_state",
+      "revision": "1",
+      "sha256": "1b6804bd17193c48e054b7d183325f632bae7dc266bd46f318eceac934c10437"
+    },
+    {
+      "catalog": "catalog/atomic/rate_balance.yaml",
+      "id": "planetlib.atomic.balance.milne_saha",
+      "revision": "1",
+      "sha256": "99a59722e6cc0aa344194d53a97c900e86e8c6de3e8cced92a65778e0f114158"
+    },
+    {
+      "catalog": "catalog/escape/energy_budget.yaml",
+      "id": "planetlib.escape.energy.continuum",
+      "revision": "1",
+      "sha256": "9e377a22fdc00cd016e7ffbcde03f79a0a9ed6e3c8886f787ff13c4f0488757d"
+    },
+    {
+      "catalog": "catalog/escape/energy_budget.yaml",
+      "id": "planetlib.escape.energy.finite_volume",
+      "revision": "1",
+      "sha256": "bb59ce75c8eeec106ce640cae6a606e558ad9125300ae0e87c4632ebd13a43e7"
+    },
+    {
+      "catalog": "catalog/escape/isothermal_parker.yaml",
+      "id": "planetlib.escape.parker.isothermal_wind",
+      "revision": "1",
+      "sha256": "287cac1edad1978e1ec7ca4113c0bbf80b1c9c99af1fc78ce4f1611bda1b6c13"
+    },
+    {
+      "catalog": "catalog/radiation/lte_coordinates.yaml",
+      "id": "planetlib.radiation.lte.populations",
+      "revision": "1",
+      "sha256": "87bd802c94020dc5a3d9fa17b7de52d5ffebb9412d65f009b0a47b1b407d6c3d"
+    },
+    {
+      "catalog": "catalog/radiation/lte_coordinates.yaml",
+      "id": "planetlib.radiation.lte.coordinates",
+      "revision": "1",
+      "sha256": "31790f5fe2a48eb9b6f15f2d86e5901c890052b2d18d5328b23b6ea1bf7d7d33"
+    },
+    {
+      "catalog": "catalog/thermodynamics/helmholtz.yaml",
+      "id": "planetlib.thermodynamics.helmholtz.model",
+      "revision": "1",
+      "sha256": "283dee30acfbac4b6b9126dd617a0f4279576c7eaba4832827af06ac5f47e87f"
+    },
+    {
+      "catalog": "catalog/thermodynamics/ideal_mixing.yaml",
+      "id": "planetlib.thermodynamics.ideal_mixing.model",
+      "revision": "1",
+      "sha256": "ff4484ea799cc1bcce2f2e4873a3aab634d3ea9632e9da2daef0e541b46f0320"
+    },
+    {
+      "catalog": "catalog/thermodynamics/mass_fraction_solute.yaml",
+      "id": "planetlib.thermodynamics.mass_fraction_solute.model",
+      "revision": "1",
+      "sha256": "fd447925af53057283ebcbddf73442d5c014c1c75ccdc551fa2cd530024776e4"
+    },
+    {
+      "catalog": "catalog/thermodynamics/nasa9.yaml",
+      "id": "planetlib.thermodynamics.nasa9.model",
+      "revision": "1",
+      "sha256": "7818a218684226ac9a3a827cc12c4b9f7995ffb42f881e6d16507c4490b41255"
+    }
+  ],
+  "passed": 32,
+  "passed_tests": [
+    "tests/test_escape_relations.py::test_continuum_energy_cancellation",
+    "tests/test_escape_relations.py::test_cell_energy_cancellation",
+    "tests/test_escape_relations.py::test_adjacent_shells_telescope",
+    "tests/test_escape_relations.py::test_parker_density_elimination",
+    "tests/test_escape_relations.py::test_parker_sonic_radius_and_accelerating_slope",
+    "tests/test_atomic_relations.py::test_closed_two_state_nuclear_conservation",
+    "tests/test_atomic_relations.py::test_milne_factor_uses_the_same_saha_state",
+    "tests/test_atomic_relations.py::test_saha_planck_forward_inverse_integrands_cancel",
+    "tests/test_atomic_relations.py::test_bound_free_kirchhoff_identity",
+    "tests/test_atomic_relations.py::test_coulomb_explicit_coefficients_rescale[1]",
+    "tests/test_atomic_relations.py::test_coulomb_explicit_coefficients_rescale[2]",
+    "tests/test_atomic_relations.py::test_coulomb_entire_step_is_equivalent[1]",
+    "tests/test_atomic_relations.py::test_coulomb_entire_step_is_equivalent[2]",
+    "tests/test_atomic_relations.py::test_coulomb_seed_normalizations",
+    "tests/test_atomic_relations.py::test_lte_source_function_of_existing_line_definition",
+    "tests/test_atomic_relations.py::test_lte_line_dependency_is_pinned",
+    "tests/test_atomic_relations.py::test_spectral_density_jacobians_preserve_integrals",
+    "tests/test_atomic_relations.py::test_extinction_has_no_spectral_jacobian_in_transfer",
+    "tests/test_atomic_relations.py::test_planck_coordinate_and_hemisphere_conversion",
+    "tests/test_thermodynamics.py::test_ideal_mixing_potentials_are_scalar_derivatives[1]",
+    "tests/test_thermodynamics.py::test_ideal_mixing_potentials_are_scalar_derivatives[2]",
+    "tests/test_thermodynamics.py::test_ideal_mixing_euler_and_hessian",
+    "tests/test_thermodynamics.py::test_mass_fraction_host_and_solute_derivatives[ns-solute_potential]",
+    "tests/test_thermodynamics.py::test_mass_fraction_host_and_solute_derivatives[n1-host_response_1]",
+    "tests/test_thermodynamics.py::test_mass_fraction_host_and_solute_derivatives[n2-host_response_2]",
+    "tests/test_thermodynamics.py::test_mass_fraction_euler_and_cross_derivatives",
+    "tests/test_thermodynamics.py::test_mass_fraction_zero_solute_is_an_energy_limit_not_a_finite_potential",
+    "tests/test_thermodynamics.py::test_nasa9_thermodynamic_derivatives_keep_reduced_normalizations",
+    "tests/test_thermodynamics.py::test_helmholtz_maxwell_relation",
+    "tests/test_thermodynamics.py::test_helmholtz_cp_follows_constant_pressure_derivative",
+    "tests/test_thermodynamics.py::test_helmholtz_sound_speed_follows_frozen_entropy_derivative",
+    "tests/test_thermodynamics.py::test_helmholtz_constant_cv_ideal_gas_limit"
+  ]
+}

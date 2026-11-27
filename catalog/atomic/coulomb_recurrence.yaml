@@ -1,0 +1,681 @@
+schema_version: '0.6'
+model:
+  id: planetlib.atomic.coulomb.catalog
+  name: Energy-normalized Coulomb recurrence
+  description: 'One scalar downward Coulomb recurrence step with branch=2 for the plus channel and branch=1 for
+    the minus channel. n is an integer with 1<=n<=20; plus steps require 0<=q<=n-3 and minus steps 1<=q<=n-3. All
+    photon energies are at or above threshold, E=1+n^2 momentum^2>=1, and Gstar is positive. Seeds are used only
+    when their indices exist: plus-next requires n>=2 and minus-next n>=3. The noncontributing n=1 minus seed is
+    never used as a dipole. This algebraic rescaling does not evaluate logarithms, prescribe clipping below threshold,
+    prove float64 stability or select a bound-free cross section. The older unscaled implementation had an n<=5
+    numerical scope; the algebraic identity does not transfer that bound to the current rescaled n<=20 implementation.'
+  implementation: &id002
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:1
+    entry_points:
+    - catalog/atomic/coulomb_recurrence.yaml
+assumptions:
+- statement: 'One scalar downward Coulomb recurrence step with branch=2 for the plus channel and branch=1 for the
+    minus channel. n is an integer with 1<=n<=20; plus steps require 0<=q<=n-3 and minus steps 1<=q<=n-3. All photon
+    energies are at or above threshold, E=1+n^2 momentum^2>=1, and Gstar is positive. Seeds are used only when their
+    indices exist: plus-next requires n>=2 and minus-next n>=3. The noncontributing n=1 minus seed is never used
+    as a dipole. This algebraic rescaling does not evaluate logarithms, prescribe clipping below threshold, prove
+    float64 stability or select a bound-free cross section. The older unscaled implementation had an n<=5 numerical
+    scope; the algebraic identity does not transfer that bound to the current rescaled n<=20 implementation.'
+  evidence: &id001
+  - planetlib.atomic.coulomb.upstream
+domains:
+- kind: scientific_applicability
+  status: unknown
+  description: The intended algebraic domain is explicit; no target environment is validated.
+  conditions: []
+  evidence: *id001
+limitations:
+- statement: Symbolic consistency does not establish atomic data, numerical conditioning, provider correspondence
+    or physical applicability.
+  evidence: *id001
+claims:
+- id: planetlib.atomic.coulomb.step_equivalence
+  revision: '1'
+  kind: theoretical
+  statement: The explicit normalized coefficients and rescaling transform the old downward step into the new step
+    for either channel.
+  scope: Conditional algebraic consistency of the recorded definitions; no provider equivalence or empirical accuracy
+    is inferred.
+  mathematical_models:
+  - {id: planetlib.atomic.coulomb.step, revision: '1'}
+- id: planetlib.atomic.coulomb.seed_equivalence
+  revision: '1'
+  kind: theoretical
+  statement: The recorded normalized seeds recover the original channel-specific initial values under their valid
+    index conditions.
+  scope: Conditional algebraic consistency of the recorded definitions; no provider equivalence or empirical accuracy
+    is inferred.
+  mathematical_models:
+  - {id: planetlib.atomic.coulomb.seeds, revision: '1'}
+evidence:
+- id: planetlib.atomic.coulomb.upstream
+  kind: theory
+  summary: Energy-normalized Coulomb recurrence extracted from inspected upstream mathematical conventions.
+  sources:
+  - https://github.com/HajimeKawahara/exojax-escape/blob/18064c9f743c38651b94c2a53d3890d2032852bb/mceg/contracts/escape.cloudy_investigation.yaml
+  - https://github.com/HajimeKawahara/exojax-escape/blob/18064c9f743c38651b94c2a53d3890d2032852bb/mceg/contracts/escape.atom_convergence.yaml
+  - https://github.com/HajimeKawahara/exojax-escape/blob/18064c9f743c38651b94c2a53d3890d2032852bb/src/escape/hydrogen_bound_free.py
+  scope: 'One scalar downward Coulomb recurrence step with branch=2 for the plus channel and branch=1 for the minus
+    channel. n is an integer with 1<=n<=20; plus steps require 0<=q<=n-3 and minus steps 1<=q<=n-3. All photon energies
+    are at or above threshold, E=1+n^2 momentum^2>=1, and Gstar is positive. Seeds are used only when their indices
+    exist: plus-next requires n>=2 and minus-next n>=3. The noncontributing n=1 minus seed is never used as a dipole.
+    This algebraic rescaling does not evaluate logarithms, prescribe clipping below threshold, prove float64 stability
+    or select a bound-free cross section. The older unscaled implementation had an n<=5 numerical scope; the algebraic
+    identity does not transfer that bound to the current rescaled n<=20 implementation.'
+  provenance:
+    role: implementation
+    location: The selected source files and MCEG equations at the pinned commits.
+    inspection: inspected
+    note: Sources were read locally; provider test status and empirical support remain upstream.
+- id: planetlib.atomic.coulomb.checks
+  kind: theory
+  summary: Symbolic residual checks read the stored definitions.
+  sources:
+  - tests/test_atomic_relations.py
+  scope: Conditional identities only; a successful check is not an independent original-source or provider-code
+    review.
+- id: planetlib.atomic.coulomb.symbolic_run_20261127
+  kind: theory
+  subject: planetlib.atomic.coulomb.definition
+  context: planetlib.atomic.coulomb.symbolic_review_20261127
+  summary: The stored-expression derivations passed in the recorded 32-test run; their equations, assumptions
+    and claim scope were reviewed.
+  sources:
+  - tests/test_atomic_relations.py
+  - reviews/symbolic_checks_20261127.json
+  artifacts:
+  - source: tests/test_atomic_relations.py
+    sha256: 41045b86a1bb163296986efbf6993340e3981a9c23c98a1613ece14a3cd0ec6b
+  - source: reviews/symbolic_checks_20261127.json
+    sha256: 5fd7c6c961971a2911a29862432579cbca20022b227a8748d6b78cd45bb814d5
+  scope: Supports only the attached mathematical identities within their stated domains. A finite symbolic
+    check is not a formal proof certificate or a numerical-provider validation.
+subjects:
+- id: planetlib.atomic.coulomb.definition
+  implementation: *id002
+  selected_files: {catalog/atomic/coulomb_recurrence.yaml: null}
+contexts:
+- {id: planetlib.atomic.coulomb.authoring, scope: 'One scalar downward Coulomb recurrence step with branch=2 for
+    the plus channel and branch=1 for the minus channel. n is an integer with 1<=n<=20; plus steps require 0<=q<=n-3
+    and minus steps 1<=q<=n-3. All photon energies are at or above threshold, E=1+n^2 momentum^2>=1, and Gstar is
+    positive. Seeds are used only when their indices exist: plus-next requires n>=2 and minus-next n>=3. The noncontributing
+    n=1 minus seed is never used as a dipole. This algebraic rescaling does not evaluate logarithms, prescribe clipping
+    below threshold, prove float64 stability or select a bound-free cross section. The older unscaled implementation
+    had an n<=5 numerical scope; the algebraic identity does not transfer that bound to the current rescaled n<=20
+    implementation.'}
+- id: planetlib.atomic.coulomb.symbolic_review_20261127
+  scope: Review of conditional symbolic identities on the domains declared by the selected definitions.
+    This context does not assess source correspondence, provider execution or physical applicability.
+  settings:
+    review_date: '2026-11-27'
+    sympy: 1.14.0
+quantities:
+- id: planetlib.atomic.coulomb.quantity.n
+  revision: '1'
+  latex: n
+  description: Principal quantum number of the bound shell.
+  unit: '1'
+  domain: Integer 1 <= n <= 20; use only the valid channel indices.
+- id: planetlib.atomic.coulomb.quantity.q
+  revision: '1'
+  latex: q
+  description: Downward recurrence index.
+  unit: '1'
+  domain: 'Integer; plus: 0 <= q <= n-3; minus: 1 <= q <= n-3.'
+- id: planetlib.atomic.coulomb.quantity.branch
+  revision: '1'
+  latex: branch
+  description: Channel selector.
+  unit: '1'
+  domain: Exactly 2 for plus or 1 for minus.
+- id: planetlib.atomic.coulomb.quantity.E
+  revision: '1'
+  latex: E
+  description: Photon energy divided by the selected threshold.
+  unit: '1'
+  domain: E >= 1; below-threshold cross sections are a separate branch.
+- id: planetlib.atomic.coulomb.quantity.momentum
+  revision: '1'
+  latex: momentum
+  description: Dimensionless continuum momentum.
+  unit: '1'
+  domain: Nonnegative; E=1+n^2 momentum^2.
+- id: planetlib.atomic.coulomb.quantity.Aold
+  revision: '1'
+  latex: Aold
+  description: Unscaled coefficient multiplying G at q+1.
+  unit: '1'
+  domain: Dimensionless local recurrence quantities in the declared channel and index domain.
+- id: planetlib.atomic.coulomb.quantity.Bold
+  revision: '1'
+  latex: Bold
+  description: Unscaled coefficient multiplying G at q+2.
+  unit: '1'
+  domain: Dimensionless local recurrence quantities in the declared channel and index domain.
+- id: planetlib.atomic.coulomb.quantity.Anew
+  revision: '1'
+  latex: Anew
+  description: Energy-normalized coefficient multiplying H at q+1.
+  unit: '1'
+  domain: Dimensionless local recurrence quantities in the declared channel and index domain.
+- id: planetlib.atomic.coulomb.quantity.Bnew
+  revision: '1'
+  latex: Bnew
+  description: Energy-normalized coefficient multiplying H at q+2.
+  unit: '1'
+  domain: Dimensionless local recurrence quantities in the declared channel and index domain.
+- id: planetlib.atomic.coulomb.quantity.G0
+  revision: '1'
+  latex: G0
+  description: Unscaled radial factor at index q in the selected branch.
+  unit: '1'
+  domain: Dimensionless local recurrence quantities in the declared channel and index domain.
+- id: planetlib.atomic.coulomb.quantity.G1
+  revision: '1'
+  latex: G1
+  description: Unscaled radial factor at index q+1 in the same branch.
+  unit: '1'
+  domain: Dimensionless local recurrence quantities in the declared channel and index domain.
+- id: planetlib.atomic.coulomb.quantity.G2
+  revision: '1'
+  latex: G2
+  description: Unscaled radial factor at index q+2 in the same branch.
+  unit: '1'
+  domain: Dimensionless local recurrence quantities in the declared channel and index domain.
+- id: planetlib.atomic.coulomb.quantity.H0
+  revision: '1'
+  latex: H0
+  description: Energy-normalized radial factor at index q in the selected branch.
+  unit: '1'
+  domain: Dimensionless local recurrence quantities in the declared channel and index domain.
+- id: planetlib.atomic.coulomb.quantity.H1
+  revision: '1'
+  latex: H1
+  description: Energy-normalized radial factor at index q+1 in the same branch.
+  unit: '1'
+  domain: Dimensionless local recurrence quantities in the declared channel and index domain.
+- id: planetlib.atomic.coulomb.quantity.H2
+  revision: '1'
+  latex: H2
+  description: Energy-normalized radial factor at index q+2 in the same branch.
+  unit: '1'
+  domain: Dimensionless local recurrence quantities in the declared channel and index domain.
+- id: planetlib.atomic.coulomb.quantity.Gstar
+  revision: '1'
+  latex: G_*
+  description: Common Coulomb normalization independent of q.
+  unit: '1'
+  domain: Positive.
+- id: planetlib.atomic.coulomb.quantity.Hp1
+  revision: '1'
+  latex: Hp1
+  description: Plus-channel normalized seed at n-1.
+  unit: '1'
+  domain: Dimensionless local recurrence quantities in the declared channel and index domain.
+- id: planetlib.atomic.coulomb.quantity.Hp2
+  revision: '1'
+  latex: Hp2
+  description: Plus-channel normalized seed at n-2.
+  unit: '1'
+  domain: Dimensionless local recurrence quantities in the declared channel and index domain.
+- id: planetlib.atomic.coulomb.quantity.Hm1
+  revision: '1'
+  latex: Hm1
+  description: Minus-channel normalized seed at n-1.
+  unit: '1'
+  domain: Dimensionless local recurrence quantities in the declared channel and index domain.
+- id: planetlib.atomic.coulomb.quantity.Hm2
+  revision: '1'
+  latex: Hm2
+  description: Minus-channel normalized seed at n-2.
+  unit: '1'
+  domain: Dimensionless local recurrence quantities in the declared channel and index domain.
+equations:
+- id: planetlib.atomic.coulomb.energy_momentum
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''E'', positive=True), Add(Mul(Pow(Symbol(''momentum'',
+      nonnegative=True), Integer(2)), Pow(Symbol(''n'', integer=True), Integer(2))), Integer(1)))'}
+  description: Photon energy and continuum momentum relation.
+  scope: Energy-normalized Coulomb recurrence under the stated assumptions.
+  symbols:
+    E: {latex: E, unit: '1', description: Photon energy divided by the selected threshold.}
+    momentum: {latex: momentum, unit: '1', description: Dimensionless continuum momentum.}
+    n: {latex: n, unit: '1', description: Principal quantum number of the bound shell.}
+  assumptions: &id003
+  - 'One scalar downward Coulomb recurrence step with branch=2 for the plus channel and branch=1 for the minus channel.
+    n is an integer with 1<=n<=20; plus steps require 0<=q<=n-3 and minus steps 1<=q<=n-3. All photon energies are
+    at or above threshold, E=1+n^2 momentum^2>=1, and Gstar is positive. Seeds are used only when their indices
+    exist: plus-next requires n>=2 and minus-next n>=3. The noncontributing n=1 minus seed is never used as a dipole.
+    This algebraic rescaling does not evaluate logarithms, prescribe clipping below threshold, prove float64 stability
+    or select a bound-free cross section. The older unscaled implementation had an n<=5 numerical scope; the algebraic
+    identity does not transfer that bound to the current rescaled n<=20 implementation.'
+  - All symbols denote numerical magnitudes in the declared units.
+  evidence: *id001
+- id: planetlib.atomic.coulomb.old_a
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''Aold''), Add(Mul(Symbol(''E'', positive=True),
+      Add(Symbol(''branch'', integer=True), Symbol(''q'', integer=True)), Add(Mul(Integer(2), Symbol(''q'', integer=True)),
+      Integer(3))), Mul(Integer(4), Pow(Symbol(''n'', integer=True), Integer(2))), Mul(Integer(-1), Integer(4),
+      Pow(Add(Symbol(''branch'', integer=True), Symbol(''q'', integer=True)), Integer(2)))))'}
+  description: Unscaled first recurrence coefficient for the selected channel.
+  scope: Energy-normalized Coulomb recurrence under the stated assumptions.
+  symbols:
+    Aold: {latex: Aold, unit: '1', description: Unscaled coefficient multiplying G at q+1.}
+    E: {latex: E, unit: '1', description: Photon energy divided by the selected threshold.}
+    branch: {latex: branch, unit: '1', description: Channel selector.}
+    n: {latex: n, unit: '1', description: Principal quantum number of the bound shell.}
+    q: {latex: q, unit: '1', description: Downward recurrence index.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.coulomb.old_b
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''Bold''), Mul(Integer(4), Pow(Symbol(''n'', integer=True),
+      Integer(2)), Add(Pow(Symbol(''n'', integer=True), Integer(2)), Mul(Integer(-1), Pow(Add(Symbol(''q'', integer=True),
+      Integer(2)), Integer(2)))), Add(Mul(Pow(Symbol(''momentum'', nonnegative=True), Integer(2)), Pow(Add(Mul(Integer(2),
+      Symbol(''branch'', integer=True)), Symbol(''q'', integer=True), Integer(-1)), Integer(2))), Integer(1))))'}
+  description: Unscaled second recurrence coefficient for the selected channel.
+  scope: Energy-normalized Coulomb recurrence under the stated assumptions.
+  symbols:
+    Bold: {latex: Bold, unit: '1', description: Unscaled coefficient multiplying G at q+2.}
+    branch: {latex: branch, unit: '1', description: Channel selector.}
+    momentum: {latex: momentum, unit: '1', description: Dimensionless continuum momentum.}
+    n: {latex: n, unit: '1', description: Principal quantum number of the bound shell.}
+    q: {latex: q, unit: '1', description: Downward recurrence index.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.coulomb.new_a
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''Anew''), Add(Mul(Add(Symbol(''branch'', integer=True),
+      Symbol(''q'', integer=True)), Add(Mul(Integer(2), Symbol(''q'', integer=True)), Integer(3))), Mul(Pow(Symbol(''E'',
+      positive=True), Integer(-1)), Add(Mul(Integer(4), Pow(Symbol(''n'', integer=True), Integer(2))), Mul(Integer(-1),
+      Integer(4), Pow(Add(Symbol(''branch'', integer=True), Symbol(''q'', integer=True)), Integer(2)))))))'}
+  description: Explicit energy-normalized first recurrence coefficient.
+  scope: Energy-normalized Coulomb recurrence under the stated assumptions.
+  symbols:
+    Anew: {latex: Anew, unit: '1', description: Energy-normalized coefficient multiplying H at q+1.}
+    E: {latex: E, unit: '1', description: Photon energy divided by the selected threshold.}
+    branch: {latex: branch, unit: '1', description: Channel selector.}
+    n: {latex: n, unit: '1', description: Principal quantum number of the bound shell.}
+    q: {latex: q, unit: '1', description: Downward recurrence index.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.coulomb.new_b
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''Bnew''), Mul(Integer(4), Pow(Symbol(''E'', positive=True),
+      Integer(-2)), Pow(Symbol(''n'', integer=True), Integer(2)), Add(Pow(Symbol(''n'', integer=True), Integer(2)),
+      Mul(Integer(-1), Pow(Add(Symbol(''q'', integer=True), Integer(2)), Integer(2)))), Add(Mul(Pow(Symbol(''momentum'',
+      nonnegative=True), Integer(2)), Pow(Add(Mul(Integer(2), Symbol(''branch'', integer=True)), Symbol(''q'', integer=True),
+      Integer(-1)), Integer(2))), Integer(1))))'}
+  description: Explicit energy-normalized second recurrence coefficient.
+  scope: Energy-normalized Coulomb recurrence under the stated assumptions.
+  symbols:
+    Bnew: {latex: Bnew, unit: '1', description: Energy-normalized coefficient multiplying H at q+2.}
+    E: {latex: E, unit: '1', description: Photon energy divided by the selected threshold.}
+    branch: {latex: branch, unit: '1', description: Channel selector.}
+    momentum: {latex: momentum, unit: '1', description: Dimensionless continuum momentum.}
+    n: {latex: n, unit: '1', description: Principal quantum number of the bound shell.}
+    q: {latex: q, unit: '1', description: Downward recurrence index.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.coulomb.old_step
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''G0''), Add(Mul(Symbol(''Aold''), Symbol(''G1'')),
+      Mul(Integer(-1), Symbol(''Bold''), Symbol(''G2''))))'}
+  description: Original downward recurrence at q.
+  scope: Energy-normalized Coulomb recurrence under the stated assumptions.
+  symbols:
+    Aold: {latex: Aold, unit: '1', description: Unscaled coefficient multiplying G at q+1.}
+    Bold: {latex: Bold, unit: '1', description: Unscaled coefficient multiplying G at q+2.}
+    G0: {latex: G0, unit: '1', description: Unscaled radial factor at index q in the selected branch.}
+    G1: {latex: G1, unit: '1', description: Unscaled radial factor at index q+1 in the same branch.}
+    G2: {latex: G2, unit: '1', description: Unscaled radial factor at index q+2 in the same branch.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.coulomb.new_step
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''H0''), Add(Mul(Symbol(''Anew''), Symbol(''H1'')),
+      Mul(Integer(-1), Symbol(''Bnew''), Symbol(''H2''))))'}
+  description: Energy-normalized downward recurrence at q.
+  scope: Energy-normalized Coulomb recurrence under the stated assumptions.
+  symbols:
+    Anew: {latex: Anew, unit: '1', description: Energy-normalized coefficient multiplying H at q+1.}
+    Bnew: {latex: Bnew, unit: '1', description: Energy-normalized coefficient multiplying H at q+2.}
+    H0: {latex: H0, unit: '1', description: Energy-normalized radial factor at index q in the selected branch.}
+    H1: {latex: H1, unit: '1', description: Energy-normalized radial factor at index q+1 in the same branch.}
+    H2: {latex: H2, unit: '1', description: Energy-normalized radial factor at index q+2 in the same branch.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.coulomb.rescale_0
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''G0''), Mul(Pow(Symbol(''E'', positive=True), Add(Mul(Integer(-1),
+      Symbol(''branch'', integer=True)), Symbol(''n'', integer=True), Mul(Integer(-1), Symbol(''q'', integer=True)),
+      Integer(1))), Symbol(''Gstar''), Symbol(''H0'')))'}
+  description: Rescale the current radial factor.
+  scope: Energy-normalized Coulomb recurrence under the stated assumptions.
+  symbols:
+    E: {latex: E, unit: '1', description: Photon energy divided by the selected threshold.}
+    G0: {latex: G0, unit: '1', description: Unscaled radial factor at index q in the selected branch.}
+    Gstar: {latex: G_*, unit: '1', description: Common Coulomb normalization independent of q.}
+    H0: {latex: H0, unit: '1', description: Energy-normalized radial factor at index q in the selected branch.}
+    branch: {latex: branch, unit: '1', description: Channel selector.}
+    n: {latex: n, unit: '1', description: Principal quantum number of the bound shell.}
+    q: {latex: q, unit: '1', description: Downward recurrence index.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.coulomb.rescale_1
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''G1''), Mul(Pow(Symbol(''E'', positive=True), Add(Mul(Integer(-1),
+      Symbol(''branch'', integer=True)), Symbol(''n'', integer=True), Mul(Integer(-1), Symbol(''q'', integer=True)))),
+      Symbol(''Gstar''), Symbol(''H1'')))'}
+  description: Rescale the next radial factor with one fewer energy power.
+  scope: Energy-normalized Coulomb recurrence under the stated assumptions.
+  symbols:
+    E: {latex: E, unit: '1', description: Photon energy divided by the selected threshold.}
+    G1: {latex: G1, unit: '1', description: Unscaled radial factor at index q+1 in the same branch.}
+    Gstar: {latex: G_*, unit: '1', description: Common Coulomb normalization independent of q.}
+    H1: {latex: H1, unit: '1', description: Energy-normalized radial factor at index q+1 in the same branch.}
+    branch: {latex: branch, unit: '1', description: Channel selector.}
+    n: {latex: n, unit: '1', description: Principal quantum number of the bound shell.}
+    q: {latex: q, unit: '1', description: Downward recurrence index.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.coulomb.rescale_2
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''G2''), Mul(Pow(Symbol(''E'', positive=True), Add(Mul(Integer(-1),
+      Symbol(''branch'', integer=True)), Symbol(''n'', integer=True), Mul(Integer(-1), Symbol(''q'', integer=True)),
+      Integer(-1))), Symbol(''Gstar''), Symbol(''H2'')))'}
+  description: Rescale the next-next radial factor with two fewer energy powers.
+  scope: Energy-normalized Coulomb recurrence under the stated assumptions.
+  symbols:
+    E: {latex: E, unit: '1', description: Photon energy divided by the selected threshold.}
+    G2: {latex: G2, unit: '1', description: Unscaled radial factor at index q+2 in the same branch.}
+    Gstar: {latex: G_*, unit: '1', description: Common Coulomb normalization independent of q.}
+    H2: {latex: H2, unit: '1', description: Energy-normalized radial factor at index q+2 in the same branch.}
+    branch: {latex: branch, unit: '1', description: Channel selector.}
+    n: {latex: n, unit: '1', description: Principal quantum number of the bound shell.}
+    q: {latex: q, unit: '1', description: Downward recurrence index.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.coulomb.plus_top_seed
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''Hp1''), Integer(1))'}
+  description: Normalized plus-channel seed at n-1.
+  scope: Energy-normalized Coulomb recurrence under the stated assumptions.
+  symbols:
+    Hp1: {latex: Hp1, unit: '1', description: Plus-channel normalized seed at n-1.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.coulomb.plus_next_seed
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''Hp2''), Mul(Symbol(''n'', integer=True), Add(Mul(Integer(2),
+      Symbol(''n'', integer=True)), Integer(-1))))'}
+  description: Normalized plus-channel seed at n-2.
+  scope: Energy-normalized Coulomb recurrence under the stated assumptions.
+  symbols:
+    Hp2: {latex: Hp2, unit: '1', description: Plus-channel normalized seed at n-2.}
+    n: {latex: n, unit: '1', description: Principal quantum number of the bound shell.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.coulomb.minus_top_seed
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''Hm1''), Mul(Rational(1, 2), Pow(Symbol(''n'', integer=True),
+      Integer(-1))))'}
+  description: Normalized minus-channel seed at n-1.
+  scope: Energy-normalized Coulomb recurrence under the stated assumptions.
+  symbols:
+    Hm1: {latex: Hm1, unit: '1', description: Minus-channel normalized seed at n-1.}
+    n: {latex: n, unit: '1', description: Principal quantum number of the bound shell.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.coulomb.minus_next_seed
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''Hm2''), Mul(Symbol(''Hm1''), Add(Mul(Integer(2),
+      Symbol(''n'', integer=True)), Integer(-1)), Add(Symbol(''n'', integer=True), Integer(-1), Mul(Integer(4),
+      Pow(Symbol(''E'', positive=True), Integer(-1))))))'}
+  description: Normalized minus-channel seed at n-2.
+  scope: Energy-normalized Coulomb recurrence under the stated assumptions.
+  symbols:
+    E: {latex: E, unit: '1', description: Photon energy divided by the selected threshold.}
+    Hm1: {latex: Hm1, unit: '1', description: Minus-channel normalized seed at n-1.}
+    Hm2: {latex: Hm2, unit: '1', description: Minus-channel normalized seed at n-2.}
+    n: {latex: n, unit: '1', description: Principal quantum number of the bound shell.}
+  assumptions: *id003
+  evidence: *id001
+mathematical_models:
+- id: planetlib.atomic.coulomb.step
+  revision: '1'
+  description: Energy-normalized Coulomb recurrence
+  scope: 'One scalar downward Coulomb recurrence step with branch=2 for the plus channel and branch=1 for the minus
+    channel. n is an integer with 1<=n<=20; plus steps require 0<=q<=n-3 and minus steps 1<=q<=n-3. All photon energies
+    are at or above threshold, E=1+n^2 momentum^2>=1, and Gstar is positive. Seeds are used only when their indices
+    exist: plus-next requires n>=2 and minus-next n>=3. The noncontributing n=1 minus seed is never used as a dipole.
+    This algebraic rescaling does not evaluate logarithms, prescribe clipping below threshold, prove float64 stability
+    or select a bound-free cross section. The older unscaled implementation had an n<=5 numerical scope; the algebraic
+    identity does not transfer that bound to the current rescaled n<=20 implementation.'
+  quantities:
+    Anew: {quantity: {id: planetlib.atomic.coulomb.quantity.Anew, revision: '1'}, role: derived}
+    Aold: {quantity: {id: planetlib.atomic.coulomb.quantity.Aold, revision: '1'}, role: derived}
+    Bnew: {quantity: {id: planetlib.atomic.coulomb.quantity.Bnew, revision: '1'}, role: derived}
+    Bold: {quantity: {id: planetlib.atomic.coulomb.quantity.Bold, revision: '1'}, role: derived}
+    E: {quantity: {id: planetlib.atomic.coulomb.quantity.E, revision: '1'}, role: derived}
+    G0: {quantity: {id: planetlib.atomic.coulomb.quantity.G0, revision: '1'}, role: derived}
+    G1: {quantity: {id: planetlib.atomic.coulomb.quantity.G1, revision: '1'}, role: derived}
+    G2: {quantity: {id: planetlib.atomic.coulomb.quantity.G2, revision: '1'}, role: derived}
+    Gstar: {quantity: {id: planetlib.atomic.coulomb.quantity.Gstar, revision: '1'}, role: input}
+    H0: {quantity: {id: planetlib.atomic.coulomb.quantity.H0, revision: '1'}, role: derived}
+    H1: {quantity: {id: planetlib.atomic.coulomb.quantity.H1, revision: '1'}, role: input}
+    H2: {quantity: {id: planetlib.atomic.coulomb.quantity.H2, revision: '1'}, role: input}
+    branch: {quantity: {id: planetlib.atomic.coulomb.quantity.branch, revision: '1'}, role: input}
+    momentum: {quantity: {id: planetlib.atomic.coulomb.quantity.momentum, revision: '1'}, role: input}
+    n: {quantity: {id: planetlib.atomic.coulomb.quantity.n, revision: '1'}, role: input}
+    q: {quantity: {id: planetlib.atomic.coulomb.quantity.q, revision: '1'}, role: input}
+  relations:
+  - id: planetlib.atomic.coulomb.relation.energy_momentum
+    equation: {id: planetlib.atomic.coulomb.energy_momentum, revision: '1'}
+    role: Photon energy and continuum momentum relation.
+    quantities: {E: E, momentum: momentum, n: n}
+  - id: planetlib.atomic.coulomb.relation.old_a
+    equation: {id: planetlib.atomic.coulomb.old_a, revision: '1'}
+    role: Unscaled first recurrence coefficient for the selected channel.
+    quantities:
+      Aold: Aold
+      E: E
+      branch: branch
+      n: n
+      q: q
+  - id: planetlib.atomic.coulomb.relation.old_b
+    equation: {id: planetlib.atomic.coulomb.old_b, revision: '1'}
+    role: Unscaled second recurrence coefficient for the selected channel.
+    quantities:
+      Bold: Bold
+      branch: branch
+      momentum: momentum
+      n: n
+      q: q
+  - id: planetlib.atomic.coulomb.relation.new_a
+    equation: {id: planetlib.atomic.coulomb.new_a, revision: '1'}
+    role: Explicit energy-normalized first recurrence coefficient.
+    quantities:
+      Anew: Anew
+      E: E
+      branch: branch
+      n: n
+      q: q
+  - id: planetlib.atomic.coulomb.relation.new_b
+    equation: {id: planetlib.atomic.coulomb.new_b, revision: '1'}
+    role: Explicit energy-normalized second recurrence coefficient.
+    quantities:
+      Bnew: Bnew
+      E: E
+      branch: branch
+      momentum: momentum
+      n: n
+      q: q
+  - id: planetlib.atomic.coulomb.relation.old_step
+    equation: {id: planetlib.atomic.coulomb.old_step, revision: '1'}
+    role: Original downward recurrence at q.
+    quantities:
+      Aold: Aold
+      Bold: Bold
+      G0: G0
+      G1: G1
+      G2: G2
+  - id: planetlib.atomic.coulomb.relation.new_step
+    equation: {id: planetlib.atomic.coulomb.new_step, revision: '1'}
+    role: Energy-normalized downward recurrence at q.
+    quantities:
+      Anew: Anew
+      Bnew: Bnew
+      H0: H0
+      H1: H1
+      H2: H2
+  - id: planetlib.atomic.coulomb.relation.rescale_0
+    equation: {id: planetlib.atomic.coulomb.rescale_0, revision: '1'}
+    role: Rescale the current radial factor.
+    quantities:
+      E: E
+      G0: G0
+      Gstar: Gstar
+      H0: H0
+      branch: branch
+      n: n
+      q: q
+  - id: planetlib.atomic.coulomb.relation.rescale_1
+    equation: {id: planetlib.atomic.coulomb.rescale_1, revision: '1'}
+    role: Rescale the next radial factor with one fewer energy power.
+    quantities:
+      E: E
+      G1: G1
+      Gstar: Gstar
+      H1: H1
+      branch: branch
+      n: n
+      q: q
+  - id: planetlib.atomic.coulomb.relation.rescale_2
+    equation: {id: planetlib.atomic.coulomb.rescale_2, revision: '1'}
+    role: Rescale the next-next radial factor with two fewer energy powers.
+    quantities:
+      E: E
+      G2: G2
+      Gstar: Gstar
+      H2: H2
+      branch: branch
+      n: n
+      q: q
+- id: planetlib.atomic.coulomb.seeds
+  revision: '1'
+  description: Energy-normalized Coulomb recurrence
+  scope: 'One scalar downward Coulomb recurrence step with branch=2 for the plus channel and branch=1 for the minus
+    channel. n is an integer with 1<=n<=20; plus steps require 0<=q<=n-3 and minus steps 1<=q<=n-3. All photon energies
+    are at or above threshold, E=1+n^2 momentum^2>=1, and Gstar is positive. Seeds are used only when their indices
+    exist: plus-next requires n>=2 and minus-next n>=3. The noncontributing n=1 minus seed is never used as a dipole.
+    This algebraic rescaling does not evaluate logarithms, prescribe clipping below threshold, prove float64 stability
+    or select a bound-free cross section. The older unscaled implementation had an n<=5 numerical scope; the algebraic
+    identity does not transfer that bound to the current rescaled n<=20 implementation.'
+  quantities:
+    E: {quantity: {id: planetlib.atomic.coulomb.quantity.E, revision: '1'}, role: input}
+    Hm1: {quantity: {id: planetlib.atomic.coulomb.quantity.Hm1, revision: '1'}, role: derived}
+    Hm2: {quantity: {id: planetlib.atomic.coulomb.quantity.Hm2, revision: '1'}, role: derived}
+    Hp1: {quantity: {id: planetlib.atomic.coulomb.quantity.Hp1, revision: '1'}, role: derived}
+    Hp2: {quantity: {id: planetlib.atomic.coulomb.quantity.Hp2, revision: '1'}, role: derived}
+    n: {quantity: {id: planetlib.atomic.coulomb.quantity.n, revision: '1'}, role: input}
+  relations:
+  - id: planetlib.atomic.coulomb.relation.plus_top_seed
+    equation: {id: planetlib.atomic.coulomb.plus_top_seed, revision: '1'}
+    role: Normalized plus-channel seed at n-1.
+    quantities: {Hp1: Hp1}
+  - id: planetlib.atomic.coulomb.relation.plus_next_seed
+    equation: {id: planetlib.atomic.coulomb.plus_next_seed, revision: '1'}
+    role: Normalized plus-channel seed at n-2.
+    quantities: {Hp2: Hp2, n: n}
+  - id: planetlib.atomic.coulomb.relation.minus_top_seed
+    equation: {id: planetlib.atomic.coulomb.minus_top_seed, revision: '1'}
+    role: Normalized minus-channel seed at n-1.
+    quantities: {Hm1: Hm1, n: n}
+  - id: planetlib.atomic.coulomb.relation.minus_next_seed
+    equation: {id: planetlib.atomic.coulomb.minus_next_seed, revision: '1'}
+    role: Normalized minus-channel seed at n-2.
+    quantities:
+      E: E
+      Hm1: Hm1
+      Hm2: Hm2
+      n: n
+assessments:
+- id: planetlib.atomic.coulomb.step_equivalence.pending
+  kind: evidence_support
+  claim: planetlib.atomic.coulomb.step_equivalence
+  claim_revision: '1'
+  subject: planetlib.atomic.coulomb.definition
+  context: planetlib.atomic.coulomb.authoring
+  method: {id: planetlib.atomic.coulomb.symbolic_inventory, revision: '1', description: Record explicit symbolic
+      checks for a separately reviewed assessment.}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.atomic.coulomb.checks
+  reasons:
+  - The shared definition and its test scope are recorded; no prior provider assessment is transferred.
+- id: planetlib.atomic.coulomb.step_equivalence.review_20261127
+  kind: evidence_support
+  claim: planetlib.atomic.coulomb.step_equivalence
+  claim_revision: '1'
+  subject: planetlib.atomic.coulomb.definition
+  context: planetlib.atomic.coulomb.symbolic_review_20261127
+  method:
+    id: planetlib.atomic.coulomb.symbolic_derivation_review
+    revision: '1'
+    description: Inspect the derivation and domain; execute substitution, differentiation, simplification
+      and limiting-case checks against the serialized definitions.
+  status: supported
+  origin: reviewed
+  evidence:
+  - planetlib.atomic.coulomb.symbolic_run_20261127
+  reasons:
+  - The stated conditional identity follows in the reviewed symbolic checks. Source correspondence and
+    physical applicability are separate questions.
+  mathematical_model_pins:
+  - id: planetlib.atomic.coulomb.step
+    revision: '1'
+    sha256: 23c4646cc575c9f364f477b001ed112877178ca14b9d63f692cb11ce4af34c00
+- id: planetlib.atomic.coulomb.seed_equivalence.review_20261127
+  kind: evidence_support
+  claim: planetlib.atomic.coulomb.seed_equivalence
+  claim_revision: '1'
+  subject: planetlib.atomic.coulomb.definition
+  context: planetlib.atomic.coulomb.symbolic_review_20261127
+  method:
+    id: planetlib.atomic.coulomb.symbolic_derivation_review
+    revision: '1'
+    description: Inspect the derivation and domain; execute substitution, differentiation, simplification
+      and limiting-case checks against the serialized definitions.
+  status: supported
+  origin: reviewed
+  evidence:
+  - planetlib.atomic.coulomb.symbolic_run_20261127
+  reasons:
+  - The stated conditional identity follows in the reviewed symbolic checks. Source correspondence and
+    physical applicability are separate questions.
+  mathematical_model_pins:
+  - id: planetlib.atomic.coulomb.seeds
+    revision: '1'
+    sha256: 207ae78f3c10c4caf84cdfc74f5e1c62d7252106df9e2b49fd889d8af3aed7cd
+- id: planetlib.atomic.coulomb.seed_equivalence.pending
+  kind: evidence_support
+  claim: planetlib.atomic.coulomb.seed_equivalence
+  claim_revision: '1'
+  subject: planetlib.atomic.coulomb.definition
+  context: planetlib.atomic.coulomb.authoring
+  method: {id: planetlib.atomic.coulomb.symbolic_inventory, revision: '1', description: Record explicit symbolic
+      checks for a separately reviewed assessment.}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.atomic.coulomb.checks
+  reasons:
+  - The shared definition and its test scope are recorded; no prior provider assessment is transferred.

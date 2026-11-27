@@ -1,0 +1,110 @@
+schema_version: '0.6'
+model:
+  id: example.exoinventory.sun_yao
+  name: Proposed ExoInventory adoption of the shared water definition
+  description: A local partial-model adoption, retaining distinct correspondence and applicability questions.
+  implementation: &id001
+    repository: https://github.com/HajimeKawahara/exoinventory
+    revision: 02540ee13cfb847ade632b35e9c8d950795dc5f0
+    entry_points:
+    - examples/subneptune_taxonomy/finite_melt/m2_s1_sun_yao.py:SunYaoRecipe.liquid
+assumptions:
+- statement: The consumer converts total pressure from Pa to bar and normalizes live dry oxide amounts with total
+    iron represented as FeO.
+  evidence:
+  - example.consumer.source
+- statement: The gas convention uses ideal-gas water partial pressure; the binary water relation is continued into
+    a separate extensive multisolute scalar.
+  evidence:
+  - example.consumer.source
+domains:
+- kind: scientific_applicability
+  status: unknown
+  description: The BSE-like, H2/He-bearing host and coupled Gibbs continuation require their own physical assessment.
+  conditions: []
+  evidence:
+  - example.consumer.history
+limitations:
+- statement: This prototype selects only the water relation; it is not a complete mathematical model of the S1 equilibrium
+    calculation.
+  evidence:
+  - example.consumer.source
+- statement: The consumer uses provider capacities inside a Gibbs scalar, so no direct scalar-output EquationBinding
+    is asserted for SunYaoRecipe.liquid.
+  evidence:
+  - example.consumer.source
+subjects:
+- id: example.consumer.source
+  implementation: *id001
+  selected_files: {examples/subneptune_taxonomy/finite_melt/m2_s1_sun_yao.py: dd4dfe6e2585be8e9dfb69540d0d87800ee322279be6e53877c1dca7bc2d74d1}
+contexts:
+- id: example.consumer.adoption
+  scope: Proposed adoption of the water submodel; no rerun of S1, full source manifest or convergence claim.
+  settings: {dry_oxide_basis: Volatile-free oxide formula units; total iron as FeO., gas_convention: Ideal gas;
+      water partial pressure in bar.}
+evidence:
+- id: example.consumer.source
+  kind: implementation
+  summary: The consumer's dry predictors and provider-capacity call inside its liquid Gibbs scalar.
+  sources:
+  - https://github.com/HajimeKawahara/exoinventory/blob/02540ee13cfb847ade632b35e9c8d950795dc5f0/examples/subneptune_taxonomy/finite_melt/m2_s1_sun_yao.py
+  scope: Read as an adoption candidate; the full coupled scalar and its numerical assessment stay upstream.
+  subject: example.consumer.source
+  context: example.consumer.adoption
+- id: example.consumer.history
+  kind: literature
+  summary: Immutable historical provider snapshot and later consumer paper review.
+  sources:
+  - https://github.com/HajimeKawahara/exoinventory/blob/02540ee13cfb847ade632b35e9c8d950795dc5f0/examples/subneptune_taxonomy/finite_melt/mceg/provider_reviews/sun_yao_binding.json
+  - https://github.com/HajimeKawahara/exoinventory/blob/02540ee13cfb847ade632b35e9c8d950795dc5f0/examples/subneptune_taxonomy/finite_melt/mceg/s1_adopted.yaml
+  scope: The frozen provider YAML has SHA256 becaf73f32e226915d753186a4ac3ed0398fee2a8e37e0d7d45e007e582eab8f at
+    provider contract revision 06d26e1fd11fb22181965988c170d63a4c5a9ab6. Its source_formula_review_20261021 is supported
+    and physical_source_review_20261021 is unknown. The later sun-yao-paper-review-20261029 context records paper:water-formula
+    supported and paper:empirical-transfer unknown. These are historical judgments about their own Subjects and
+    Contexts, not assessments of this proposed adoption.
+claims:
+- id: example.consumer.correspondence
+  revision: '2'
+  kind: theoretical
+  statement: The consumer's use of the provider capacities preserves the shared binary water definition under its
+    declared conventions.
+  scope: Requires review of composition normalization and Gibbs continuation, beyond equality of fitted coefficients.
+  mathematical_models:
+  - {id: planetlib.solubility.sun_yao2026.binary_water, revision: '2'}
+- id: example.consumer.applicability
+  revision: '2'
+  kind: physical_validation
+  statement: The adopted relation has adequate empirical accuracy for the selected host and coupled fluid.
+  scope: No target error criterion or independent experiment is supplied by this prototype.
+  mathematical_models:
+  - {id: planetlib.solubility.sun_yao2026.binary_water, revision: '2'}
+assessments:
+- id: example.consumer.correspondence_pending
+  kind: evidence_support
+  claim: example.consumer.correspondence
+  claim_revision: '2'
+  subject: example.consumer.source
+  context: example.consumer.adoption
+  method: {id: example.consumer.initial_adoption, revision: '1', description: Record the proposed component choice
+      separately from upstream reviews.}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - example.consumer.source
+  - example.consumer.history
+  reasons:
+  - The earlier formula review does not establish correspondence of this new adoption and the full Gibbs scalar.
+- id: example.consumer.applicability_pending
+  kind: evidence_support
+  claim: example.consumer.applicability
+  claim_revision: '2'
+  subject: example.consumer.source
+  context: example.consumer.adoption
+  method: {id: example.consumer.empirical_scope, revision: '1', description: Require independent target-specific
+      physical evidence.}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - example.consumer.history
+  reasons:
+  - Static formula agreement does not establish target-host accuracy.

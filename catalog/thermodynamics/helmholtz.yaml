@@ -1,0 +1,433 @@
+schema_version: '0.6'
+model:
+  id: planetlib.thermodynamics.helmholtz
+  name: Fixed-composition molar Helmholtz response relations
+  description: An open derivative model for a smooth complete molar Helmholtz potential at fixed composition. Density
+    is molar. The user supplies the potential, composition and mean molar mass. The stable response domain has T>0,
+    rho>0, cv>0 and partial P/partial rho at fixed T positive. No phase selection, chemical equilibrium response,
+    EOS coefficients or numerical differentiation method is selected.
+  implementation: &id001
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:1
+    entry_points:
+    - catalog/thermodynamics/helmholtz.yaml
+assumptions:
+- statement: The potential is twice continuously differentiable on the selected single-phase interior, allowing
+    the mixed derivatives to commute.
+  evidence:
+  - planetlib.thermodynamics.helmholtz.source
+- statement: All T/rho partial derivatives hold composition fixed. Mean molar mass is constant in these derivatives.
+  evidence:
+  - planetlib.thermodynamics.helmholtz.source
+- statement: cp and sound speed require nonzero cv and pressure-density derivative; singular states and phase boundaries
+    are outside this model.
+  evidence:
+  - planetlib.thermodynamics.helmholtz.source
+- statement: Every symbol denotes a numerical magnitude in its stated SI units; no automatic unit conversion is
+    implied.
+  evidence:
+  - planetlib.thermodynamics.helmholtz.source
+domains:
+- kind: scientific_applicability
+  status: unknown
+  description: No target-specific physical assessment is asserted by this shared definition.
+  conditions: []
+  evidence:
+  - planetlib.thermodynamics.helmholtz.source
+limitations:
+- statement: An open derivative model for a smooth complete molar Helmholtz potential at fixed composition. Density
+    is molar. The user supplies the potential, composition and mean molar mass. The stable response domain has T>0,
+    rho>0, cv>0 and partial P/partial rho at fixed T positive. No phase selection, chemical equilibrium response,
+    EOS coefficients or numerical differentiation method is selected.
+  evidence:
+  - planetlib.thermodynamics.helmholtz.source
+claims:
+- id: planetlib.thermodynamics.helmholtz.mathematical_consistency
+  revision: '1'
+  kind: theoretical
+  statement: On the smooth stable fixed-composition domain, the stored pressure/entropy relations satisfy Maxwell
+    symmetry, the stored cp and sound-speed expressions follow from constant-pressure and constant-entropy derivatives,
+    and a constant-cv ideal-gas potential yields cp-cv=R and cs2=gamma*R*T/M.
+  scope: An open derivative model for a smooth complete molar Helmholtz potential at fixed composition. Density
+    is molar. The user supplies the potential, composition and mean molar mass. The stable response domain has T>0,
+    rho>0, cv>0 and partial P/partial rho at fixed T positive. No phase selection, chemical equilibrium response,
+    EOS coefficients or numerical differentiation method is selected. The executable checks use stored symbolic
+    definitions; these are not empirical or code-correspondence claims.
+  mathematical_models:
+  - {id: planetlib.thermodynamics.helmholtz.model, revision: '1'}
+- id: planetlib.thermodynamics.helmholtz.source_correspondence
+  revision: '1'
+  kind: theoretical
+  statement: The extraction preserves the selected source conventions and implementation intent.
+  scope: Requires a separate source-to-definition review; symbolic identities alone do not establish provider equivalence.
+  mathematical_models:
+  - {id: planetlib.thermodynamics.helmholtz.model, revision: '1'}
+- id: planetlib.thermodynamics.helmholtz.physical_applicability
+  revision: '1'
+  kind: physical_validation
+  statement: The partial model is empirically adequate for a specified consumer environment.
+  scope: No target material, error criterion or independent empirical comparison is specified.
+  mathematical_models:
+  - {id: planetlib.thermodynamics.helmholtz.model, revision: '1'}
+evidence:
+- id: planetlib.thermodynamics.helmholtz.source
+  kind: implementation
+  summary: Pinned provider formulas and quantity conventions inspected for extraction.
+  sources:
+  - https://github.com/HajimeKawahara/exoeos/blob/1032f58872bdef9d48c8b1ce2a16a473ced97f3c/src/exoeos/thermodynamics.py
+  - https://github.com/HajimeKawahara/exoeos/blob/1032f58872bdef9d48c8b1ce2a16a473ced97f3c/src/exoeos/state.py
+  scope: thermodynamic_state_trho and HelmholtzThermodynamicState define molar, fixed-composition derivatives and
+    response functions at this commit. Their provider implementation, root selection and numerical checks remain
+    upstream.
+  provenance:
+    role: implementation
+    location: The source functions identified by the immutable URLs.
+    inspection: inspected
+    note: Source inspection identifies conventions; no provider support is transferred.
+- id: planetlib.thermodynamics.helmholtz.symbolic_checks
+  kind: theory
+  summary: Reproducible symbolic residual and limiting-case checks against the stored relations.
+  sources:
+  - tests/test_thermodynamics.py
+  scope: On the smooth stable fixed-composition domain, the stored pressure/entropy relations satisfy Maxwell symmetry,
+    the stored cp and sound-speed expressions follow from constant-pressure and constant-entropy derivatives, and
+    a constant-cv ideal-gas potential yields cp-cv=R and cs2=gamma*R*T/M. Test execution and scientific support
+    must be recorded separately; these checks do not run the numerical providers.
+- id: planetlib.thermodynamics.helmholtz.symbolic_run_20261127
+  kind: theory
+  subject: planetlib.thermodynamics.helmholtz.definition
+  context: planetlib.thermodynamics.helmholtz.symbolic_review_20261127
+  summary: The stored-expression derivations passed in the recorded 32-test run; their equations, assumptions
+    and claim scope were reviewed.
+  sources:
+  - tests/test_thermodynamics.py
+  - reviews/symbolic_checks_20261127.json
+  artifacts:
+  - source: tests/test_thermodynamics.py
+    sha256: 165ef2ecda35f1a983aab8c00fb73cddb4d9ae4ea11d1db727eb4fad72148780
+  - source: reviews/symbolic_checks_20261127.json
+    sha256: 5fd7c6c961971a2911a29862432579cbca20022b227a8748d6b78cd45bb814d5
+  scope: Supports only the attached mathematical identities within their stated domains. A finite symbolic
+    check is not a formal proof certificate or a numerical-provider validation.
+subjects:
+- id: planetlib.thermodynamics.helmholtz.definition
+  implementation: *id001
+  selected_files: {catalog/thermodynamics/helmholtz.yaml: null}
+contexts:
+- {id: planetlib.thermodynamics.helmholtz.extraction, scope: Initial definition extraction and explicit mathematical
+    checks; provider execution and physical applicability remain separate.}
+- id: planetlib.thermodynamics.helmholtz.symbolic_review_20261127
+  scope: Review of conditional symbolic identities on the domains declared by the selected definitions.
+    This context does not assess source correspondence, provider execution or physical applicability.
+  settings:
+    review_date: '2026-11-27'
+    sympy: 1.14.0
+quantities:
+- id: planetlib.thermodynamics.helmholtz.T
+  revision: '1'
+  latex: T
+  description: Absolute temperature at fixed composition.
+  unit: K
+  domain: Positive, within one smooth single-phase domain.
+- id: planetlib.thermodynamics.helmholtz.rho
+  revision: '1'
+  latex: \rho
+  description: Total molar density, not mass density.
+  unit: mol m^-3
+  domain: Positive, within the same single-phase domain.
+- id: planetlib.thermodynamics.helmholtz.M
+  revision: '1'
+  latex: \overline M
+  description: Mean molar mass of the fixed composition.
+  unit: kg mol^-1
+  domain: Positive and constant during the specified derivatives.
+- id: planetlib.thermodynamics.helmholtz.a
+  revision: '1'
+  latex: a
+  description: Complete molar Helmholtz energy as a function of T and molar density, including ideal mixing.
+  unit: J mol^-1
+  domain: Twice continuously differentiable in the chosen single phase; composition is held fixed.
+  coordinates:
+  - {id: planetlib.thermodynamics.helmholtz.T, revision: '1'}
+  - {id: planetlib.thermodynamics.helmholtz.rho, revision: '1'}
+- id: planetlib.thermodynamics.helmholtz.P
+  revision: '1'
+  latex: P
+  description: Pressure derived from the same complete molar Helmholtz energy.
+  unit: Pa
+  domain: Pressure-density derivative is positive for the stable response domain.
+  coordinates:
+  - {id: planetlib.thermodynamics.helmholtz.T, revision: '1'}
+  - {id: planetlib.thermodynamics.helmholtz.rho, revision: '1'}
+- id: planetlib.thermodynamics.helmholtz.s
+  revision: '1'
+  latex: s
+  description: Molar entropy derived from the same complete Helmholtz energy.
+  unit: J mol^-1 K^-1
+  domain: All partial derivatives hold the declared composition fixed.
+  coordinates:
+  - {id: planetlib.thermodynamics.helmholtz.T, revision: '1'}
+  - {id: planetlib.thermodynamics.helmholtz.rho, revision: '1'}
+- id: planetlib.thermodynamics.helmholtz.cv
+  revision: '1'
+  latex: c_v
+  description: Molar heat capacity at fixed molar density and composition.
+  unit: J mol^-1 K^-1
+  domain: Positive for the stable response domain.
+  coordinates:
+  - {id: planetlib.thermodynamics.helmholtz.T, revision: '1'}
+  - {id: planetlib.thermodynamics.helmholtz.rho, revision: '1'}
+- id: planetlib.thermodynamics.helmholtz.cp
+  revision: '1'
+  latex: c_p
+  description: Molar heat capacity at fixed pressure and composition.
+  unit: J mol^-1 K^-1
+  domain: Requires a nonzero pressure-density derivative; stable branch has positive derivative.
+  coordinates:
+  - {id: planetlib.thermodynamics.helmholtz.T, revision: '1'}
+  - {id: planetlib.thermodynamics.helmholtz.rho, revision: '1'}
+- id: planetlib.thermodynamics.helmholtz.cs2
+  revision: '1'
+  latex: c_s^2
+  description: Squared isentropic sound speed at frozen composition.
+  unit: m^2 s^-2
+  domain: Requires positive cv and pressure-density derivative; not a chemically equilibrating sound speed.
+  coordinates:
+  - {id: planetlib.thermodynamics.helmholtz.T, revision: '1'}
+  - {id: planetlib.thermodynamics.helmholtz.rho, revision: '1'}
+equations:
+- id: planetlib.thermodynamics.helmholtz.pressure
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Function(''P'')(Symbol(''T'', positive=True), Symbol(''rho'',
+      positive=True)), Mul(Pow(Symbol(''rho'', positive=True), Integer(2)), Derivative(Function(''a'')(Symbol(''T'',
+      positive=True), Symbol(''rho'', positive=True)), Tuple(Symbol(''rho'', positive=True), Integer(1)))))'}
+  description: Pressure derivative at fixed T.
+  scope: An open derivative model for a smooth complete molar Helmholtz potential at fixed composition. Density
+    is molar. The user supplies the potential, composition and mean molar mass. The stable response domain has T>0,
+    rho>0, cv>0 and partial P/partial rho at fixed T positive. No phase selection, chemical equilibrium response,
+    EOS coefficients or numerical differentiation method is selected.
+  symbols:
+    P: {latex: P, description: Pressure derived from the same complete molar Helmholtz energy., unit: Pa}
+    T: {latex: T, description: Absolute temperature at fixed composition., unit: K}
+    a: {latex: a, description: 'Complete molar Helmholtz energy as a function of T and molar density, including
+        ideal mixing.', unit: J mol^-1}
+    rho: {latex: \rho, description: 'Total molar density, not mass density.', unit: mol m^-3}
+  assumptions: &id002
+  - The potential is twice continuously differentiable on the selected single-phase interior, allowing the mixed
+    derivatives to commute.
+  - All T/rho partial derivatives hold composition fixed. Mean molar mass is constant in these derivatives.
+  - cp and sound speed require nonzero cv and pressure-density derivative; singular states and phase boundaries
+    are outside this model.
+  - Every symbol denotes a numerical magnitude in its stated SI units; no automatic unit conversion is implied.
+  evidence:
+  - planetlib.thermodynamics.helmholtz.source
+- id: planetlib.thermodynamics.helmholtz.entropy
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Function(''s'')(Symbol(''T'', positive=True), Symbol(''rho'',
+      positive=True)), Mul(Integer(-1), Derivative(Function(''a'')(Symbol(''T'', positive=True), Symbol(''rho'',
+      positive=True)), Tuple(Symbol(''T'', positive=True), Integer(1)))))'}
+  description: Entropy derivative at fixed molar density.
+  scope: An open derivative model for a smooth complete molar Helmholtz potential at fixed composition. Density
+    is molar. The user supplies the potential, composition and mean molar mass. The stable response domain has T>0,
+    rho>0, cv>0 and partial P/partial rho at fixed T positive. No phase selection, chemical equilibrium response,
+    EOS coefficients or numerical differentiation method is selected.
+  symbols:
+    T: {latex: T, description: Absolute temperature at fixed composition., unit: K}
+    a: {latex: a, description: 'Complete molar Helmholtz energy as a function of T and molar density, including
+        ideal mixing.', unit: J mol^-1}
+    rho: {latex: \rho, description: 'Total molar density, not mass density.', unit: mol m^-3}
+    s: {latex: s, description: Molar entropy derived from the same complete Helmholtz energy., unit: J mol^-1 K^-1}
+  assumptions: *id002
+  evidence:
+  - planetlib.thermodynamics.helmholtz.source
+- id: planetlib.thermodynamics.helmholtz.heat_capacity_cv
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Function(''cv'')(Symbol(''T'', positive=True), Symbol(''rho'',
+      positive=True)), Mul(Integer(-1), Symbol(''T'', positive=True), Derivative(Function(''a'')(Symbol(''T'', positive=True),
+      Symbol(''rho'', positive=True)), Tuple(Symbol(''T'', positive=True), Integer(2)))))'}
+  description: Isochoric caloric response.
+  scope: An open derivative model for a smooth complete molar Helmholtz potential at fixed composition. Density
+    is molar. The user supplies the potential, composition and mean molar mass. The stable response domain has T>0,
+    rho>0, cv>0 and partial P/partial rho at fixed T positive. No phase selection, chemical equilibrium response,
+    EOS coefficients or numerical differentiation method is selected.
+  symbols:
+    T: {latex: T, description: Absolute temperature at fixed composition., unit: K}
+    a: {latex: a, description: 'Complete molar Helmholtz energy as a function of T and molar density, including
+        ideal mixing.', unit: J mol^-1}
+    cv: {latex: c_v, description: Molar heat capacity at fixed molar density and composition., unit: J mol^-1 K^-1}
+    rho: {latex: \rho, description: 'Total molar density, not mass density.', unit: mol m^-3}
+  assumptions: *id002
+  evidence:
+  - planetlib.thermodynamics.helmholtz.source
+- id: planetlib.thermodynamics.helmholtz.heat_capacity_cp
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Function(''cp'')(Symbol(''T'', positive=True), Symbol(''rho'',
+      positive=True)), Add(Mul(Symbol(''T'', positive=True), Pow(Symbol(''rho'', positive=True), Integer(-2)), Pow(Derivative(Function(''P'')(Symbol(''T'',
+      positive=True), Symbol(''rho'', positive=True)), Tuple(Symbol(''T'', positive=True), Integer(1))), Integer(2)),
+      Pow(Derivative(Function(''P'')(Symbol(''T'', positive=True), Symbol(''rho'', positive=True)), Tuple(Symbol(''rho'',
+      positive=True), Integer(1))), Integer(-1))), Function(''cv'')(Symbol(''T'', positive=True), Symbol(''rho'',
+      positive=True))))'}
+  description: Isobaric caloric response.
+  scope: An open derivative model for a smooth complete molar Helmholtz potential at fixed composition. Density
+    is molar. The user supplies the potential, composition and mean molar mass. The stable response domain has T>0,
+    rho>0, cv>0 and partial P/partial rho at fixed T positive. No phase selection, chemical equilibrium response,
+    EOS coefficients or numerical differentiation method is selected.
+  symbols:
+    P: {latex: P, description: Pressure derived from the same complete molar Helmholtz energy., unit: Pa}
+    T: {latex: T, description: Absolute temperature at fixed composition., unit: K}
+    cp: {latex: c_p, description: Molar heat capacity at fixed pressure and composition., unit: J mol^-1 K^-1}
+    cv: {latex: c_v, description: Molar heat capacity at fixed molar density and composition., unit: J mol^-1 K^-1}
+    rho: {latex: \rho, description: 'Total molar density, not mass density.', unit: mol m^-3}
+  assumptions: *id002
+  evidence:
+  - planetlib.thermodynamics.helmholtz.source
+- id: planetlib.thermodynamics.helmholtz.sound_speed
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Function(''cs2'')(Symbol(''T'', positive=True), Symbol(''rho'',
+      positive=True)), Mul(Pow(Symbol(''M'', positive=True), Integer(-1)), Add(Mul(Symbol(''T'', positive=True),
+      Pow(Symbol(''rho'', positive=True), Integer(-2)), Pow(Function(''cv'')(Symbol(''T'', positive=True), Symbol(''rho'',
+      positive=True)), Integer(-1)), Pow(Derivative(Function(''P'')(Symbol(''T'', positive=True), Symbol(''rho'',
+      positive=True)), Tuple(Symbol(''T'', positive=True), Integer(1))), Integer(2))), Derivative(Function(''P'')(Symbol(''T'',
+      positive=True), Symbol(''rho'', positive=True)), Tuple(Symbol(''rho'', positive=True), Integer(1))))))'}
+  description: Frozen-composition isentropic response.
+  scope: An open derivative model for a smooth complete molar Helmholtz potential at fixed composition. Density
+    is molar. The user supplies the potential, composition and mean molar mass. The stable response domain has T>0,
+    rho>0, cv>0 and partial P/partial rho at fixed T positive. No phase selection, chemical equilibrium response,
+    EOS coefficients or numerical differentiation method is selected.
+  symbols:
+    M: {latex: \overline M, description: Mean molar mass of the fixed composition., unit: kg mol^-1}
+    P: {latex: P, description: Pressure derived from the same complete molar Helmholtz energy., unit: Pa}
+    T: {latex: T, description: Absolute temperature at fixed composition., unit: K}
+    cs2: {latex: c_s^2, description: Squared isentropic sound speed at frozen composition., unit: m^2 s^-2}
+    cv: {latex: c_v, description: Molar heat capacity at fixed molar density and composition., unit: J mol^-1 K^-1}
+    rho: {latex: \rho, description: 'Total molar density, not mass density.', unit: mol m^-3}
+  assumptions: *id002
+  evidence:
+  - planetlib.thermodynamics.helmholtz.source
+mathematical_models:
+- id: planetlib.thermodynamics.helmholtz.model
+  revision: '1'
+  description: Fixed-composition molar Helmholtz response relations.
+  scope: An open derivative model for a smooth complete molar Helmholtz potential at fixed composition. Density
+    is molar. The user supplies the potential, composition and mean molar mass. The stable response domain has T>0,
+    rho>0, cv>0 and partial P/partial rho at fixed T positive. No phase selection, chemical equilibrium response,
+    EOS coefficients or numerical differentiation method is selected.
+  quantities:
+    T: {quantity: {id: planetlib.thermodynamics.helmholtz.T, revision: '1'}, role: coordinate}
+    rho: {quantity: {id: planetlib.thermodynamics.helmholtz.rho, revision: '1'}, role: coordinate}
+    M: {quantity: {id: planetlib.thermodynamics.helmholtz.M, revision: '1'}, role: parameter}
+    a: {quantity: {id: planetlib.thermodynamics.helmholtz.a, revision: '1'}, role: input}
+    P: {quantity: {id: planetlib.thermodynamics.helmholtz.P, revision: '1'}, role: derived}
+    s: {quantity: {id: planetlib.thermodynamics.helmholtz.s, revision: '1'}, role: derived}
+    cv: {quantity: {id: planetlib.thermodynamics.helmholtz.cv, revision: '1'}, role: derived}
+    cp: {quantity: {id: planetlib.thermodynamics.helmholtz.cp, revision: '1'}, role: derived}
+    cs2: {quantity: {id: planetlib.thermodynamics.helmholtz.cs2, revision: '1'}, role: derived}
+  relations:
+  - id: planetlib.thermodynamics.helmholtz.pressure_relation
+    equation: {id: planetlib.thermodynamics.helmholtz.pressure, revision: '1'}
+    role: Pressure derivative at fixed T
+    quantities:
+      P: P
+      T: T
+      a: a
+      rho: rho
+  - id: planetlib.thermodynamics.helmholtz.entropy_relation
+    equation: {id: planetlib.thermodynamics.helmholtz.entropy, revision: '1'}
+    role: Entropy derivative at fixed molar density
+    quantities:
+      T: T
+      a: a
+      rho: rho
+      s: s
+  - id: planetlib.thermodynamics.helmholtz.heat_capacity_cv_relation
+    equation: {id: planetlib.thermodynamics.helmholtz.heat_capacity_cv, revision: '1'}
+    role: Isochoric caloric response
+    quantities:
+      T: T
+      a: a
+      cv: cv
+      rho: rho
+  - id: planetlib.thermodynamics.helmholtz.heat_capacity_cp_relation
+    equation: {id: planetlib.thermodynamics.helmholtz.heat_capacity_cp, revision: '1'}
+    role: Isobaric caloric response
+    quantities:
+      P: P
+      T: T
+      cp: cp
+      cv: cv
+      rho: rho
+  - id: planetlib.thermodynamics.helmholtz.sound_speed_relation
+    equation: {id: planetlib.thermodynamics.helmholtz.sound_speed, revision: '1'}
+    role: Frozen-composition isentropic response
+    quantities:
+      M: M
+      P: P
+      T: T
+      cs2: cs2
+      cv: cv
+      rho: rho
+assessments:
+- id: planetlib.thermodynamics.helmholtz.mathematical_consistency.initial
+  kind: evidence_support
+  claim: planetlib.thermodynamics.helmholtz.mathematical_consistency
+  claim_revision: '1'
+  subject: planetlib.thermodynamics.helmholtz.definition
+  context: planetlib.thermodynamics.helmholtz.extraction
+  method: {id: planetlib.thermodynamics.helmholtz.initial_review, revision: '1', description: 'Register separate
+      mathematical, correspondence and applicability claims for review.'}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.thermodynamics.helmholtz.symbolic_checks
+  reasons:
+  - The initial extraction does not itself record a reviewed support judgment for this claim.
+- id: planetlib.thermodynamics.helmholtz.source_correspondence.initial
+  kind: evidence_support
+  claim: planetlib.thermodynamics.helmholtz.source_correspondence
+  claim_revision: '1'
+  subject: planetlib.thermodynamics.helmholtz.definition
+  context: planetlib.thermodynamics.helmholtz.extraction
+  method: {id: planetlib.thermodynamics.helmholtz.initial_review, revision: '1', description: 'Register separate
+      mathematical, correspondence and applicability claims for review.'}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.thermodynamics.helmholtz.source
+  reasons:
+  - The initial extraction does not itself record a reviewed support judgment for this claim.
+- id: planetlib.thermodynamics.helmholtz.mathematical_consistency.review_20261127
+  kind: evidence_support
+  claim: planetlib.thermodynamics.helmholtz.mathematical_consistency
+  claim_revision: '1'
+  subject: planetlib.thermodynamics.helmholtz.definition
+  context: planetlib.thermodynamics.helmholtz.symbolic_review_20261127
+  method:
+    id: planetlib.thermodynamics.helmholtz.symbolic_derivation_review
+    revision: '1'
+    description: Inspect the derivation and domain; execute substitution, differentiation, simplification
+      and limiting-case checks against the serialized definitions.
+  status: supported
+  origin: reviewed
+  evidence:
+  - planetlib.thermodynamics.helmholtz.symbolic_run_20261127
+  reasons:
+  - The stated conditional identity follows in the reviewed symbolic checks. Source correspondence and
+    physical applicability are separate questions.
+  mathematical_model_pins:
+  - id: planetlib.thermodynamics.helmholtz.model
+    revision: '1'
+    sha256: 283dee30acfbac4b6b9126dd617a0f4279576c7eaba4832827af06ac5f47e87f
+- id: planetlib.thermodynamics.helmholtz.physical_applicability.initial
+  kind: evidence_support
+  claim: planetlib.thermodynamics.helmholtz.physical_applicability
+  claim_revision: '1'
+  subject: planetlib.thermodynamics.helmholtz.definition
+  context: planetlib.thermodynamics.helmholtz.extraction
+  method: {id: planetlib.thermodynamics.helmholtz.initial_review, revision: '1', description: 'Register separate
+      mathematical, correspondence and applicability claims for review.'}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.thermodynamics.helmholtz.source
+  reasons:
+  - The initial extraction does not itself record a reviewed support judgment for this claim.

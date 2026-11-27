@@ -1,0 +1,439 @@
+schema_version: '0.6'
+model:
+  id: planetlib.thermodynamics.nasa9
+  name: NASA9 standard thermodynamic interval
+  description: One species on one positive-temperature interval with externally supplied NASA9 coefficients and
+    a consistent standard reference. The source uses one bar. No species data, temperature bounds, interval joins,
+    elemental gauge transformation or empirical accuracy is selected.
+  implementation: &id001
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:1
+    entry_points:
+    - catalog/thermodynamics/nasa9.yaml
+assumptions:
+- statement: The polynomial variable is the numerical temperature in K; log(T) means log(T/(1 K)). Coefficient units
+    follow this convention.
+  evidence:
+  - planetlib.thermodynamics.nasa9.source
+- statement: All nine coefficients are constant within the selected interval; differentiation does not cross an
+    interval boundary.
+  evidence:
+  - planetlib.thermodynamics.nasa9.source
+- statement: hbar and gbar are divided by R T, whereas sbar and cpbar are divided by R; these normalizations must
+    be retained during differentiation.
+  evidence:
+  - planetlib.thermodynamics.nasa9.source
+domains:
+- kind: scientific_applicability
+  status: unknown
+  description: No target-specific physical assessment is asserted by this shared definition.
+  conditions: []
+  evidence:
+  - planetlib.thermodynamics.nasa9.source
+limitations:
+- statement: One species on one positive-temperature interval with externally supplied NASA9 coefficients and a
+    consistent standard reference. The source uses one bar. No species data, temperature bounds, interval joins,
+    elemental gauge transformation or empirical accuracy is selected.
+  evidence:
+  - planetlib.thermodynamics.nasa9.source
+claims:
+- id: planetlib.thermodynamics.nasa9.mathematical_consistency
+  revision: '1'
+  kind: theoretical
+  statement: For a single interval with constant coefficients and positive temperature, the stored forms satisfy
+    d(T*hbar)/dT=cpbar, T*d(sbar)/dT=cpbar and -(gbar+T*d(gbar)/dT)=sbar.
+  scope: One species on one positive-temperature interval with externally supplied NASA9 coefficients and a consistent
+    standard reference. The source uses one bar. No species data, temperature bounds, interval joins, elemental
+    gauge transformation or empirical accuracy is selected. The executable checks use stored symbolic definitions;
+    these are not empirical or code-correspondence claims.
+  mathematical_models:
+  - {id: planetlib.thermodynamics.nasa9.model, revision: '1'}
+- id: planetlib.thermodynamics.nasa9.source_correspondence
+  revision: '1'
+  kind: theoretical
+  statement: The extraction preserves the selected source conventions and implementation intent.
+  scope: Requires a separate source-to-definition review; symbolic identities alone do not establish provider equivalence.
+  mathematical_models:
+  - {id: planetlib.thermodynamics.nasa9.model, revision: '1'}
+- id: planetlib.thermodynamics.nasa9.physical_applicability
+  revision: '1'
+  kind: physical_validation
+  statement: The partial model is empirically adequate for a specified consumer environment.
+  scope: No target material, error criterion or independent empirical comparison is specified.
+  mathematical_models:
+  - {id: planetlib.thermodynamics.nasa9.model, revision: '1'}
+evidence:
+- id: planetlib.thermodynamics.nasa9.source
+  kind: implementation
+  summary: Pinned provider formulas and quantity conventions inspected for extraction.
+  sources:
+  - https://github.com/HajimeKawahara/exogibbs/blob/08d3d85a6680eb81c4057bf584530d269de88253/src/exogibbs/thermo/standard.py
+  scope: The _nasa9 interval formula and StandardThermodynamics unit/reference conventions were inspected at the
+    pinned source. Coefficient data and temperature-range assessments are not extracted.
+  provenance:
+    role: implementation
+    location: The source functions identified by the immutable URLs.
+    inspection: inspected
+    note: Source inspection identifies conventions; no provider support is transferred.
+- id: planetlib.thermodynamics.nasa9.symbolic_checks
+  kind: theory
+  summary: Reproducible symbolic residual and limiting-case checks against the stored relations.
+  sources:
+  - tests/test_thermodynamics.py
+  scope: For a single interval with constant coefficients and positive temperature, the stored forms satisfy d(T*hbar)/dT=cpbar,
+    T*d(sbar)/dT=cpbar and -(gbar+T*d(gbar)/dT)=sbar. Test execution and scientific support must be recorded separately;
+    these checks do not run the numerical providers.
+- id: planetlib.thermodynamics.nasa9.symbolic_run_20261127
+  kind: theory
+  subject: planetlib.thermodynamics.nasa9.definition
+  context: planetlib.thermodynamics.nasa9.symbolic_review_20261127
+  summary: The stored-expression derivations passed in the recorded 32-test run; their equations, assumptions
+    and claim scope were reviewed.
+  sources:
+  - tests/test_thermodynamics.py
+  - reviews/symbolic_checks_20261127.json
+  artifacts:
+  - source: tests/test_thermodynamics.py
+    sha256: 165ef2ecda35f1a983aab8c00fb73cddb4d9ae4ea11d1db727eb4fad72148780
+  - source: reviews/symbolic_checks_20261127.json
+    sha256: 5fd7c6c961971a2911a29862432579cbca20022b227a8748d6b78cd45bb814d5
+  scope: Supports only the attached mathematical identities within their stated domains. A finite symbolic
+    check is not a formal proof certificate or a numerical-provider validation.
+subjects:
+- id: planetlib.thermodynamics.nasa9.definition
+  implementation: *id001
+  selected_files: {catalog/thermodynamics/nasa9.yaml: null}
+contexts:
+- {id: planetlib.thermodynamics.nasa9.extraction, scope: Initial definition extraction and explicit mathematical
+    checks; provider execution and physical applicability remain separate.}
+- id: planetlib.thermodynamics.nasa9.symbolic_review_20261127
+  scope: Review of conditional symbolic identities on the domains declared by the selected definitions.
+    This context does not assess source correspondence, provider execution or physical applicability.
+  settings:
+    review_date: '2026-11-27'
+    sympy: 1.14.0
+quantities:
+- id: planetlib.thermodynamics.nasa9.T
+  revision: '1'
+  latex: T
+  description: Absolute temperature; its numerical magnitude in K is used in the polynomial and logarithm.
+  unit: K
+  domain: Positive, inside one externally chosen NASA9 coefficient interval.
+- id: planetlib.thermodynamics.nasa9.cpbar
+  revision: '1'
+  latex: c_p^0/R
+  description: Standard molar heat capacity at fixed standard pressure, divided by R.
+  unit: '1'
+  domain: The chosen single coefficient interval.
+- id: planetlib.thermodynamics.nasa9.sbar
+  revision: '1'
+  latex: s^0/R
+  description: Standard molar entropy divided by R, retaining its integration constant.
+  unit: '1'
+  domain: The selected reference and single coefficient interval.
+- id: planetlib.thermodynamics.nasa9.hbar
+  revision: '1'
+  latex: h^0/(RT)
+  description: Standard molar enthalpy divided by R T, retaining its integration constant.
+  unit: '1'
+  domain: The selected reference and single coefficient interval.
+- id: planetlib.thermodynamics.nasa9.gbar
+  revision: '1'
+  latex: g^0/(RT)
+  description: Standard molar Gibbs energy divided by R T, not an elemental-reference shifted solver potential.
+  unit: '1'
+  domain: The same reference used by hbar and sbar.
+- id: planetlib.thermodynamics.nasa9.a1
+  revision: '1'
+  latex: a_1
+  description: NASA9 coefficient a1 for one interval with temperature measured in K.
+  unit: K^2
+  domain: Finite real coefficient supplied externally; no coefficient dataset is selected.
+- id: planetlib.thermodynamics.nasa9.a2
+  revision: '1'
+  latex: a_2
+  description: NASA9 coefficient a2 for one interval with temperature measured in K.
+  unit: K
+  domain: Finite real coefficient supplied externally; no coefficient dataset is selected.
+- id: planetlib.thermodynamics.nasa9.a3
+  revision: '1'
+  latex: a_3
+  description: NASA9 coefficient a3 for one interval with temperature measured in K.
+  unit: '1'
+  domain: Finite real coefficient supplied externally; no coefficient dataset is selected.
+- id: planetlib.thermodynamics.nasa9.a4
+  revision: '1'
+  latex: a_4
+  description: NASA9 coefficient a4 for one interval with temperature measured in K.
+  unit: K^-1
+  domain: Finite real coefficient supplied externally; no coefficient dataset is selected.
+- id: planetlib.thermodynamics.nasa9.a5
+  revision: '1'
+  latex: a_5
+  description: NASA9 coefficient a5 for one interval with temperature measured in K.
+  unit: K^-2
+  domain: Finite real coefficient supplied externally; no coefficient dataset is selected.
+- id: planetlib.thermodynamics.nasa9.a6
+  revision: '1'
+  latex: a_6
+  description: NASA9 coefficient a6 for one interval with temperature measured in K.
+  unit: K^-3
+  domain: Finite real coefficient supplied externally; no coefficient dataset is selected.
+- id: planetlib.thermodynamics.nasa9.a7
+  revision: '1'
+  latex: a_7
+  description: NASA9 coefficient a7 for one interval with temperature measured in K.
+  unit: K^-4
+  domain: Finite real coefficient supplied externally; no coefficient dataset is selected.
+- id: planetlib.thermodynamics.nasa9.b1
+  revision: '1'
+  latex: b_1
+  description: NASA9 coefficient b1 for one interval with temperature measured in K.
+  unit: K
+  domain: Finite real coefficient supplied externally; no coefficient dataset is selected.
+- id: planetlib.thermodynamics.nasa9.b2
+  revision: '1'
+  latex: b_2
+  description: NASA9 coefficient b2 for one interval with temperature measured in K.
+  unit: '1'
+  domain: Finite real coefficient supplied externally; no coefficient dataset is selected.
+equations:
+- id: planetlib.thermodynamics.nasa9.heat_capacity
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''cpbar''), Add(Mul(Pow(Symbol(''T'', positive=True),
+      Integer(4)), Symbol(''a7'')), Mul(Pow(Symbol(''T'', positive=True), Integer(3)), Symbol(''a6'')), Mul(Pow(Symbol(''T'',
+      positive=True), Integer(2)), Symbol(''a5'')), Mul(Symbol(''T'', positive=True), Symbol(''a4'')), Symbol(''a3''),
+      Mul(Pow(Symbol(''T'', positive=True), Integer(-1)), Symbol(''a2'')), Mul(Pow(Symbol(''T'', positive=True),
+      Integer(-2)), Symbol(''a1''))))'}
+  description: Standard heat-capacity polynomial.
+  scope: One species on one positive-temperature interval with externally supplied NASA9 coefficients and a consistent
+    standard reference. The source uses one bar. No species data, temperature bounds, interval joins, elemental
+    gauge transformation or empirical accuracy is selected.
+  symbols:
+    T: {latex: T, description: Absolute temperature; its numerical magnitude in K is used in the polynomial and
+        logarithm., unit: K}
+    a1: {latex: a_1, description: NASA9 coefficient a1 for one interval with temperature measured in K., unit: K^2}
+    a2: {latex: a_2, description: NASA9 coefficient a2 for one interval with temperature measured in K., unit: K}
+    a3: {latex: a_3, description: NASA9 coefficient a3 for one interval with temperature measured in K., unit: '1'}
+    a4: {latex: a_4, description: NASA9 coefficient a4 for one interval with temperature measured in K., unit: K^-1}
+    a5: {latex: a_5, description: NASA9 coefficient a5 for one interval with temperature measured in K., unit: K^-2}
+    a6: {latex: a_6, description: NASA9 coefficient a6 for one interval with temperature measured in K., unit: K^-3}
+    a7: {latex: a_7, description: NASA9 coefficient a7 for one interval with temperature measured in K., unit: K^-4}
+    cpbar: {latex: c_p^0/R, description: 'Standard molar heat capacity at fixed standard pressure, divided by R.',
+      unit: '1'}
+  assumptions: &id002
+  - The polynomial variable is the numerical temperature in K; log(T) means log(T/(1 K)). Coefficient units follow
+    this convention.
+  - All nine coefficients are constant within the selected interval; differentiation does not cross an interval
+    boundary.
+  - hbar and gbar are divided by R T, whereas sbar and cpbar are divided by R; these normalizations must be retained
+    during differentiation.
+  evidence:
+  - planetlib.thermodynamics.nasa9.source
+- id: planetlib.thermodynamics.nasa9.entropy
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''sbar''), Add(Mul(Rational(1, 4), Pow(Symbol(''T'',
+      positive=True), Integer(4)), Symbol(''a7'')), Mul(Rational(1, 3), Pow(Symbol(''T'', positive=True), Integer(3)),
+      Symbol(''a6'')), Mul(Rational(1, 2), Pow(Symbol(''T'', positive=True), Integer(2)), Symbol(''a5'')), Mul(Symbol(''T'',
+      positive=True), Symbol(''a4'')), Mul(Symbol(''a3''), log(Symbol(''T'', positive=True))), Symbol(''b2''), Mul(Integer(-1),
+      Pow(Symbol(''T'', positive=True), Integer(-1)), Symbol(''a2'')), Mul(Integer(-1), Rational(1, 2), Pow(Symbol(''T'',
+      positive=True), Integer(-2)), Symbol(''a1''))))'}
+  description: Integrated standard entropy.
+  scope: One species on one positive-temperature interval with externally supplied NASA9 coefficients and a consistent
+    standard reference. The source uses one bar. No species data, temperature bounds, interval joins, elemental
+    gauge transformation or empirical accuracy is selected.
+  symbols:
+    T: {latex: T, description: Absolute temperature; its numerical magnitude in K is used in the polynomial and
+        logarithm., unit: K}
+    a1: {latex: a_1, description: NASA9 coefficient a1 for one interval with temperature measured in K., unit: K^2}
+    a2: {latex: a_2, description: NASA9 coefficient a2 for one interval with temperature measured in K., unit: K}
+    a3: {latex: a_3, description: NASA9 coefficient a3 for one interval with temperature measured in K., unit: '1'}
+    a4: {latex: a_4, description: NASA9 coefficient a4 for one interval with temperature measured in K., unit: K^-1}
+    a5: {latex: a_5, description: NASA9 coefficient a5 for one interval with temperature measured in K., unit: K^-2}
+    a6: {latex: a_6, description: NASA9 coefficient a6 for one interval with temperature measured in K., unit: K^-3}
+    a7: {latex: a_7, description: NASA9 coefficient a7 for one interval with temperature measured in K., unit: K^-4}
+    b2: {latex: b_2, description: NASA9 coefficient b2 for one interval with temperature measured in K., unit: '1'}
+    sbar: {latex: s^0/R, description: 'Standard molar entropy divided by R, retaining its integration constant.',
+      unit: '1'}
+  assumptions: *id002
+  evidence:
+  - planetlib.thermodynamics.nasa9.source
+- id: planetlib.thermodynamics.nasa9.enthalpy
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''hbar''), Add(Mul(Rational(1, 5), Pow(Symbol(''T'',
+      positive=True), Integer(4)), Symbol(''a7'')), Mul(Rational(1, 4), Pow(Symbol(''T'', positive=True), Integer(3)),
+      Symbol(''a6'')), Mul(Rational(1, 3), Pow(Symbol(''T'', positive=True), Integer(2)), Symbol(''a5'')), Mul(Rational(1,
+      2), Symbol(''T'', positive=True), Symbol(''a4'')), Symbol(''a3''), Mul(Pow(Symbol(''T'', positive=True), Integer(-1)),
+      Symbol(''a2''), log(Symbol(''T'', positive=True))), Mul(Pow(Symbol(''T'', positive=True), Integer(-1)), Symbol(''b1'')),
+      Mul(Integer(-1), Pow(Symbol(''T'', positive=True), Integer(-2)), Symbol(''a1''))))'}
+  description: Integrated standard enthalpy.
+  scope: One species on one positive-temperature interval with externally supplied NASA9 coefficients and a consistent
+    standard reference. The source uses one bar. No species data, temperature bounds, interval joins, elemental
+    gauge transformation or empirical accuracy is selected.
+  symbols:
+    T: {latex: T, description: Absolute temperature; its numerical magnitude in K is used in the polynomial and
+        logarithm., unit: K}
+    a1: {latex: a_1, description: NASA9 coefficient a1 for one interval with temperature measured in K., unit: K^2}
+    a2: {latex: a_2, description: NASA9 coefficient a2 for one interval with temperature measured in K., unit: K}
+    a3: {latex: a_3, description: NASA9 coefficient a3 for one interval with temperature measured in K., unit: '1'}
+    a4: {latex: a_4, description: NASA9 coefficient a4 for one interval with temperature measured in K., unit: K^-1}
+    a5: {latex: a_5, description: NASA9 coefficient a5 for one interval with temperature measured in K., unit: K^-2}
+    a6: {latex: a_6, description: NASA9 coefficient a6 for one interval with temperature measured in K., unit: K^-3}
+    a7: {latex: a_7, description: NASA9 coefficient a7 for one interval with temperature measured in K., unit: K^-4}
+    b1: {latex: b_1, description: NASA9 coefficient b1 for one interval with temperature measured in K., unit: K}
+    hbar: {latex: h^0/(RT), description: 'Standard molar enthalpy divided by R T, retaining its integration constant.',
+      unit: '1'}
+  assumptions: *id002
+  evidence:
+  - planetlib.thermodynamics.nasa9.source
+- id: planetlib.thermodynamics.nasa9.gibbs
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''gbar''), Add(Symbol(''hbar''), Mul(Integer(-1),
+      Symbol(''sbar''))))'}
+  description: Common standard reference relation.
+  scope: One species on one positive-temperature interval with externally supplied NASA9 coefficients and a consistent
+    standard reference. The source uses one bar. No species data, temperature bounds, interval joins, elemental
+    gauge transformation or empirical accuracy is selected.
+  symbols:
+    gbar: {latex: g^0/(RT), description: 'Standard molar Gibbs energy divided by R T, not an elemental-reference
+        shifted solver potential.', unit: '1'}
+    hbar: {latex: h^0/(RT), description: 'Standard molar enthalpy divided by R T, retaining its integration constant.',
+      unit: '1'}
+    sbar: {latex: s^0/R, description: 'Standard molar entropy divided by R, retaining its integration constant.',
+      unit: '1'}
+  assumptions: *id002
+  evidence:
+  - planetlib.thermodynamics.nasa9.source
+mathematical_models:
+- id: planetlib.thermodynamics.nasa9.model
+  revision: '1'
+  description: NASA9 standard thermodynamic interval.
+  scope: One species on one positive-temperature interval with externally supplied NASA9 coefficients and a consistent
+    standard reference. The source uses one bar. No species data, temperature bounds, interval joins, elemental
+    gauge transformation or empirical accuracy is selected.
+  quantities:
+    T: {quantity: {id: planetlib.thermodynamics.nasa9.T, revision: '1'}, role: input}
+    cpbar: {quantity: {id: planetlib.thermodynamics.nasa9.cpbar, revision: '1'}, role: derived}
+    sbar: {quantity: {id: planetlib.thermodynamics.nasa9.sbar, revision: '1'}, role: derived}
+    hbar: {quantity: {id: planetlib.thermodynamics.nasa9.hbar, revision: '1'}, role: derived}
+    gbar: {quantity: {id: planetlib.thermodynamics.nasa9.gbar, revision: '1'}, role: derived}
+    a1: {quantity: {id: planetlib.thermodynamics.nasa9.a1, revision: '1'}, role: parameter}
+    a2: {quantity: {id: planetlib.thermodynamics.nasa9.a2, revision: '1'}, role: parameter}
+    a3: {quantity: {id: planetlib.thermodynamics.nasa9.a3, revision: '1'}, role: parameter}
+    a4: {quantity: {id: planetlib.thermodynamics.nasa9.a4, revision: '1'}, role: parameter}
+    a5: {quantity: {id: planetlib.thermodynamics.nasa9.a5, revision: '1'}, role: parameter}
+    a6: {quantity: {id: planetlib.thermodynamics.nasa9.a6, revision: '1'}, role: parameter}
+    a7: {quantity: {id: planetlib.thermodynamics.nasa9.a7, revision: '1'}, role: parameter}
+    b1: {quantity: {id: planetlib.thermodynamics.nasa9.b1, revision: '1'}, role: parameter}
+    b2: {quantity: {id: planetlib.thermodynamics.nasa9.b2, revision: '1'}, role: parameter}
+  relations:
+  - id: planetlib.thermodynamics.nasa9.heat_capacity_relation
+    equation: {id: planetlib.thermodynamics.nasa9.heat_capacity, revision: '1'}
+    role: Standard heat-capacity polynomial
+    quantities:
+      T: T
+      a1: a1
+      a2: a2
+      a3: a3
+      a4: a4
+      a5: a5
+      a6: a6
+      a7: a7
+      cpbar: cpbar
+  - id: planetlib.thermodynamics.nasa9.entropy_relation
+    equation: {id: planetlib.thermodynamics.nasa9.entropy, revision: '1'}
+    role: Integrated standard entropy
+    quantities:
+      T: T
+      a1: a1
+      a2: a2
+      a3: a3
+      a4: a4
+      a5: a5
+      a6: a6
+      a7: a7
+      b2: b2
+      sbar: sbar
+  - id: planetlib.thermodynamics.nasa9.enthalpy_relation
+    equation: {id: planetlib.thermodynamics.nasa9.enthalpy, revision: '1'}
+    role: Integrated standard enthalpy
+    quantities:
+      T: T
+      a1: a1
+      a2: a2
+      a3: a3
+      a4: a4
+      a5: a5
+      a6: a6
+      a7: a7
+      b1: b1
+      hbar: hbar
+  - id: planetlib.thermodynamics.nasa9.gibbs_relation
+    equation: {id: planetlib.thermodynamics.nasa9.gibbs, revision: '1'}
+    role: Common standard reference relation
+    quantities: {gbar: gbar, hbar: hbar, sbar: sbar}
+assessments:
+- id: planetlib.thermodynamics.nasa9.mathematical_consistency.initial
+  kind: evidence_support
+  claim: planetlib.thermodynamics.nasa9.mathematical_consistency
+  claim_revision: '1'
+  subject: planetlib.thermodynamics.nasa9.definition
+  context: planetlib.thermodynamics.nasa9.extraction
+  method: {id: planetlib.thermodynamics.nasa9.initial_review, revision: '1', description: 'Register separate mathematical,
+      correspondence and applicability claims for review.'}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.thermodynamics.nasa9.symbolic_checks
+  reasons:
+  - The initial extraction does not itself record a reviewed support judgment for this claim.
+- id: planetlib.thermodynamics.nasa9.source_correspondence.initial
+  kind: evidence_support
+  claim: planetlib.thermodynamics.nasa9.source_correspondence
+  claim_revision: '1'
+  subject: planetlib.thermodynamics.nasa9.definition
+  context: planetlib.thermodynamics.nasa9.extraction
+  method: {id: planetlib.thermodynamics.nasa9.initial_review, revision: '1', description: 'Register separate mathematical,
+      correspondence and applicability claims for review.'}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.thermodynamics.nasa9.source
+  reasons:
+  - The initial extraction does not itself record a reviewed support judgment for this claim.
+- id: planetlib.thermodynamics.nasa9.mathematical_consistency.review_20261127
+  kind: evidence_support
+  claim: planetlib.thermodynamics.nasa9.mathematical_consistency
+  claim_revision: '1'
+  subject: planetlib.thermodynamics.nasa9.definition
+  context: planetlib.thermodynamics.nasa9.symbolic_review_20261127
+  method:
+    id: planetlib.thermodynamics.nasa9.symbolic_derivation_review
+    revision: '1'
+    description: Inspect the derivation and domain; execute substitution, differentiation, simplification
+      and limiting-case checks against the serialized definitions.
+  status: supported
+  origin: reviewed
+  evidence:
+  - planetlib.thermodynamics.nasa9.symbolic_run_20261127
+  reasons:
+  - The stated conditional identity follows in the reviewed symbolic checks. Source correspondence and
+    physical applicability are separate questions.
+  mathematical_model_pins:
+  - id: planetlib.thermodynamics.nasa9.model
+    revision: '1'
+    sha256: 7818a218684226ac9a3a827cc12c4b9f7995ffb42f881e6d16507c4490b41255
+- id: planetlib.thermodynamics.nasa9.physical_applicability.initial
+  kind: evidence_support
+  claim: planetlib.thermodynamics.nasa9.physical_applicability
+  claim_revision: '1'
+  subject: planetlib.thermodynamics.nasa9.definition
+  context: planetlib.thermodynamics.nasa9.extraction
+  method: {id: planetlib.thermodynamics.nasa9.initial_review, revision: '1', description: 'Register separate mathematical,
+      correspondence and applicability claims for review.'}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.thermodynamics.nasa9.source
+  reasons:
+  - The initial extraction does not itself record a reviewed support judgment for this claim.

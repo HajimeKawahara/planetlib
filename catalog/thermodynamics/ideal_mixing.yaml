@@ -1,0 +1,360 @@
+schema_version: '0.6'
+model:
+  id: planetlib.thermodynamics.ideal_mixing
+  name: Binary ideal mixing Gibbs energy and chemical potentials
+  description: 'Two components at fixed temperature and pressure, with composition-independent supplied standards.
+    The finite two-component model is a minimal reusable instance, not an arbitrary-species solver. Pressure contributions
+    belong to the supplied standards: one-bar ideal-gas standards require a separate ln(P/P0) addition exactly once.
+    No gas law, activity correction, phase equilibrium or boundary derivative is selected.'
+  implementation: &id001
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:1
+    entry_points:
+    - catalog/thermodynamics/ideal_mixing.yaml
+assumptions:
+- statement: Amounts are positive for chemical-potential derivatives; the zero-amount energy limit does not define
+    a finite insertion potential.
+  evidence:
+  - planetlib.thermodynamics.ideal_mixing.source
+- statement: The scalar G/(R T) has units of mol, whereas each chemical potential divided by R T is dimensionless.
+  evidence:
+  - planetlib.thermodynamics.ideal_mixing.source
+- statement: The selected standards already refer to the fixed pressure; ideal mixing is counted exactly once.
+  evidence:
+  - planetlib.thermodynamics.ideal_mixing.source
+domains:
+- kind: scientific_applicability
+  status: unknown
+  description: No target-specific physical assessment is asserted by this shared definition.
+  conditions: []
+  evidence:
+  - planetlib.thermodynamics.ideal_mixing.source
+limitations:
+- statement: 'Two components at fixed temperature and pressure, with composition-independent supplied standards.
+    The finite two-component model is a minimal reusable instance, not an arbitrary-species solver. Pressure contributions
+    belong to the supplied standards: one-bar ideal-gas standards require a separate ln(P/P0) addition exactly once.
+    No gas law, activity correction, phase equilibrium or boundary derivative is selected.'
+  evidence:
+  - planetlib.thermodynamics.ideal_mixing.source
+claims:
+- id: planetlib.thermodynamics.ideal_mixing.mathematical_consistency
+  revision: '1'
+  kind: theoretical
+  statement: For positive binary amounts at fixed T/P, differentiating the stored Gibbs scalar yields both stored
+    potentials, the Euler relation holds, and its Hessian is symmetric with the amount vector in its null space.
+  scope: 'Two components at fixed temperature and pressure, with composition-independent supplied standards. The
+    finite two-component model is a minimal reusable instance, not an arbitrary-species solver. Pressure contributions
+    belong to the supplied standards: one-bar ideal-gas standards require a separate ln(P/P0) addition exactly once.
+    No gas law, activity correction, phase equilibrium or boundary derivative is selected. The executable checks
+    use stored symbolic definitions; these are not empirical or code-correspondence claims.'
+  mathematical_models:
+  - {id: planetlib.thermodynamics.ideal_mixing.model, revision: '1'}
+- id: planetlib.thermodynamics.ideal_mixing.source_correspondence
+  revision: '1'
+  kind: theoretical
+  statement: The extraction preserves the selected source conventions and implementation intent.
+  scope: Requires a separate source-to-definition review; symbolic identities alone do not establish provider equivalence.
+  mathematical_models:
+  - {id: planetlib.thermodynamics.ideal_mixing.model, revision: '1'}
+- id: planetlib.thermodynamics.ideal_mixing.physical_applicability
+  revision: '1'
+  kind: physical_validation
+  statement: The partial model is empirically adequate for a specified consumer environment.
+  scope: No target material, error criterion or independent empirical comparison is specified.
+  mathematical_models:
+  - {id: planetlib.thermodynamics.ideal_mixing.model, revision: '1'}
+evidence:
+- id: planetlib.thermodynamics.ideal_mixing.source
+  kind: implementation
+  summary: Pinned provider formulas and quantity conventions inspected for extraction.
+  sources:
+  - https://github.com/HajimeKawahara/exogibbs/blob/08d3d85a6680eb81c4057bf584530d269de88253/src/exogibbs/thermo/ideal_gibbs.py
+  - https://github.com/HajimeKawahara/exoeos/blob/1032f58872bdef9d48c8b1ce2a16a473ced97f3c/src/exoeos/solution_gibbs.py
+  scope: Selected source files match their recorded commits. ExoGibbs adds an explicit one-bar gas-pressure term;
+    the shared mixing definition instead receives standards at the selected pressure, as in ExoEOS. No provider
+    code was executed.
+  provenance:
+    role: implementation
+    location: The source functions identified by the immutable URLs.
+    inspection: inspected
+    note: Source inspection identifies conventions; no provider support is transferred.
+- id: planetlib.thermodynamics.ideal_mixing.symbolic_checks
+  kind: theory
+  summary: Reproducible symbolic residual and limiting-case checks against the stored relations.
+  sources:
+  - tests/test_thermodynamics.py
+  scope: For positive binary amounts at fixed T/P, differentiating the stored Gibbs scalar yields both stored potentials,
+    the Euler relation holds, and its Hessian is symmetric with the amount vector in its null space. Test execution
+    and scientific support must be recorded separately; these checks do not run the numerical providers.
+- id: planetlib.thermodynamics.ideal_mixing.symbolic_run_20261127
+  kind: theory
+  subject: planetlib.thermodynamics.ideal_mixing.definition
+  context: planetlib.thermodynamics.ideal_mixing.symbolic_review_20261127
+  summary: The stored-expression derivations passed in the recorded 32-test run; their equations, assumptions
+    and claim scope were reviewed.
+  sources:
+  - tests/test_thermodynamics.py
+  - reviews/symbolic_checks_20261127.json
+  artifacts:
+  - source: tests/test_thermodynamics.py
+    sha256: 165ef2ecda35f1a983aab8c00fb73cddb4d9ae4ea11d1db727eb4fad72148780
+  - source: reviews/symbolic_checks_20261127.json
+    sha256: 5fd7c6c961971a2911a29862432579cbca20022b227a8748d6b78cd45bb814d5
+  scope: Supports only the attached mathematical identities within their stated domains. A finite symbolic
+    check is not a formal proof certificate or a numerical-provider validation.
+subjects:
+- id: planetlib.thermodynamics.ideal_mixing.definition
+  implementation: *id001
+  selected_files: {catalog/thermodynamics/ideal_mixing.yaml: null}
+contexts:
+- {id: planetlib.thermodynamics.ideal_mixing.extraction, scope: Initial definition extraction and explicit mathematical
+    checks; provider execution and physical applicability remain separate.}
+- id: planetlib.thermodynamics.ideal_mixing.symbolic_review_20261127
+  scope: Review of conditional symbolic identities on the domains declared by the selected definitions.
+    This context does not assess source correspondence, provider execution or physical applicability.
+  settings:
+    review_date: '2026-11-27'
+    sympy: 1.14.0
+quantities:
+- id: planetlib.thermodynamics.ideal_mixing.n1
+  revision: '1'
+  latex: n_1
+  description: Amount of host component 1.
+  unit: mol
+  domain: Positive interior amount.
+- id: planetlib.thermodynamics.ideal_mixing.n2
+  revision: '1'
+  latex: n_2
+  description: Amount of host component 2.
+  unit: mol
+  domain: Positive interior amount.
+- id: planetlib.thermodynamics.ideal_mixing.u01
+  revision: '1'
+  latex: u_1^0
+  description: Component 1 standard chemical potential divided by R T at the selected fixed temperature and pressure.
+  unit: '1'
+  domain: Finite and independent of composition.
+- id: planetlib.thermodynamics.ideal_mixing.u02
+  revision: '1'
+  latex: u_2^0
+  description: Component 2 standard chemical potential divided by R T at the selected fixed temperature and pressure.
+  unit: '1'
+  domain: Finite and independent of composition.
+- id: planetlib.thermodynamics.ideal_mixing.G
+  revision: '1'
+  latex: G/(RT)
+  description: Total extensive Gibbs energy divided by R T; this is not molar Gibbs energy.
+  unit: mol
+  domain: Positive total amount; temperature and pressure held fixed.
+- id: planetlib.thermodynamics.ideal_mixing.u1
+  revision: '1'
+  latex: u_1
+  description: Component 1 chemical potential divided by R T.
+  unit: '1'
+  domain: Positive component amounts at fixed temperature and pressure.
+- id: planetlib.thermodynamics.ideal_mixing.u2
+  revision: '1'
+  latex: u_2
+  description: Component 2 chemical potential divided by R T.
+  unit: '1'
+  domain: Positive component amounts at fixed temperature and pressure.
+equations:
+- id: planetlib.thermodynamics.ideal_mixing.gibbs
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''G''), Add(Mul(Symbol(''n1'', positive=True), Symbol(''u01'')),
+      Mul(Symbol(''n1'', positive=True), log(Mul(Symbol(''n1'', positive=True), Pow(Add(Symbol(''n1'', positive=True),
+      Symbol(''n2'', positive=True)), Integer(-1))))), Mul(Symbol(''n2'', positive=True), Symbol(''u02'')), Mul(Symbol(''n2'',
+      positive=True), log(Mul(Symbol(''n2'', positive=True), Pow(Add(Symbol(''n1'', positive=True), Symbol(''n2'',
+      positive=True)), Integer(-1)))))))'}
+  description: Extensive scalar.
+  scope: 'Two components at fixed temperature and pressure, with composition-independent supplied standards. The
+    finite two-component model is a minimal reusable instance, not an arbitrary-species solver. Pressure contributions
+    belong to the supplied standards: one-bar ideal-gas standards require a separate ln(P/P0) addition exactly once.
+    No gas law, activity correction, phase equilibrium or boundary derivative is selected.'
+  symbols:
+    G: {latex: G/(RT), description: Total extensive Gibbs energy divided by R T; this is not molar Gibbs energy.,
+      unit: mol}
+    n1: {latex: n_1, description: Amount of host component 1., unit: mol}
+    n2: {latex: n_2, description: Amount of host component 2., unit: mol}
+    u01: {latex: u_1^0, description: Component 1 standard chemical potential divided by R T at the selected fixed
+        temperature and pressure., unit: '1'}
+    u02: {latex: u_2^0, description: Component 2 standard chemical potential divided by R T at the selected fixed
+        temperature and pressure., unit: '1'}
+  assumptions: &id002
+  - Amounts are positive for chemical-potential derivatives; the zero-amount energy limit does not define a finite
+    insertion potential.
+  - The scalar G/(R T) has units of mol, whereas each chemical potential divided by R T is dimensionless.
+  - The selected standards already refer to the fixed pressure; ideal mixing is counted exactly once.
+  evidence:
+  - planetlib.thermodynamics.ideal_mixing.source
+- id: planetlib.thermodynamics.ideal_mixing.potential_1
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''u1''), Add(Symbol(''u01''), log(Mul(Symbol(''n1'',
+      positive=True), Pow(Add(Symbol(''n1'', positive=True), Symbol(''n2'', positive=True)), Integer(-1))))))'}
+  description: First component chemical potential.
+  scope: 'Two components at fixed temperature and pressure, with composition-independent supplied standards. The
+    finite two-component model is a minimal reusable instance, not an arbitrary-species solver. Pressure contributions
+    belong to the supplied standards: one-bar ideal-gas standards require a separate ln(P/P0) addition exactly once.
+    No gas law, activity correction, phase equilibrium or boundary derivative is selected.'
+  symbols:
+    n1: {latex: n_1, description: Amount of host component 1., unit: mol}
+    n2: {latex: n_2, description: Amount of host component 2., unit: mol}
+    u01: {latex: u_1^0, description: Component 1 standard chemical potential divided by R T at the selected fixed
+        temperature and pressure., unit: '1'}
+    u1: {latex: u_1, description: Component 1 chemical potential divided by R T., unit: '1'}
+  assumptions: *id002
+  evidence:
+  - planetlib.thermodynamics.ideal_mixing.source
+- id: planetlib.thermodynamics.ideal_mixing.potential_2
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''u2''), Add(Symbol(''u02''), log(Mul(Symbol(''n2'',
+      positive=True), Pow(Add(Symbol(''n1'', positive=True), Symbol(''n2'', positive=True)), Integer(-1))))))'}
+  description: Second component chemical potential.
+  scope: 'Two components at fixed temperature and pressure, with composition-independent supplied standards. The
+    finite two-component model is a minimal reusable instance, not an arbitrary-species solver. Pressure contributions
+    belong to the supplied standards: one-bar ideal-gas standards require a separate ln(P/P0) addition exactly once.
+    No gas law, activity correction, phase equilibrium or boundary derivative is selected.'
+  symbols:
+    n1: {latex: n_1, description: Amount of host component 1., unit: mol}
+    n2: {latex: n_2, description: Amount of host component 2., unit: mol}
+    u02: {latex: u_2^0, description: Component 2 standard chemical potential divided by R T at the selected fixed
+        temperature and pressure., unit: '1'}
+    u2: {latex: u_2, description: Component 2 chemical potential divided by R T., unit: '1'}
+  assumptions: *id002
+  evidence:
+  - planetlib.thermodynamics.ideal_mixing.source
+- id: planetlib.thermodynamics.ideal_mixing.euler
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''G''), Add(Mul(Symbol(''n1'', positive=True), Symbol(''u1'')),
+      Mul(Symbol(''n2'', positive=True), Symbol(''u2''))))'}
+  description: Euler consistency relation.
+  scope: 'Two components at fixed temperature and pressure, with composition-independent supplied standards. The
+    finite two-component model is a minimal reusable instance, not an arbitrary-species solver. Pressure contributions
+    belong to the supplied standards: one-bar ideal-gas standards require a separate ln(P/P0) addition exactly once.
+    No gas law, activity correction, phase equilibrium or boundary derivative is selected.'
+  symbols:
+    G: {latex: G/(RT), description: Total extensive Gibbs energy divided by R T; this is not molar Gibbs energy.,
+      unit: mol}
+    n1: {latex: n_1, description: Amount of host component 1., unit: mol}
+    n2: {latex: n_2, description: Amount of host component 2., unit: mol}
+    u1: {latex: u_1, description: Component 1 chemical potential divided by R T., unit: '1'}
+    u2: {latex: u_2, description: Component 2 chemical potential divided by R T., unit: '1'}
+  assumptions: *id002
+  evidence:
+  - planetlib.thermodynamics.ideal_mixing.source
+mathematical_models:
+- id: planetlib.thermodynamics.ideal_mixing.model
+  revision: '1'
+  description: Binary ideal mixing Gibbs energy and chemical potentials.
+  scope: 'Two components at fixed temperature and pressure, with composition-independent supplied standards. The
+    finite two-component model is a minimal reusable instance, not an arbitrary-species solver. Pressure contributions
+    belong to the supplied standards: one-bar ideal-gas standards require a separate ln(P/P0) addition exactly once.
+    No gas law, activity correction, phase equilibrium or boundary derivative is selected.'
+  quantities:
+    n1: {quantity: {id: planetlib.thermodynamics.ideal_mixing.n1, revision: '1'}, role: input}
+    n2: {quantity: {id: planetlib.thermodynamics.ideal_mixing.n2, revision: '1'}, role: input}
+    u01: {quantity: {id: planetlib.thermodynamics.ideal_mixing.u01, revision: '1'}, role: input}
+    u02: {quantity: {id: planetlib.thermodynamics.ideal_mixing.u02, revision: '1'}, role: input}
+    G: {quantity: {id: planetlib.thermodynamics.ideal_mixing.G, revision: '1'}, role: derived}
+    u1: {quantity: {id: planetlib.thermodynamics.ideal_mixing.u1, revision: '1'}, role: derived}
+    u2: {quantity: {id: planetlib.thermodynamics.ideal_mixing.u2, revision: '1'}, role: derived}
+  relations:
+  - id: planetlib.thermodynamics.ideal_mixing.gibbs_relation
+    equation: {id: planetlib.thermodynamics.ideal_mixing.gibbs, revision: '1'}
+    role: Extensive scalar
+    quantities:
+      G: G
+      n1: n1
+      n2: n2
+      u01: u01
+      u02: u02
+  - id: planetlib.thermodynamics.ideal_mixing.potential_1_relation
+    equation: {id: planetlib.thermodynamics.ideal_mixing.potential_1, revision: '1'}
+    role: First component chemical potential
+    quantities:
+      n1: n1
+      n2: n2
+      u01: u01
+      u1: u1
+  - id: planetlib.thermodynamics.ideal_mixing.potential_2_relation
+    equation: {id: planetlib.thermodynamics.ideal_mixing.potential_2, revision: '1'}
+    role: Second component chemical potential
+    quantities:
+      n1: n1
+      n2: n2
+      u02: u02
+      u2: u2
+  - id: planetlib.thermodynamics.ideal_mixing.euler_relation
+    equation: {id: planetlib.thermodynamics.ideal_mixing.euler, revision: '1'}
+    role: Euler consistency relation
+    quantities:
+      G: G
+      n1: n1
+      n2: n2
+      u1: u1
+      u2: u2
+assessments:
+- id: planetlib.thermodynamics.ideal_mixing.mathematical_consistency.initial
+  kind: evidence_support
+  claim: planetlib.thermodynamics.ideal_mixing.mathematical_consistency
+  claim_revision: '1'
+  subject: planetlib.thermodynamics.ideal_mixing.definition
+  context: planetlib.thermodynamics.ideal_mixing.extraction
+  method: {id: planetlib.thermodynamics.ideal_mixing.initial_review, revision: '1', description: 'Register separate
+      mathematical, correspondence and applicability claims for review.'}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.thermodynamics.ideal_mixing.symbolic_checks
+  reasons:
+  - The initial extraction does not itself record a reviewed support judgment for this claim.
+- id: planetlib.thermodynamics.ideal_mixing.source_correspondence.initial
+  kind: evidence_support
+  claim: planetlib.thermodynamics.ideal_mixing.source_correspondence
+  claim_revision: '1'
+  subject: planetlib.thermodynamics.ideal_mixing.definition
+  context: planetlib.thermodynamics.ideal_mixing.extraction
+  method: {id: planetlib.thermodynamics.ideal_mixing.initial_review, revision: '1', description: 'Register separate
+      mathematical, correspondence and applicability claims for review.'}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.thermodynamics.ideal_mixing.source
+  reasons:
+  - The initial extraction does not itself record a reviewed support judgment for this claim.
+- id: planetlib.thermodynamics.ideal_mixing.mathematical_consistency.review_20261127
+  kind: evidence_support
+  claim: planetlib.thermodynamics.ideal_mixing.mathematical_consistency
+  claim_revision: '1'
+  subject: planetlib.thermodynamics.ideal_mixing.definition
+  context: planetlib.thermodynamics.ideal_mixing.symbolic_review_20261127
+  method:
+    id: planetlib.thermodynamics.ideal_mixing.symbolic_derivation_review
+    revision: '1'
+    description: Inspect the derivation and domain; execute substitution, differentiation, simplification
+      and limiting-case checks against the serialized definitions.
+  status: supported
+  origin: reviewed
+  evidence:
+  - planetlib.thermodynamics.ideal_mixing.symbolic_run_20261127
+  reasons:
+  - The stated conditional identity follows in the reviewed symbolic checks. Source correspondence and
+    physical applicability are separate questions.
+  mathematical_model_pins:
+  - id: planetlib.thermodynamics.ideal_mixing.model
+    revision: '1'
+    sha256: ff4484ea799cc1bcce2f2e4873a3aab634d3ea9632e9da2daef0e541b46f0320
+- id: planetlib.thermodynamics.ideal_mixing.physical_applicability.initial
+  kind: evidence_support
+  claim: planetlib.thermodynamics.ideal_mixing.physical_applicability
+  claim_revision: '1'
+  subject: planetlib.thermodynamics.ideal_mixing.definition
+  context: planetlib.thermodynamics.ideal_mixing.extraction
+  method: {id: planetlib.thermodynamics.ideal_mixing.initial_review, revision: '1', description: 'Register separate
+      mathematical, correspondence and applicability claims for review.'}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.thermodynamics.ideal_mixing.source
+  reasons:
+  - The initial extraction does not itself record a reviewed support judgment for this claim.

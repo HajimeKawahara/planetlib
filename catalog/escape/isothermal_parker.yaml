@@ -1,0 +1,426 @@
+schema_version: '0.6'
+model:
+  id: planetlib.escape.parker.catalog
+  name: Isothermal spherical Parker wind relations
+  description: Continuity and momentum reduction with an explicit accelerating sonic-branch choice.
+  implementation: &id001
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:1
+    entry_points:
+    - catalog/escape/isothermal_parker.yaml
+assumptions:
+- statement: Steady spherical single-fluid flow, constant positive isothermal sound speed and mean molecular weight,
+    fixed point-mass gravity, and positive density/velocity.
+  evidence:
+  - planetlib.escape.parker.upstream
+- statement: No tides, rotation, viscosity, radiation-pressure force or distributed mass source is included; symbols
+    denote numerical magnitudes in the declared cgs units.
+  evidence:
+  - planetlib.escape.parker.upstream
+- statement: The sonic radius and slope require a smooth transonic solution. The positive slope selects the accelerating
+    wind, while the local algebra also admits a negative regular slope.
+  evidence:
+  - planetlib.escape.parker.upstream
+- statement: Boundary conditions, mass-loss selection, global existence, numerical branch finding and temperature/ionization
+    closure are not supplied.
+  evidence:
+  - planetlib.escape.parker.upstream
+domains:
+- kind: scientific_applicability
+  status: unknown
+  description: Algebraic consistency does not establish astrophysical accuracy, closure adequacy or a complete boundary-value
+    problem.
+  conditions: []
+  evidence:
+  - planetlib.escape.parker.upstream
+limitations:
+- statement: Numerical solvers, convergence, source accuracy, branch existence and physical applicability require
+    separate provider or study assessments.
+  evidence:
+  - planetlib.escape.parker.upstream
+claims:
+- id: planetlib.escape.parker.density_elimination
+  revision: '1'
+  kind: theoretical
+  statement: The reduced wind equation follows from continuity, pressure and momentum.
+  scope: Exact smooth-interior symbolic elimination with constant a; no numerical implementation equivalence.
+  mathematical_models:
+  - {id: planetlib.escape.parker.isothermal_wind, revision: '1'}
+- id: planetlib.escape.parker.sonic_regularity
+  revision: '1'
+  kind: theoretical
+  statement: The recorded radius and positive sonic slope satisfy the regular critical-point conditions.
+  scope: Local accelerating root only; neither uniqueness nor existence of a global wind follows.
+  mathematical_models:
+  - {id: planetlib.escape.parker.isothermal_wind, revision: '1'}
+- id: planetlib.escape.parker.source_correspondence
+  revision: '1'
+  kind: theoretical
+  statement: The extracted definitions preserve the declared upstream conventions within the stated reduced scope.
+  scope: A source-extraction proposition; passing symbolic identity tests alone does not establish correspondence
+    to provider code.
+  mathematical_models:
+  - {id: planetlib.escape.parker.isothermal_wind, revision: '1'}
+evidence:
+- id: planetlib.escape.parker.upstream
+  kind: theory
+  summary: Inspected pinned escape definitions and the corresponding implementation conventions.
+  sources:
+  - https://github.com/HajimeKawahara/exojax-escape/blob/18064c9f743c38651b94c2a53d3890d2032852bb/mceg/contracts/escape.parker_wind.yaml
+  - https://github.com/HajimeKawahara/exojax-escape/blob/18064c9f743c38651b94c2a53d3890d2032852bb/src/escape/parker.py
+  scope: Local source files matched the pinned clean checkout. Only the stated mathematical submodel is extracted;
+    historical numerical or physical support is not transferred.
+  provenance:
+    role: primary
+    location: mceg/contracts/escape.parker_wind.yaml, src/escape/parker.py
+    inspection: partial
+    note: The source is an authored formulation and implementation record, not a new independent experimental validation.
+- id: planetlib.escape.parker.symbolic_checks
+  kind: theory
+  summary: Executable symbolic derivations from the serialized catalog expressions.
+  sources:
+  - tests/test_escape_relations.py::test_parker_density_elimination
+  - tests/test_escape_relations.py::test_parker_sonic_radius_and_accelerating_slope
+  scope: Algebraic identities on the stated smooth interior domain only; no provider execution, numerical stability
+    certificate or physical-support transfer.
+- id: planetlib.escape.parker.symbolic_run_20261127
+  kind: theory
+  subject: planetlib.escape.parker.definition
+  context: planetlib.escape.parker.symbolic_review_20261127
+  summary: The stored-expression derivations passed in the recorded 32-test run; their equations, assumptions
+    and claim scope were reviewed.
+  sources:
+  - tests/test_escape_relations.py
+  - reviews/symbolic_checks_20261127.json
+  artifacts:
+  - source: tests/test_escape_relations.py
+    sha256: 671d44df7c783e747f17cc0069d1dc581797edfca4eefa6eb46784765f110c89
+  - source: reviews/symbolic_checks_20261127.json
+    sha256: 5fd7c6c961971a2911a29862432579cbca20022b227a8748d6b78cd45bb814d5
+  scope: Supports only the attached mathematical identities within their stated domains. A finite symbolic
+    check is not a formal proof certificate or a numerical-provider validation.
+subjects:
+- id: planetlib.escape.parker.definition
+  implementation: *id001
+  selected_files: {catalog/escape/isothermal_parker.yaml: null}
+contexts:
+- {id: planetlib.escape.parker.symbolic_context, scope: Conditional mathematical identities for the extracted definitions;
+    source correspondence and physical applicability remain separate.}
+- id: planetlib.escape.parker.symbolic_review_20261127
+  scope: Review of conditional symbolic identities on the domains declared by the selected definitions.
+    This context does not assess source correspondence, provider execution or physical applicability.
+  settings:
+    review_date: '2026-11-27'
+    sympy: 1.14.0
+quantities:
+- id: planetlib.escape.parker.quantity.r
+  revision: '1'
+  latex: r
+  description: Radius from the point-mass center.
+  unit: cm
+  domain: Positive radius.
+- id: planetlib.escape.parker.quantity.mdot
+  revision: '1'
+  latex: \dot M
+  description: Total outward mass flow through a sphere.
+  unit: g s^-1
+  domain: Positive constant; no distributed mass source.
+- id: planetlib.escape.parker.quantity.v
+  revision: '1'
+  latex: v
+  description: Outward radial material velocity.
+  unit: cm s^-1
+  domain: Positive smooth velocity; an accelerating transonic branch is selected only for the sonic-slope relation.
+  coordinates:
+  - {id: planetlib.escape.parker.quantity.r, revision: '1'}
+- id: planetlib.escape.parker.quantity.rho
+  revision: '1'
+  latex: \rho
+  description: Total material mass density.
+  unit: g cm^-3
+  domain: Positive smooth density of the same flow.
+  coordinates:
+  - {id: planetlib.escape.parker.quantity.r, revision: '1'}
+- id: planetlib.escape.parker.quantity.P
+  revision: '1'
+  latex: P
+  description: Gas pressure supporting the isothermal flow.
+  unit: erg cm^-3
+  domain: Positive smooth gas pressure; no radiation pressure.
+  coordinates:
+  - {id: planetlib.escape.parker.quantity.r, revision: '1'}
+- id: planetlib.escape.parker.quantity.a
+  revision: '1'
+  latex: a
+  description: Constant isothermal sound speed with fixed temperature and mean molecular weight.
+  unit: cm s^-1
+  domain: Positive, independent of radius; distinct from an adiabatic sound speed.
+- id: planetlib.escape.parker.quantity.gm
+  revision: '1'
+  latex: GM
+  description: Point-mass gravitational parameter.
+  unit: cm^3 s^-2
+  domain: Positive constant; no tides, rotation or self gravity.
+- id: planetlib.escape.parker.quantity.r_s
+  revision: '1'
+  latex: r_s
+  description: Regular sonic radius at which v=a on the selected branch.
+  unit: cm
+  domain: Positive radius of the smooth isothermal transonic critical point.
+- id: planetlib.escape.parker.quantity.slope
+  revision: '1'
+  latex: v'_s
+  description: Radial velocity derivative at the sonic point.
+  unit: s^-1
+  domain: The accelerating branch selects the positive regular root.
+equations:
+- id: planetlib.escape.parker.continuity
+  revision: '1'
+  description: Constant spherical mass loss.
+  scope: The same density and velocity occur in the pressure and momentum equations.
+  symbols:
+    mdot: {latex: \dot M, description: Total outward mass flow through a sphere., unit: g s^-1}
+    r: {latex: r, description: Radius from the point-mass center., unit: cm}
+    rho: {latex: \rho, description: Total material mass density., unit: g cm^-3}
+    v: {latex: v, description: Outward radial material velocity., unit: cm s^-1}
+  assumptions: &id002
+  - Steady spherical single-fluid flow, constant positive isothermal sound speed and mean molecular weight, fixed
+    point-mass gravity, and positive density/velocity.
+  - No tides, rotation, viscosity, radiation-pressure force or distributed mass source is included; symbols denote
+    numerical magnitudes in the declared cgs units.
+  - The sonic radius and slope require a smooth transonic solution. The positive slope selects the accelerating
+    wind, while the local algebra also admits a negative regular slope.
+  - Boundary conditions, mass-loss selection, global existence, numerical branch finding and temperature/ionization
+    closure are not supplied.
+  evidence:
+  - planetlib.escape.parker.upstream
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''mdot'', positive=True), Mul(Integer(4), pi, Pow(Symbol(''r'',
+      positive=True), Integer(2)), Function(''rho'')(Symbol(''r'', positive=True)), Function(''v'')(Symbol(''r'',
+      positive=True))))'}
+- id: planetlib.escape.parker.isothermal_pressure
+  revision: '1'
+  description: Gas pressure for the fixed isothermal sound speed.
+  scope: a is spatially constant; using a variable a would add its radial derivative to the reduced equation.
+  symbols:
+    P: {latex: P, description: Gas pressure supporting the isothermal flow., unit: erg cm^-3}
+    a: {latex: a, description: Constant isothermal sound speed with fixed temperature and mean molecular weight.,
+      unit: cm s^-1}
+    r: {latex: r, description: Radius from the point-mass center., unit: cm}
+    rho: {latex: \rho, description: Total material mass density., unit: g cm^-3}
+  assumptions: *id002
+  evidence:
+  - planetlib.escape.parker.upstream
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Function(''P'')(Symbol(''r'', positive=True)), Mul(Pow(Symbol(''a'',
+      positive=True), Integer(2)), Function(''rho'')(Symbol(''r'', positive=True))))'}
+- id: planetlib.escape.parker.momentum
+  revision: '1'
+  description: Radial momentum balance in point-mass gravity.
+  scope: Smooth positive density and velocity on a finite radial interval.
+  symbols:
+    P: {latex: P, description: Gas pressure supporting the isothermal flow., unit: erg cm^-3}
+    gm: {latex: GM, description: Point-mass gravitational parameter., unit: cm^3 s^-2}
+    r: {latex: r, description: Radius from the point-mass center., unit: cm}
+    rho: {latex: \rho, description: Total material mass density., unit: g cm^-3}
+    v: {latex: v, description: Outward radial material velocity., unit: cm s^-1}
+  assumptions: *id002
+  evidence:
+  - planetlib.escape.parker.upstream
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Mul(Function(''v'')(Symbol(''r'', positive=True)), Derivative(Function(''v'')(Symbol(''r'',
+      positive=True)), Tuple(Symbol(''r'', positive=True), Integer(1)))), Add(Mul(Integer(-1), Symbol(''gm'', positive=True),
+      Pow(Symbol(''r'', positive=True), Integer(-2))), Mul(Integer(-1), Pow(Function(''rho'')(Symbol(''r'', positive=True)),
+      Integer(-1)), Derivative(Function(''P'')(Symbol(''r'', positive=True)), Tuple(Symbol(''r'', positive=True),
+      Integer(1))))))'}
+- id: planetlib.escape.parker.reduced_wind
+  revision: '1'
+  description: Eliminate the density gradient using continuity and the isothermal pressure law.
+  scope: Valid away from singular branches; the sonic point requires the separate regularity conditions.
+  symbols:
+    a: {latex: a, description: Constant isothermal sound speed with fixed temperature and mean molecular weight.,
+      unit: cm s^-1}
+    gm: {latex: GM, description: Point-mass gravitational parameter., unit: cm^3 s^-2}
+    r: {latex: r, description: Radius from the point-mass center., unit: cm}
+    v: {latex: v, description: Outward radial material velocity., unit: cm s^-1}
+  assumptions: *id002
+  evidence:
+  - planetlib.escape.parker.upstream
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Mul(Add(Mul(Integer(-1), Pow(Symbol(''a'', positive=True),
+      Integer(2)), Pow(Function(''v'')(Symbol(''r'', positive=True)), Integer(-1))), Function(''v'')(Symbol(''r'',
+      positive=True))), Derivative(Function(''v'')(Symbol(''r'', positive=True)), Tuple(Symbol(''r'', positive=True),
+      Integer(1)))), Add(Mul(Integer(2), Pow(Symbol(''a'', positive=True), Integer(2)), Pow(Symbol(''r'', positive=True),
+      Integer(-1))), Mul(Integer(-1), Symbol(''gm'', positive=True), Pow(Symbol(''r'', positive=True), Integer(-2)))))'}
+- id: planetlib.escape.parker.sonic_radius
+  revision: '1'
+  description: Locate the regular critical radius for v=a.
+  scope: The numerator and coefficient of v-prime vanish together.
+  symbols:
+    a: {latex: a, description: Constant isothermal sound speed with fixed temperature and mean molecular weight.,
+      unit: cm s^-1}
+    gm: {latex: GM, description: Point-mass gravitational parameter., unit: cm^3 s^-2}
+    r_s: {latex: r_s, description: Regular sonic radius at which v=a on the selected branch., unit: cm}
+  assumptions: *id002
+  evidence:
+  - planetlib.escape.parker.upstream
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''r_s'', positive=True), Mul(Rational(1, 2), Pow(Symbol(''a'',
+      positive=True), Integer(-2)), Symbol(''gm'', positive=True)))'}
+- id: planetlib.escape.parker.accelerating_slope
+  revision: '1'
+  description: Select the positive regular sonic slope.
+  scope: Differentiate the reduced equation at the smooth critical point; the negative root belongs to a different
+    local branch.
+  symbols:
+    a: {latex: a, description: Constant isothermal sound speed with fixed temperature and mean molecular weight.,
+      unit: cm s^-1}
+    r_s: {latex: r_s, description: Regular sonic radius at which v=a on the selected branch., unit: cm}
+    slope: {latex: v'_s, description: Radial velocity derivative at the sonic point., unit: s^-1}
+  assumptions: *id002
+  evidence:
+  - planetlib.escape.parker.upstream
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''slope'', real=True), Mul(Symbol(''a'', positive=True),
+      Pow(Symbol(''r_s'', positive=True), Integer(-1))))'}
+mathematical_models:
+- id: planetlib.escape.parker.isothermal_wind
+  revision: '1'
+  description: Open isothermal point-mass wind model.
+  scope: a and GM are supplied positive constants. The mass rate and boundary state remain unspecified; sonic regularity
+    selects a local accelerating branch, not a complete global solution.
+  quantities:
+    P: {quantity: {id: planetlib.escape.parker.quantity.P, revision: '1'}, role: unknown}
+    a: {quantity: {id: planetlib.escape.parker.quantity.a, revision: '1'}, role: parameter}
+    gm: {quantity: {id: planetlib.escape.parker.quantity.gm, revision: '1'}, role: parameter}
+    mdot: {quantity: {id: planetlib.escape.parker.quantity.mdot, revision: '1'}, role: input}
+    r: {quantity: {id: planetlib.escape.parker.quantity.r, revision: '1'}, role: coordinate}
+    r_s: {quantity: {id: planetlib.escape.parker.quantity.r_s, revision: '1'}, role: derived}
+    rho: {quantity: {id: planetlib.escape.parker.quantity.rho, revision: '1'}, role: unknown}
+    slope: {quantity: {id: planetlib.escape.parker.quantity.slope, revision: '1'}, role: derived}
+    v: {quantity: {id: planetlib.escape.parker.quantity.v, revision: '1'}, role: unknown}
+  relations:
+  - id: planetlib.escape.parker.isothermal_wind.continuity
+    equation: {id: planetlib.escape.parker.continuity, revision: '1'}
+    role: Mass conservation
+    quantities:
+      mdot: mdot
+      r: r
+      rho: rho
+      v: v
+  - id: planetlib.escape.parker.isothermal_wind.isothermal_pressure
+    equation: {id: planetlib.escape.parker.isothermal_pressure, revision: '1'}
+    role: Isothermal equation of state
+    quantities:
+      P: P
+      a: a
+      r: r
+      rho: rho
+  - id: planetlib.escape.parker.isothermal_wind.momentum
+    equation: {id: planetlib.escape.parker.momentum, revision: '1'}
+    role: Momentum conservation
+    quantities:
+      P: P
+      gm: gm
+      r: r
+      rho: rho
+      v: v
+  - id: planetlib.escape.parker.isothermal_wind.reduced_wind
+    equation: {id: planetlib.escape.parker.reduced_wind, revision: '1'}
+    role: Derived wind equation
+    quantities:
+      a: a
+      gm: gm
+      r: r
+      v: v
+  - id: planetlib.escape.parker.isothermal_wind.sonic_radius
+    equation: {id: planetlib.escape.parker.sonic_radius, revision: '1'}
+    role: Sonic regularity
+    quantities: {a: a, gm: gm, r_s: r_s}
+  - id: planetlib.escape.parker.isothermal_wind.accelerating_slope
+    equation: {id: planetlib.escape.parker.accelerating_slope, revision: '1'}
+    role: Accelerating branch choice
+    quantities: {a: a, r_s: r_s, slope: slope}
+assessments:
+- id: planetlib.escape.parker.density_elimination.pending
+  kind: evidence_support
+  claim: planetlib.escape.parker.density_elimination
+  claim_revision: '1'
+  subject: planetlib.escape.parker.definition
+  context: planetlib.escape.parker.symbolic_context
+  method: {id: planetlib.escape.parker.symbolic_review, revision: '1', description: Review exact symbolic residuals
+      of the stored definitions under explicit assumptions.}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.escape.parker.symbolic_checks
+  reasons:
+  - The named executable checks identify the intended mathematical relation; their reviewed result is recorded separately
+    from source correspondence and physical applicability.
+- id: planetlib.escape.parker.sonic_regularity.pending
+  kind: evidence_support
+  claim: planetlib.escape.parker.sonic_regularity
+  claim_revision: '1'
+  subject: planetlib.escape.parker.definition
+  context: planetlib.escape.parker.symbolic_context
+  method: {id: planetlib.escape.parker.symbolic_review, revision: '1', description: Review exact symbolic residuals
+      of the stored definitions under explicit assumptions.}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.escape.parker.symbolic_checks
+  reasons:
+  - The named executable checks identify the intended mathematical relation; their reviewed result is recorded separately
+    from source correspondence and physical applicability.
+- id: planetlib.escape.parker.source_review_pending
+  kind: evidence_support
+  claim: planetlib.escape.parker.source_correspondence
+  claim_revision: '1'
+  subject: planetlib.escape.parker.definition
+  context: planetlib.escape.parker.symbolic_context
+  method: {id: planetlib.escape.parker.extraction_review, revision: '1', description: Keep extraction review separate
+      from algebraic consistency tests.}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.escape.parker.upstream
+  reasons:
+  - No independent provider-correspondence or target-environment assessment is imported.
+- id: planetlib.escape.parker.density_elimination.review_20261127
+  kind: evidence_support
+  claim: planetlib.escape.parker.density_elimination
+  claim_revision: '1'
+  subject: planetlib.escape.parker.definition
+  context: planetlib.escape.parker.symbolic_review_20261127
+  method:
+    id: planetlib.escape.parker.symbolic_derivation_review
+    revision: '1'
+    description: Inspect the derivation and domain; execute substitution, differentiation, simplification
+      and limiting-case checks against the serialized definitions.
+  status: supported
+  origin: reviewed
+  evidence:
+  - planetlib.escape.parker.symbolic_run_20261127
+  reasons:
+  - The stated conditional identity follows in the reviewed symbolic checks. Source correspondence and
+    physical applicability are separate questions.
+  mathematical_model_pins:
+  - id: planetlib.escape.parker.isothermal_wind
+    revision: '1'
+    sha256: 287cac1edad1978e1ec7ca4113c0bbf80b1c9c99af1fc78ce4f1611bda1b6c13
+- id: planetlib.escape.parker.sonic_regularity.review_20261127
+  kind: evidence_support
+  claim: planetlib.escape.parker.sonic_regularity
+  claim_revision: '1'
+  subject: planetlib.escape.parker.definition
+  context: planetlib.escape.parker.symbolic_review_20261127
+  method:
+    id: planetlib.escape.parker.symbolic_derivation_review
+    revision: '1'
+    description: Inspect the derivation and domain; execute substitution, differentiation, simplification
+      and limiting-case checks against the serialized definitions.
+  status: supported
+  origin: reviewed
+  evidence:
+  - planetlib.escape.parker.symbolic_run_20261127
+  reasons:
+  - The stated conditional identity follows in the reviewed symbolic checks. Source correspondence and
+    physical applicability are separate questions.
+  mathematical_model_pins:
+  - id: planetlib.escape.parker.isothermal_wind
+    revision: '1'
+    sha256: 287cac1edad1978e1ec7ca4113c0bbf80b1c9c99af1fc78ce4f1611bda1b6c13

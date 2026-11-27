@@ -1,0 +1,323 @@
+schema_version: '0.6'
+model:
+  id: planetlib.solubility.sun_yao2026.catalog
+  name: Sun-Yao water solubility on a binary dry-host/water basis
+  description: A partial-pressure-specific definition with explicit concentration and oxide denominators.
+  implementation:
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:2
+    entry_points:
+    - catalog/solubility/sun_yao2026.yaml
+assumptions:
+- statement: The driving quantity is water partial pressure. The fitted composite terms already absorb fluid nonideality;
+    replacing partial pressure by fugacity defines a different relation.
+  evidence:
+  - planetlib.solubility.sun_yao2026.paper_review
+- statement: The adopted concentration denominator is dry-host mass plus dissolved H2O-equivalent mass. Molecular
+    water and hydroxyl contributions share this denominator; hydroxyl supplies no additional hydrogen inventory.
+  evidence:
+  - planetlib.solubility.sun_yao2026.provider_source
+domains:
+- kind: numerical_evaluation
+  status: documented
+  description: Mathematical evaluation domain of this definition, not a calibration domain.
+  conditions:
+  - T > 0, P > 0, and 0 <= p_H2O <= P; all inputs are finite.
+  - x_Na2O >= 0, x_Al2O3 >= 0, and x_Na2O + x_Al2O3 <= 1.
+  - The predicted mass fraction must satisfy 0 <= w < 1 for the stated binary mass interpretation.
+  - At p_H2O = 0 the continuous extension is w = 0; the pressure derivative is singular.
+  evidence:
+  - planetlib.solubility.sun_yao2026.provider_source
+- kind: scientific_applicability
+  status: unknown
+  description: Joint composition, temperature, pressure and fluid-specific accuracy requires separate evaluation.
+  conditions: []
+  evidence:
+  - planetlib.solubility.sun_yao2026.paper_review
+limitations:
+- statement: The binary mass basis is an explicit provider convention. Additional dissolved H2, He or CO2 require
+    a separate mass convention and thermodynamic continuation. This relation supplies neither a Gibbs scalar nor
+    host chemical potentials.
+  evidence:
+  - planetlib.solubility.sun_yao2026.provider_source
+  - planetlib.solubility.sun_yao2026.paper_review
+- statement: The combined H2O-CO2 compilation's 60000 bar upper limit is not a water-only calibration box. The consumer
+    review reports water experiments up to 20000 bar; marginal ranges and pooled errors establish no target-host
+    error bound.
+  evidence:
+  - planetlib.solubility.sun_yao2026.paper_review
+- statement: Earlier provider assessments and the later consumer paper review retain their original Subjects and
+    Contexts. Their support is not transferred to this extracted definition or to a new coupled model.
+  evidence:
+  - planetlib.solubility.sun_yao2026.provider_snapshot
+  - planetlib.solubility.sun_yao2026.paper_review
+claims:
+- id: planetlib.solubility.sun_yao2026.definition_correspondence
+  revision: '2'
+  kind: theoretical
+  statement: The extracted relation preserves the selected source formula and the explicitly adopted binary mass
+    convention.
+  scope: Definition correspondence only; no implementation equivalence, experimental transfer or thermodynamic closure
+    is asserted.
+  equations:
+  - {id: planetlib.solubility.sun_yao2026.water_mass_fraction, revision: '2'}
+  mathematical_models:
+  - {id: planetlib.solubility.sun_yao2026.binary_water, revision: '2'}
+- id: planetlib.solubility.sun_yao2026.definition_correspondence
+  revision: '1'
+  kind: theoretical
+  statement: The extracted relation preserves the selected source formula and the explicitly adopted binary mass
+    convention.
+  scope: Definition correspondence only; no implementation equivalence, experimental transfer or thermodynamic closure
+    is asserted.
+  equations:
+  - {id: planetlib.solubility.sun_yao2026.water_mass_fraction, revision: '1'}
+  mathematical_models:
+  - {id: planetlib.solubility.sun_yao2026.binary_water, revision: '1'}
+evidence:
+- id: planetlib.solubility.sun_yao2026.provider_source
+  kind: implementation
+  summary: ExoGibbs source and current provider contract, inspected as extraction inputs.
+  sources:
+  - https://github.com/HajimeKawahara/exogibbs/blob/08d3d85a6680eb81c4057bf584530d269de88253/src/exogibbs/solubility/sun_yao2026.py
+  - https://github.com/HajimeKawahara/exogibbs/blob/08d3d85a6680eb81c4057bf584530d269de88253/mceg/contracts/h2o_sun_yao2026.yaml
+  scope: Source SHA256 965fc7ef776b4b93000b149177f38070b86720d1668c586f67878fcf68726eeb; contract SHA256 c1a94e3e111e6e992b31c80eb6b36aad9558381bf56fa8ecdd2188b1081363b1.
+    The source follows MAGEMin_C.jl commit 47e2d12bfec0f799acf030b285fa3b1e8eb32098. No numerical provider was imported
+    or executed for this extraction.
+  provenance:
+    role: implementation
+    location: h2o_sun_yao2026_terms, h2o_sun_yao2026 and the _A coefficient tuple.
+    inspection: inspected
+    note: Source conventions are recorded; reading code is not numerical or empirical validation.
+- id: planetlib.solubility.sun_yao2026.provider_snapshot
+  kind: implementation
+  summary: Historical provider review retained by the ExoInventory consumer.
+  sources:
+  - https://github.com/HajimeKawahara/exoinventory/blob/02540ee13cfb847ade632b35e9c8d950795dc5f0/examples/subneptune_taxonomy/finite_melt/mceg/provider_reviews/h2o_sun_yao2026.yaml
+  - https://github.com/HajimeKawahara/exoinventory/blob/02540ee13cfb847ade632b35e9c8d950795dc5f0/examples/subneptune_taxonomy/finite_melt/mceg/provider_reviews/sun_yao_binding.json
+  scope: Snapshot SHA256 becaf73f32e226915d753186a4ac3ed0398fee2a8e37e0d7d45e007e582eab8f, provider contract revision
+    06d26e1fd11fb22181965988c170d63a4c5a9ab6. Subject survey_20261020 and Context source_review_environment_20261021
+    select source_formula_review_20261021 (supported, four positive-interior scalar comparisons) and physical_source_review_20261021
+    (unknown). The adopted source revision is 1f868eab28c7d71aac613645a264cfd4417709be. The current contract relocates
+    archived evidence paths; its bytes are distinct from this snapshot.
+- id: planetlib.solubility.sun_yao2026.paper_review
+  kind: literature
+  summary: ExoInventory's later static comparison with Sun and Yao (2026), Eq. 7 and Table 1.
+  sources:
+  - https://doi.org/10.1016/j.epsl.2026.120115
+  - https://github.com/HajimeKawahara/exoinventory/blob/02540ee13cfb847ade632b35e9c8d950795dc5f0/examples/subneptune_taxonomy/finite_melt/mceg/sun_yao_paper.md
+  - https://github.com/HajimeKawahara/exoinventory/blob/02540ee13cfb847ade632b35e9c8d950795dc5f0/examples/subneptune_taxonomy/finite_melt/validation/20261029_sun_yao_paper/review.json
+  - https://github.com/HajimeKawahara/exoinventory/blob/02540ee13cfb847ade632b35e9c8d950795dc5f0/examples/subneptune_taxonomy/finite_melt/mceg/s1_adopted.yaml
+  scope: Context sun-yao-paper-review-20261029 records paper:water-formula as supported for static Eq. 7/Table 1
+    agreement and paper:empirical-transfer as unknown. The review distinguishes partial pressure from fugacity and
+    leaves binary denominator, iron-redox convention and multisolute continuation as consumer choices. The paper's
+    parameter uncertainties supply no covariance matrix or target-host error bound. This evidence points to that
+    review, not a new assessment. The 60000 bar upper bound belongs to the combined H2O-CO2 dataset; the reviewed
+    water experiments reach 20000 bar. Neither range is a joint calibration box.
+  provenance:
+    role: secondary
+    location: The committed original-paper review and receipt in ExoInventory.
+    inspection: inspected
+    note: The historical review's conclusions remain scoped to its original records.
+subjects:
+- id: planetlib.solubility.sun_yao2026.definition
+  implementation:
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:1
+    entry_points:
+    - catalog/solubility/sun_yao2026.yaml
+  selected_files: {}
+- id: planetlib.solubility.sun_yao2026.definition.symbolic_v2
+  implementation:
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:2
+    entry_points:
+    - catalog/solubility/sun_yao2026.yaml
+  selected_files: {}
+contexts:
+- {id: planetlib.solubility.sun_yao2026.extraction, scope: Initial shared-definition extraction; no provider execution
+    or target-system validation.}
+quantities:
+- id: planetlib.solubility.sun_yao2026.temperature
+  revision: '1'
+  latex: T
+  description: Absolute temperature of the equilibrated melt and fluid.
+  unit: K
+  domain: Finite T > 0.
+- id: planetlib.solubility.sun_yao2026.melt_total_pressure
+  revision: '1'
+  latex: P
+  description: Total pressure at the melt-fluid interface, distinct from water partial pressure.
+  unit: bar
+  domain: Finite P > 0.
+- id: planetlib.solubility.sun_yao2026.water_partial_pressure
+  revision: '1'
+  latex: p_{H_2O}
+  description: Water partial pressure in the fluid; this quantity is not water fugacity.
+  unit: bar
+  domain: Finite 0 <= p_H2O <= P.
+- id: planetlib.solubility.sun_yao2026.dry_na2o_mole_fraction
+  revision: '1'
+  latex: X_{Na_2O}
+  description: Na2O formula-unit moles divided by the sum of all volatile-free oxide formula-unit moles; Na and
+    Al are not renormalized alone.
+  unit: '1'
+  domain: Nonnegative fraction of a fully specified dry oxide inventory; the caller declares iron-redox normalization.
+- id: planetlib.solubility.sun_yao2026.dry_al2o3_mole_fraction
+  revision: '1'
+  latex: X_{Al_2O_3}
+  description: Al2O3 formula-unit moles divided by the same complete volatile-free oxide mole inventory as X_Na2O.
+  unit: '1'
+  domain: Nonnegative fraction with X_Na2O + X_Al2O3 <= 1; the caller declares iron-redox normalization.
+- id: planetlib.solubility.sun_yao2026.binary_water_mass_fraction
+  revision: '1'
+  latex: w
+  description: Total dissolved H2O-equivalent mass divided by dry-host mass plus that H2O-equivalent mass; molecular
+    water and hydroxyl are already combined.
+  unit: '1'
+  domain: 0 <= w < 1 on the binary dry-host/water basis; extra dissolved species require a new convention.
+equations:
+- id: planetlib.solubility.sun_yao2026.water_mass_fraction
+  revision: '2'
+  description: Two pressure powers for molecular water and hydroxyl, with the ten published water coefficients and
+    one wt%-to-mass-fraction conversion.
+  scope: Sun-Yao Eq. 7/Table 1 evaluated with T in K and both pressures in bar, restricted here to the explicit
+    binary dry-host/water mass convention. Fixed coefficient precision follows the inspected source and consumer
+    review.
+  symbols:
+    T: {latex: T, description: Melt-fluid temperature, unit: K}
+    P: {latex: P, description: Total melt pressure, unit: bar}
+    p_H2O: {latex: 'p_{H_2O}', description: Fluid water partial pressure, unit: bar}
+    x_Na2O: {latex: 'X_{Na_2O}', description: Complete dry-oxide-basis Na2O mole fraction, unit: '1'}
+    x_Al2O3: {latex: 'X_{Al_2O_3}', description: Complete dry-oxide-basis Al2O3 mole fraction, unit: '1'}
+    w: {latex: w, description: Binary dissolved H2O-equivalent mass fraction, unit: '1'}
+  assumptions:
+  - Pressure and temperature occur as numerical values in the specified units; changing units requires these normalizations.
+  - Water partial pressure is not replaced by fugacity.
+  - The complete dry oxide denominator and its iron-redox convention are supplied externally.
+  - The two terms use the same H2O-equivalent mass basis; no separate hydroxyl hydrogen budget is added.
+  - At zero water partial pressure the continuous extension is w=0, with a singular pressure derivative.
+  - 'SymPy symbols are numerical magnitudes: T in K, P and p_H2O in bar, and mole/mass fractions dimensionless.'
+  evidence:
+  - planetlib.solubility.sun_yao2026.provider_source
+  - planetlib.solubility.sun_yao2026.paper_review
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''w''), Add(Mul(Rational(1, 100), Pow(Symbol(''T''),
+      Rational(-43771, 62500)), Pow(Symbol(''p_H2O''), Rational(161561, 200000)), exp(Add(Mul(Integer(-1), Rational(74546597,
+      1000000), Pow(Symbol(''P''), Rational(1, 2)), Pow(Symbol(''T''), Integer(-1)), Symbol(''x_Na2O'')), Mul(Rational(2949559,
+      1000000000000), Pow(Symbol(''P''), Integer(2)), Pow(Symbol(''T''), Integer(-1))), Mul(Rational(1786568863,
+      250000), Pow(Symbol(''T''), Integer(-1)), Symbol(''x_Na2O''))))), Mul(Rational(1, 100), Pow(Symbol(''T''),
+      Rational(-180097, 500000)), Pow(Symbol(''p_H2O''), Rational(449387, 1000000)), exp(Mul(Symbol(''P''), Pow(Symbol(''T''),
+      Integer(-1)), Add(Mul(Rational(2984703, 1000000), Symbol(''x_Al2O3'')), Mul(Integer(-1), Rational(169371,
+      100000), Symbol(''x_Na2O'')), Rational(-308259, 1000000)))))))'}
+- id: planetlib.solubility.sun_yao2026.water_mass_fraction
+  revision: '1'
+  latex: w=\frac{1}{100}\left[ \left(\frac{p_{H_2O}}{1\,\mathrm{bar}}\right)^{0.807805} \left(\frac{T}{1\,\mathrm{K}}\right)^{-0.700336}
+    \exp\!\left(2.949559\times10^{-6}\frac{(P/(1\,\mathrm{bar}))^2}{T/(1\,\mathrm{K})} +\frac{(-74.546597\sqrt{P/(1\,\mathrm{bar})}+7146.275452)X_{Na_2O}}{T/(1\,\mathrm{K})}\right)
+    +\left(\frac{p_{H_2O}}{1\,\mathrm{bar}}\right)^{0.449387} \left(\frac{T}{1\,\mathrm{K}}\right)^{-0.360194} \exp\!\left(\frac{(-0.308259+2.984703X_{Al_2O_3}-1.693710X_{Na_2O})(P/(1\,\mathrm{bar}))}{T/(1\,\mathrm{K})}\right)
+    \right]
+  description: Two pressure powers for molecular water and hydroxyl, with the ten published water coefficients and
+    one wt%-to-mass-fraction conversion.
+  scope: Sun-Yao Eq. 7/Table 1 evaluated with T in K and both pressures in bar, restricted here to the explicit
+    binary dry-host/water mass convention. Fixed coefficient precision follows the inspected source and consumer
+    review.
+  symbols:
+    T: {latex: T, description: Melt-fluid temperature, unit: K}
+    P: {latex: P, description: Total melt pressure, unit: bar}
+    p_H2O: {latex: 'p_{H_2O}', description: Fluid water partial pressure, unit: bar}
+    x_Na2O: {latex: 'X_{Na_2O}', description: Complete dry-oxide-basis Na2O mole fraction, unit: '1'}
+    x_Al2O3: {latex: 'X_{Al_2O_3}', description: Complete dry-oxide-basis Al2O3 mole fraction, unit: '1'}
+    w: {latex: w, description: Binary dissolved H2O-equivalent mass fraction, unit: '1'}
+  assumptions:
+  - Pressure and temperature occur as numerical values in the specified units; changing units requires these normalizations.
+  - Water partial pressure is not replaced by fugacity.
+  - The complete dry oxide denominator and its iron-redox convention are supplied externally.
+  - The two terms use the same H2O-equivalent mass basis; no separate hydroxyl hydrogen budget is added.
+  - At zero water partial pressure the continuous extension is w=0, with a singular pressure derivative.
+  evidence:
+  - planetlib.solubility.sun_yao2026.provider_source
+  - planetlib.solubility.sun_yao2026.paper_review
+mathematical_models:
+- id: planetlib.solubility.sun_yao2026.binary_water
+  revision: '2'
+  description: Water-solubility relation with five externally supplied thermodynamic and composition inputs.
+  scope: T, P, p_H2O, X_Na2O and X_Al2O3 are external inputs; w is derived. No gas composition solver, phase equilibrium,
+    iron-redox closure, multisolute mass convention, Gibbs continuation or boundary condition is selected.
+  quantities:
+    temperature: {quantity: {id: planetlib.solubility.sun_yao2026.temperature, revision: '1'}, role: input}
+    total_pressure: {quantity: {id: planetlib.solubility.sun_yao2026.melt_total_pressure, revision: '1'}, role: input}
+    water_pressure: {quantity: {id: planetlib.solubility.sun_yao2026.water_partial_pressure, revision: '1'}, role: input}
+    sodium_fraction: {quantity: {id: planetlib.solubility.sun_yao2026.dry_na2o_mole_fraction, revision: '1'}, role: input}
+    aluminium_fraction: {quantity: {id: planetlib.solubility.sun_yao2026.dry_al2o3_mole_fraction, revision: '1'},
+      role: input}
+    water_fraction: {quantity: {id: planetlib.solubility.sun_yao2026.binary_water_mass_fraction, revision: '1'},
+      role: derived}
+  relations:
+  - id: planetlib.solubility.sun_yao2026.solubility
+    equation: {id: planetlib.solubility.sun_yao2026.water_mass_fraction, revision: '2'}
+    role: Empirical water relation on the selected mass basis
+    quantities:
+      T: temperature
+      P: total_pressure
+      p_H2O: water_pressure
+      x_Na2O: sodium_fraction
+      x_Al2O3: aluminium_fraction
+      w: water_fraction
+- id: planetlib.solubility.sun_yao2026.binary_water
+  revision: '1'
+  description: Water-solubility relation with five externally supplied thermodynamic and composition inputs.
+  scope: T, P, p_H2O, X_Na2O and X_Al2O3 are external inputs; w is derived. No gas composition solver, phase equilibrium,
+    iron-redox closure, multisolute mass convention, Gibbs continuation or boundary condition is selected.
+  quantities:
+    temperature: {quantity: {id: planetlib.solubility.sun_yao2026.temperature, revision: '1'}, role: input}
+    total_pressure: {quantity: {id: planetlib.solubility.sun_yao2026.melt_total_pressure, revision: '1'}, role: input}
+    water_pressure: {quantity: {id: planetlib.solubility.sun_yao2026.water_partial_pressure, revision: '1'}, role: input}
+    sodium_fraction: {quantity: {id: planetlib.solubility.sun_yao2026.dry_na2o_mole_fraction, revision: '1'}, role: input}
+    aluminium_fraction: {quantity: {id: planetlib.solubility.sun_yao2026.dry_al2o3_mole_fraction, revision: '1'},
+      role: input}
+    water_fraction: {quantity: {id: planetlib.solubility.sun_yao2026.binary_water_mass_fraction, revision: '1'},
+      role: derived}
+  relations:
+  - id: planetlib.solubility.sun_yao2026.solubility
+    equation: {id: planetlib.solubility.sun_yao2026.water_mass_fraction, revision: '1'}
+    role: Empirical water relation on the selected mass basis
+    quantities:
+      T: temperature
+      P: total_pressure
+      p_H2O: water_pressure
+      x_Na2O: sodium_fraction
+      x_Al2O3: aluminium_fraction
+      w: water_fraction
+assessments:
+- id: planetlib.solubility.sun_yao2026.initial_extraction.symbolic_v2
+  kind: evidence_support
+  claim: planetlib.solubility.sun_yao2026.definition_correspondence
+  claim_revision: '2'
+  subject: planetlib.solubility.sun_yao2026.definition.symbolic_v2
+  context: planetlib.solubility.sun_yao2026.extraction
+  method: {id: planetlib.solubility.sun_yao2026.source_extraction, revision: '1', description: Record a shared definition
+      for subsequent review without importing provider or consumer support.}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.solubility.sun_yao2026.provider_source
+  - planetlib.solubility.sun_yao2026.provider_snapshot
+  - planetlib.solubility.sun_yao2026.paper_review
+  reasons:
+  - The newly extracted definition has not received a separate recorded correspondence review.
+  - The mathematical source changed to SymPy revision 2; prior support is not transferred.
+- id: planetlib.solubility.sun_yao2026.initial_extraction
+  kind: evidence_support
+  claim: planetlib.solubility.sun_yao2026.definition_correspondence
+  claim_revision: '1'
+  subject: planetlib.solubility.sun_yao2026.definition
+  context: planetlib.solubility.sun_yao2026.extraction
+  method: {id: planetlib.solubility.sun_yao2026.source_extraction, revision: '1', description: Record a shared definition
+      for subsequent review without importing provider or consumer support.}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.solubility.sun_yao2026.provider_source
+  - planetlib.solubility.sun_yao2026.provider_snapshot
+  - planetlib.solubility.sun_yao2026.paper_review
+  reasons:
+  - The newly extracted definition has not received a separate recorded correspondence review.

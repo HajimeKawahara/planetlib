@@ -1,0 +1,439 @@
+schema_version: '0.6'
+model:
+  id: planetlib.thermodynamics.mass_fraction_solute
+  name: Mass-fraction solute Gibbs increment and host response
+  description: One solute and a two-component host at fixed temperature and pressure. The supplied host Gibbs energy
+    and potentials must already be consistent. Solute standard and molar masses are independent of all amounts.
+    This increment supplies no Henry coefficient, empirical fit, multisolute interaction or Sun-Yao Gibbs continuation.
+  implementation: &id001
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:1
+    entry_points:
+    - catalog/thermodynamics/mass_fraction_solute.yaml
+assumptions:
+- statement: 'The normalization counts mass: S=(M1*n1+M2*n2)/Ms; it is not a host mole sum.'
+  evidence:
+  - planetlib.thermodynamics.mass_fraction_solute.source
+- statement: Host mixing is included in the supplied host model only once; add this scalar and both host responses
+    consistently.
+  evidence:
+  - planetlib.thermodynamics.mass_fraction_solute.source
+- statement: Interior derivatives require positive host and solute; the zero-solute energy limit is continuous but
+    its insertion potential is minus infinity.
+  evidence:
+  - planetlib.thermodynamics.mass_fraction_solute.source
+domains:
+- kind: scientific_applicability
+  status: unknown
+  description: No target-specific physical assessment is asserted by this shared definition.
+  conditions: []
+  evidence:
+  - planetlib.thermodynamics.mass_fraction_solute.source
+limitations:
+- statement: One solute and a two-component host at fixed temperature and pressure. The supplied host Gibbs energy
+    and potentials must already be consistent. Solute standard and molar masses are independent of all amounts.
+    This increment supplies no Henry coefficient, empirical fit, multisolute interaction or Sun-Yao Gibbs continuation.
+  evidence:
+  - planetlib.thermodynamics.mass_fraction_solute.source
+claims:
+- id: planetlib.thermodynamics.mass_fraction_solute.mathematical_consistency
+  revision: '1'
+  kind: theoretical
+  statement: After substituting the stored equivalent-host and mass-fraction relations, derivatives of the Gibbs
+    increment yield all three stored potential increments, satisfy Euler and mixed-derivative symmetry, and preserve
+    the zero-solute energy limit.
+  scope: One solute and a two-component host at fixed temperature and pressure. The supplied host Gibbs energy and
+    potentials must already be consistent. Solute standard and molar masses are independent of all amounts. This
+    increment supplies no Henry coefficient, empirical fit, multisolute interaction or Sun-Yao Gibbs continuation.
+    The executable checks use stored symbolic definitions; these are not empirical or code-correspondence claims.
+  mathematical_models:
+  - {id: planetlib.thermodynamics.mass_fraction_solute.model, revision: '1'}
+- id: planetlib.thermodynamics.mass_fraction_solute.source_correspondence
+  revision: '1'
+  kind: theoretical
+  statement: The extraction preserves the selected source conventions and implementation intent.
+  scope: Requires a separate source-to-definition review; symbolic identities alone do not establish provider equivalence.
+  mathematical_models:
+  - {id: planetlib.thermodynamics.mass_fraction_solute.model, revision: '1'}
+- id: planetlib.thermodynamics.mass_fraction_solute.physical_applicability
+  revision: '1'
+  kind: physical_validation
+  statement: The partial model is empirically adequate for a specified consumer environment.
+  scope: No target material, error criterion or independent empirical comparison is specified.
+  mathematical_models:
+  - {id: planetlib.thermodynamics.mass_fraction_solute.model, revision: '1'}
+evidence:
+- id: planetlib.thermodynamics.mass_fraction_solute.source
+  kind: implementation
+  summary: Pinned provider formulas and quantity conventions inspected for extraction.
+  sources:
+  - https://github.com/HajimeKawahara/exoeos/blob/1032f58872bdef9d48c8b1ce2a16a473ced97f3c/src/exoeos/mass_fraction_solute.py
+  - https://github.com/HajimeKawahara/exoeos/blob/1032f58872bdef9d48c8b1ce2a16a473ced97f3c/mceg/contracts/mass_fraction_solute.yaml
+  scope: The source and contract identify a mathematical construction on a total-liquid mass denominator. Its historical
+    numerical assessments remain upstream; no physical solubility calibration is inherited.
+  provenance:
+    role: implementation
+    location: The source functions identified by the immutable URLs.
+    inspection: inspected
+    note: Source inspection identifies conventions; no provider support is transferred.
+- id: planetlib.thermodynamics.mass_fraction_solute.symbolic_checks
+  kind: theory
+  summary: Reproducible symbolic residual and limiting-case checks against the stored relations.
+  sources:
+  - tests/test_thermodynamics.py
+  scope: After substituting the stored equivalent-host and mass-fraction relations, derivatives of the Gibbs increment
+    yield all three stored potential increments, satisfy Euler and mixed-derivative symmetry, and preserve the zero-solute
+    energy limit. Test execution and scientific support must be recorded separately; these checks do not run the
+    numerical providers.
+- id: planetlib.thermodynamics.mass_fraction_solute.symbolic_run_20261127
+  kind: theory
+  subject: planetlib.thermodynamics.mass_fraction_solute.definition
+  context: planetlib.thermodynamics.mass_fraction_solute.symbolic_review_20261127
+  summary: The stored-expression derivations passed in the recorded 32-test run; their equations, assumptions
+    and claim scope were reviewed.
+  sources:
+  - tests/test_thermodynamics.py
+  - reviews/symbolic_checks_20261127.json
+  artifacts:
+  - source: tests/test_thermodynamics.py
+    sha256: 165ef2ecda35f1a983aab8c00fb73cddb4d9ae4ea11d1db727eb4fad72148780
+  - source: reviews/symbolic_checks_20261127.json
+    sha256: 5fd7c6c961971a2911a29862432579cbca20022b227a8748d6b78cd45bb814d5
+  scope: Supports only the attached mathematical identities within their stated domains. A finite symbolic
+    check is not a formal proof certificate or a numerical-provider validation.
+subjects:
+- id: planetlib.thermodynamics.mass_fraction_solute.definition
+  implementation: *id001
+  selected_files: {catalog/thermodynamics/mass_fraction_solute.yaml: null}
+contexts:
+- {id: planetlib.thermodynamics.mass_fraction_solute.extraction, scope: Initial definition extraction and explicit
+    mathematical checks; provider execution and physical applicability remain separate.}
+- id: planetlib.thermodynamics.mass_fraction_solute.symbolic_review_20261127
+  scope: Review of conditional symbolic identities on the domains declared by the selected definitions.
+    This context does not assess source correspondence, provider execution or physical applicability.
+  settings:
+    review_date: '2026-11-27'
+    sympy: 1.14.0
+quantities:
+- id: planetlib.thermodynamics.mass_fraction_solute.n1
+  revision: '1'
+  latex: n_1
+  description: Amount of dry host component 1.
+  unit: mol
+  domain: Nonnegative amount with positive total host mass; interior derivatives use positive amounts.
+- id: planetlib.thermodynamics.mass_fraction_solute.n2
+  revision: '1'
+  latex: n_2
+  description: Amount of dry host component 2.
+  unit: mol
+  domain: Nonnegative amount with positive total host mass; interior derivatives use positive amounts.
+- id: planetlib.thermodynamics.mass_fraction_solute.M1
+  revision: '1'
+  latex: M_1
+  description: Molar mass of host component 1 in the same formula-unit basis as n1.
+  unit: kg mol^-1
+  domain: Positive and composition independent.
+- id: planetlib.thermodynamics.mass_fraction_solute.M2
+  revision: '1'
+  latex: M_2
+  description: Molar mass of host component 2 in the same formula-unit basis as n2.
+  unit: kg mol^-1
+  domain: Positive and composition independent.
+- id: planetlib.thermodynamics.mass_fraction_solute.Ms
+  revision: '1'
+  latex: M_s
+  description: Molar mass of the counted solute species, including its atomic or molecular convention.
+  unit: kg mol^-1
+  domain: Positive and composition independent.
+- id: planetlib.thermodynamics.mass_fraction_solute.ns
+  revision: '1'
+  latex: n_s
+  description: Amount of the solute species counted by Ms.
+  unit: mol
+  domain: Positive interior amount; zero solute is a separate continuous energy limit.
+- id: planetlib.thermodynamics.mass_fraction_solute.S
+  revision: '1'
+  latex: N_*
+  description: Total host mass divided by solute molar mass; a mass-equivalent amount, not the host molecular count.
+  unit: mol
+  domain: Positive host mass; two-component host in this minimal model.
+- id: planetlib.thermodynamics.mass_fraction_solute.w
+  revision: '1'
+  latex: w
+  description: Solute mass divided by host mass plus solute mass.
+  unit: '1'
+  domain: Strictly between zero and one in the differentiable interior.
+- id: planetlib.thermodynamics.mass_fraction_solute.u0
+  revision: '1'
+  latex: u_s^0
+  description: Solute standard chemical potential divided by R T.
+  unit: '1'
+  domain: Finite, fixed with respect to all component amounts.
+- id: planetlib.thermodynamics.mass_fraction_solute.F
+  revision: '1'
+  latex: \Delta G/(RT)
+  description: Added extensive Gibbs energy divided by R T, to be added to an already mixed host energy.
+  unit: mol
+  domain: Same R and fixed T/P as the supplied host model; host mixing is not repeated.
+- id: planetlib.thermodynamics.mass_fraction_solute.us
+  revision: '1'
+  latex: u_s
+  description: Solute chemical potential divided by R T.
+  unit: '1'
+  domain: Positive solute and host amounts.
+- id: planetlib.thermodynamics.mass_fraction_solute.du1
+  revision: '1'
+  latex: \Delta u_1
+  description: Increment to host component 1 chemical potential divided by R T.
+  unit: '1'
+  domain: Added to the corresponding derivative of the supplied host Gibbs energy.
+- id: planetlib.thermodynamics.mass_fraction_solute.du2
+  revision: '1'
+  latex: \Delta u_2
+  description: Increment to host component 2 chemical potential divided by R T.
+  unit: '1'
+  domain: Added to the corresponding derivative of the supplied host Gibbs energy.
+equations:
+- id: planetlib.thermodynamics.mass_fraction_solute.equivalent_host
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''S'', positive=True), Mul(Pow(Symbol(''Ms'', positive=True),
+      Integer(-1)), Add(Mul(Symbol(''M1'', positive=True), Symbol(''n1'', positive=True)), Mul(Symbol(''M2'', positive=True),
+      Symbol(''n2'', positive=True)))))'}
+  description: Convert host mass to solute-equivalent amount.
+  scope: One solute and a two-component host at fixed temperature and pressure. The supplied host Gibbs energy and
+    potentials must already be consistent. Solute standard and molar masses are independent of all amounts. This
+    increment supplies no Henry coefficient, empirical fit, multisolute interaction or Sun-Yao Gibbs continuation.
+  symbols:
+    M1: {latex: M_1, description: Molar mass of host component 1 in the same formula-unit basis as n1., unit: kg
+        mol^-1}
+    M2: {latex: M_2, description: Molar mass of host component 2 in the same formula-unit basis as n2., unit: kg
+        mol^-1}
+    Ms: {latex: M_s, description: 'Molar mass of the counted solute species, including its atomic or molecular convention.',
+      unit: kg mol^-1}
+    S: {latex: N_*, description: 'Total host mass divided by solute molar mass; a mass-equivalent amount, not the
+        host molecular count.', unit: mol}
+    n1: {latex: n_1, description: Amount of dry host component 1., unit: mol}
+    n2: {latex: n_2, description: Amount of dry host component 2., unit: mol}
+  assumptions: &id002
+  - 'The normalization counts mass: S=(M1*n1+M2*n2)/Ms; it is not a host mole sum.'
+  - Host mixing is included in the supplied host model only once; add this scalar and both host responses consistently.
+  - Interior derivatives require positive host and solute; the zero-solute energy limit is continuous but its insertion
+    potential is minus infinity.
+  evidence:
+  - planetlib.thermodynamics.mass_fraction_solute.source
+- id: planetlib.thermodynamics.mass_fraction_solute.mass_fraction
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''w''), Mul(Symbol(''ns'', positive=True), Pow(Add(Symbol(''S'',
+      positive=True), Symbol(''ns'', positive=True)), Integer(-1))))'}
+  description: Total-liquid solute mass fraction.
+  scope: One solute and a two-component host at fixed temperature and pressure. The supplied host Gibbs energy and
+    potentials must already be consistent. Solute standard and molar masses are independent of all amounts. This
+    increment supplies no Henry coefficient, empirical fit, multisolute interaction or Sun-Yao Gibbs continuation.
+  symbols:
+    S: {latex: N_*, description: 'Total host mass divided by solute molar mass; a mass-equivalent amount, not the
+        host molecular count.', unit: mol}
+    ns: {latex: n_s, description: Amount of the solute species counted by Ms., unit: mol}
+    w: {latex: w, description: Solute mass divided by host mass plus solute mass., unit: '1'}
+  assumptions: *id002
+  evidence:
+  - planetlib.thermodynamics.mass_fraction_solute.source
+- id: planetlib.thermodynamics.mass_fraction_solute.gibbs_increment
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''F''), Add(Mul(Symbol(''S'', positive=True), log(Add(Integer(1),
+      Mul(Integer(-1), Symbol(''w''))))), Mul(Symbol(''ns'', positive=True), Symbol(''u0'')), Mul(Symbol(''ns'',
+      positive=True), log(Symbol(''w'')))))'}
+  description: Extensive increment to the host Gibbs energy.
+  scope: One solute and a two-component host at fixed temperature and pressure. The supplied host Gibbs energy and
+    potentials must already be consistent. Solute standard and molar masses are independent of all amounts. This
+    increment supplies no Henry coefficient, empirical fit, multisolute interaction or Sun-Yao Gibbs continuation.
+  symbols:
+    F: {latex: \Delta G/(RT), description: 'Added extensive Gibbs energy divided by R T, to be added to an already
+        mixed host energy.', unit: mol}
+    S: {latex: N_*, description: 'Total host mass divided by solute molar mass; a mass-equivalent amount, not the
+        host molecular count.', unit: mol}
+    ns: {latex: n_s, description: Amount of the solute species counted by Ms., unit: mol}
+    u0: {latex: u_s^0, description: Solute standard chemical potential divided by R T., unit: '1'}
+    w: {latex: w, description: Solute mass divided by host mass plus solute mass., unit: '1'}
+  assumptions: *id002
+  evidence:
+  - planetlib.thermodynamics.mass_fraction_solute.source
+- id: planetlib.thermodynamics.mass_fraction_solute.solute_potential
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''us''), Add(Symbol(''u0''), log(Symbol(''w''))))'}
+  description: Solute derivative.
+  scope: One solute and a two-component host at fixed temperature and pressure. The supplied host Gibbs energy and
+    potentials must already be consistent. Solute standard and molar masses are independent of all amounts. This
+    increment supplies no Henry coefficient, empirical fit, multisolute interaction or Sun-Yao Gibbs continuation.
+  symbols:
+    u0: {latex: u_s^0, description: Solute standard chemical potential divided by R T., unit: '1'}
+    us: {latex: u_s, description: Solute chemical potential divided by R T., unit: '1'}
+    w: {latex: w, description: Solute mass divided by host mass plus solute mass., unit: '1'}
+  assumptions: *id002
+  evidence:
+  - planetlib.thermodynamics.mass_fraction_solute.source
+- id: planetlib.thermodynamics.mass_fraction_solute.host_response_1
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''du1''), Mul(Symbol(''M1'', positive=True), Pow(Symbol(''Ms'',
+      positive=True), Integer(-1)), log(Add(Integer(1), Mul(Integer(-1), Symbol(''w''))))))'}
+  description: Host component 1 derivative.
+  scope: One solute and a two-component host at fixed temperature and pressure. The supplied host Gibbs energy and
+    potentials must already be consistent. Solute standard and molar masses are independent of all amounts. This
+    increment supplies no Henry coefficient, empirical fit, multisolute interaction or Sun-Yao Gibbs continuation.
+  symbols:
+    M1: {latex: M_1, description: Molar mass of host component 1 in the same formula-unit basis as n1., unit: kg
+        mol^-1}
+    Ms: {latex: M_s, description: 'Molar mass of the counted solute species, including its atomic or molecular convention.',
+      unit: kg mol^-1}
+    du1: {latex: \Delta u_1, description: Increment to host component 1 chemical potential divided by R T., unit: '1'}
+    w: {latex: w, description: Solute mass divided by host mass plus solute mass., unit: '1'}
+  assumptions: *id002
+  evidence:
+  - planetlib.thermodynamics.mass_fraction_solute.source
+- id: planetlib.thermodynamics.mass_fraction_solute.host_response_2
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''du2''), Mul(Symbol(''M2'', positive=True), Pow(Symbol(''Ms'',
+      positive=True), Integer(-1)), log(Add(Integer(1), Mul(Integer(-1), Symbol(''w''))))))'}
+  description: Host component 2 derivative.
+  scope: One solute and a two-component host at fixed temperature and pressure. The supplied host Gibbs energy and
+    potentials must already be consistent. Solute standard and molar masses are independent of all amounts. This
+    increment supplies no Henry coefficient, empirical fit, multisolute interaction or Sun-Yao Gibbs continuation.
+  symbols:
+    M2: {latex: M_2, description: Molar mass of host component 2 in the same formula-unit basis as n2., unit: kg
+        mol^-1}
+    Ms: {latex: M_s, description: 'Molar mass of the counted solute species, including its atomic or molecular convention.',
+      unit: kg mol^-1}
+    du2: {latex: \Delta u_2, description: Increment to host component 2 chemical potential divided by R T., unit: '1'}
+    w: {latex: w, description: Solute mass divided by host mass plus solute mass., unit: '1'}
+  assumptions: *id002
+  evidence:
+  - planetlib.thermodynamics.mass_fraction_solute.source
+mathematical_models:
+- id: planetlib.thermodynamics.mass_fraction_solute.model
+  revision: '1'
+  description: Mass-fraction solute Gibbs increment and host response.
+  scope: One solute and a two-component host at fixed temperature and pressure. The supplied host Gibbs energy and
+    potentials must already be consistent. Solute standard and molar masses are independent of all amounts. This
+    increment supplies no Henry coefficient, empirical fit, multisolute interaction or Sun-Yao Gibbs continuation.
+  quantities:
+    n1: {quantity: {id: planetlib.thermodynamics.mass_fraction_solute.n1, revision: '1'}, role: input}
+    n2: {quantity: {id: planetlib.thermodynamics.mass_fraction_solute.n2, revision: '1'}, role: input}
+    M1: {quantity: {id: planetlib.thermodynamics.mass_fraction_solute.M1, revision: '1'}, role: parameter}
+    M2: {quantity: {id: planetlib.thermodynamics.mass_fraction_solute.M2, revision: '1'}, role: parameter}
+    Ms: {quantity: {id: planetlib.thermodynamics.mass_fraction_solute.Ms, revision: '1'}, role: parameter}
+    ns: {quantity: {id: planetlib.thermodynamics.mass_fraction_solute.ns, revision: '1'}, role: input}
+    S: {quantity: {id: planetlib.thermodynamics.mass_fraction_solute.S, revision: '1'}, role: derived}
+    w: {quantity: {id: planetlib.thermodynamics.mass_fraction_solute.w, revision: '1'}, role: derived}
+    u0: {quantity: {id: planetlib.thermodynamics.mass_fraction_solute.u0, revision: '1'}, role: input}
+    F: {quantity: {id: planetlib.thermodynamics.mass_fraction_solute.F, revision: '1'}, role: derived}
+    us: {quantity: {id: planetlib.thermodynamics.mass_fraction_solute.us, revision: '1'}, role: derived}
+    du1: {quantity: {id: planetlib.thermodynamics.mass_fraction_solute.du1, revision: '1'}, role: derived}
+    du2: {quantity: {id: planetlib.thermodynamics.mass_fraction_solute.du2, revision: '1'}, role: derived}
+  relations:
+  - id: planetlib.thermodynamics.mass_fraction_solute.equivalent_host_relation
+    equation: {id: planetlib.thermodynamics.mass_fraction_solute.equivalent_host, revision: '1'}
+    role: Convert host mass to solute-equivalent amount
+    quantities:
+      M1: M1
+      M2: M2
+      Ms: Ms
+      S: S
+      n1: n1
+      n2: n2
+  - id: planetlib.thermodynamics.mass_fraction_solute.mass_fraction_relation
+    equation: {id: planetlib.thermodynamics.mass_fraction_solute.mass_fraction, revision: '1'}
+    role: Total-liquid solute mass fraction
+    quantities: {S: S, ns: ns, w: w}
+  - id: planetlib.thermodynamics.mass_fraction_solute.gibbs_increment_relation
+    equation: {id: planetlib.thermodynamics.mass_fraction_solute.gibbs_increment, revision: '1'}
+    role: Extensive increment to the host Gibbs energy
+    quantities:
+      F: F
+      S: S
+      ns: ns
+      u0: u0
+      w: w
+  - id: planetlib.thermodynamics.mass_fraction_solute.solute_potential_relation
+    equation: {id: planetlib.thermodynamics.mass_fraction_solute.solute_potential, revision: '1'}
+    role: Solute derivative
+    quantities: {u0: u0, us: us, w: w}
+  - id: planetlib.thermodynamics.mass_fraction_solute.host_response_1_relation
+    equation: {id: planetlib.thermodynamics.mass_fraction_solute.host_response_1, revision: '1'}
+    role: Host component 1 derivative
+    quantities:
+      M1: M1
+      Ms: Ms
+      du1: du1
+      w: w
+  - id: planetlib.thermodynamics.mass_fraction_solute.host_response_2_relation
+    equation: {id: planetlib.thermodynamics.mass_fraction_solute.host_response_2, revision: '1'}
+    role: Host component 2 derivative
+    quantities:
+      M2: M2
+      Ms: Ms
+      du2: du2
+      w: w
+assessments:
+- id: planetlib.thermodynamics.mass_fraction_solute.mathematical_consistency.initial
+  kind: evidence_support
+  claim: planetlib.thermodynamics.mass_fraction_solute.mathematical_consistency
+  claim_revision: '1'
+  subject: planetlib.thermodynamics.mass_fraction_solute.definition
+  context: planetlib.thermodynamics.mass_fraction_solute.extraction
+  method: {id: planetlib.thermodynamics.mass_fraction_solute.initial_review, revision: '1', description: 'Register
+      separate mathematical, correspondence and applicability claims for review.'}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.thermodynamics.mass_fraction_solute.symbolic_checks
+  reasons:
+  - The initial extraction does not itself record a reviewed support judgment for this claim.
+- id: planetlib.thermodynamics.mass_fraction_solute.source_correspondence.initial
+  kind: evidence_support
+  claim: planetlib.thermodynamics.mass_fraction_solute.source_correspondence
+  claim_revision: '1'
+  subject: planetlib.thermodynamics.mass_fraction_solute.definition
+  context: planetlib.thermodynamics.mass_fraction_solute.extraction
+  method: {id: planetlib.thermodynamics.mass_fraction_solute.initial_review, revision: '1', description: 'Register
+      separate mathematical, correspondence and applicability claims for review.'}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.thermodynamics.mass_fraction_solute.source
+  reasons:
+  - The initial extraction does not itself record a reviewed support judgment for this claim.
+- id: planetlib.thermodynamics.mass_fraction_solute.mathematical_consistency.review_20261127
+  kind: evidence_support
+  claim: planetlib.thermodynamics.mass_fraction_solute.mathematical_consistency
+  claim_revision: '1'
+  subject: planetlib.thermodynamics.mass_fraction_solute.definition
+  context: planetlib.thermodynamics.mass_fraction_solute.symbolic_review_20261127
+  method:
+    id: planetlib.thermodynamics.mass_fraction_solute.symbolic_derivation_review
+    revision: '1'
+    description: Inspect the derivation and domain; execute substitution, differentiation, simplification
+      and limiting-case checks against the serialized definitions.
+  status: supported
+  origin: reviewed
+  evidence:
+  - planetlib.thermodynamics.mass_fraction_solute.symbolic_run_20261127
+  reasons:
+  - The stated conditional identity follows in the reviewed symbolic checks. Source correspondence and
+    physical applicability are separate questions.
+  mathematical_model_pins:
+  - id: planetlib.thermodynamics.mass_fraction_solute.model
+    revision: '1'
+    sha256: fd447925af53057283ebcbddf73442d5c014c1c75ccdc551fa2cd530024776e4
+- id: planetlib.thermodynamics.mass_fraction_solute.physical_applicability.initial
+  kind: evidence_support
+  claim: planetlib.thermodynamics.mass_fraction_solute.physical_applicability
+  claim_revision: '1'
+  subject: planetlib.thermodynamics.mass_fraction_solute.definition
+  context: planetlib.thermodynamics.mass_fraction_solute.extraction
+  method: {id: planetlib.thermodynamics.mass_fraction_solute.initial_review, revision: '1', description: 'Register
+      separate mathematical, correspondence and applicability claims for review.'}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.thermodynamics.mass_fraction_solute.source
+  reasons:
+  - The initial extraction does not itself record a reviewed support judgment for this claim.
