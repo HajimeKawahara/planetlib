@@ -1,0 +1,393 @@
+schema_version: '0.6'
+model:
+  id: planetlib.radiation.line
+  name: Bound-bound line coefficients with supplied populations
+  description: Shared local extinction and spontaneous emission for one transition.
+  implementation:
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:2
+    entry_points:
+    - catalog/radiation/line_coefficients.yaml
+assumptions:
+- statement: Scalar, unpolarized coefficients in a static local rest frame use the same normalized frequency profile
+    and line-center prefactors for absorption, stimulated emission, and spontaneous emission.
+  evidence:
+  - planetlib.radiation.line.escape_source
+domains:
+- kind: scientific_applicability
+  status: unknown
+  description: No planetary environment or population closure is validated here.
+  conditions: []
+  evidence:
+  - planetlib.radiation.line.escape_source
+limitations:
+- statement: Populations, atomic data, profile shape, line selection, and the radiation boundary problem must be
+    supplied separately. No LTE or statistical equilibrium closure, Voigt width, frequency quadrature, or solver
+    is adopted.
+  evidence:
+  - planetlib.radiation.line.escape_source
+- statement: ExoJAX line strengths use wavenumber in cm^-1 and normalization per absorber. They are not these volume
+    coefficients per Hz. A correspondence must declare species density, level fractions, the frequency-to-wavenumber
+    Jacobian, and the emissivity angular convention before sharing an implementation binding.
+  evidence:
+  - planetlib.radiation.line.exojax_source
+claims:
+- id: planetlib.radiation.line.extraction
+  revision: '2'
+  kind: theoretical
+  statement: The two relations preserve the local per-transition coefficient definitions extracted from escape.coupled_hydrogen
+    line_transfer_coefficients revision 1.
+  scope: Definition extraction only; independent review and provider bindings remain open.
+  equations:
+  - {id: planetlib.radiation.line.extinction, revision: '2'}
+  - {id: planetlib.radiation.line.emission, revision: '2'}
+  mathematical_models:
+  - {id: planetlib.radiation.line.coefficients, revision: '2'}
+- id: planetlib.radiation.line.extraction
+  revision: '1'
+  kind: theoretical
+  statement: The two relations preserve the local per-transition coefficient definitions extracted from escape.coupled_hydrogen
+    line_transfer_coefficients revision 1.
+  scope: Definition extraction only; independent review and provider bindings remain open.
+  equations:
+  - {id: planetlib.radiation.line.extinction, revision: '1'}
+  - {id: planetlib.radiation.line.emission, revision: '1'}
+  mathematical_models:
+  - {id: planetlib.radiation.line.coefficients, revision: '1'}
+evidence:
+- id: planetlib.radiation.line.escape_source
+  kind: theory
+  summary: Inspected upstream equation and implementation of the two local line coefficients.
+  sources:
+  - https://github.com/HajimeKawahara/exojax-escape/blob/18064c9f743c38651b94c2a53d3890d2032852bb/mceg/contracts/escape.coupled_hydrogen.yaml
+  - https://github.com/HajimeKawahara/exojax-escape/blob/18064c9f743c38651b94c2a53d3890d2032852bb/src/escape/coupled_hydrogen.py
+  scope: Equation line_transfer_coefficients revision 1 and radiation_state were inspected locally. The upstream
+    sum is represented here by one transition; hydrogen-specific broadening and finite-grid normalization are not
+    extracted.
+  provenance:
+    role: primary
+    location: line_transfer_coefficients and CoupledHydrogenModel.radiation_state
+    inspection: partial
+    note: Local files matched the recorded clean upstream commit. This is a source record, not inherited numerical
+      or physical support from that contract.
+- id: planetlib.radiation.line.exojax_source
+  kind: implementation
+  summary: Inspected the distinct ExoJAX LTE line-strength convention.
+  sources:
+  - https://github.com/HajimeKawahara/exojax/blob/19fe37b5509d931e6fb85bcd731be60877751544/src/exojax/database/core_atom/line_strength.py
+  - https://github.com/HajimeKawahara/exojax/blob/19fe37b5509d931e6fb85bcd731be60877751544/src/exojax/database/core/line_strength.py
+  scope: Convention comparison only; no ExoJAX binding or equivalence claim.
+  provenance:
+    role: implementation
+    location: line_strength_atom and line_strength
+    inspection: partial
+    note: These files matched HEAD in a checkout with unrelated local changes. No tracked MCEG contract was found;
+      local untracked non-LTE work is excluded.
+subjects:
+- id: planetlib.radiation.line.definition
+  implementation:
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:1
+    entry_points:
+    - catalog/radiation/line_coefficients.yaml
+  selected_files: {catalog/radiation/line_coefficients.yaml: null}
+- id: planetlib.radiation.line.definition.symbolic_v2
+  implementation:
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:2
+    entry_points:
+    - catalog/radiation/line_coefficients.yaml
+  selected_files: {catalog/radiation/line_coefficients.yaml: null}
+contexts:
+- {id: planetlib.radiation.line.extraction_context, scope: Static source inspection of the shared definitions; no
+    numerical or physical validation.}
+quantities:
+- id: planetlib.radiation.line.frequency
+  revision: '1'
+  latex: \nu
+  description: Ordinary photon frequency, not angular frequency or wavenumber.
+  unit: Hz
+  domain: Positive frequencies in the local rest frame.
+- id: planetlib.radiation.line.center
+  revision: '1'
+  latex: \nu_0
+  description: Positive transition frequency used in the line-center prefactors.
+  unit: Hz
+  domain: One specified upper-to-lower bound transition.
+- id: planetlib.radiation.line.einstein_a
+  revision: '1'
+  latex: A_{ul}
+  description: Spontaneous downward transition probability per unit time.
+  unit: s^-1
+  domain: Nonnegative Einstein A for the same upper and lower states.
+- id: planetlib.radiation.line.upper_weight
+  revision: '1'
+  latex: g_u
+  description: Statistical weight of the upper state counted by the upper population.
+  unit: '1'
+  domain: Positive; level grouping must match the supplied Einstein coefficient.
+- id: planetlib.radiation.line.lower_weight
+  revision: '1'
+  latex: g_l
+  description: Statistical weight of the lower state counted by the lower population.
+  unit: '1'
+  domain: Positive; level grouping must match the supplied Einstein coefficient.
+- id: planetlib.radiation.line.upper_density
+  revision: '1'
+  latex: n_u
+  description: Upper-state particles per physical volume, summed over its statistical weight.
+  unit: cm^-3
+  domain: Nonnegative population at the local material state; no equilibrium law imposed.
+- id: planetlib.radiation.line.lower_density
+  revision: '1'
+  latex: n_l
+  description: Lower-state particles per physical volume, summed over its statistical weight.
+  unit: cm^-3
+  domain: Nonnegative population at the same local material state; no equilibrium law imposed.
+- id: planetlib.radiation.line.profile
+  revision: '1'
+  latex: \phi_\nu
+  description: Common nonnegative line profile with integral over ordinary frequency equal to one.
+  unit: Hz^-1
+  domain: Integral from zero to infinity of phi_nu dnu is one. No line shape or finite window renormalization is
+    selected; numerical profile treatment belongs to the provider.
+  coordinates:
+  - {id: planetlib.radiation.line.frequency, revision: '1'}
+- id: planetlib.radiation.line.light_speed
+  revision: '1'
+  latex: c
+  description: Vacuum speed of light expressed in cgs length units.
+  unit: cm s^-1
+  domain: Positive physical constant.
+- id: planetlib.radiation.line.planck_constant
+  revision: '1'
+  latex: h
+  description: Planck constant for ordinary frequency, not the reduced Planck constant.
+  unit: erg s
+  domain: Positive physical constant.
+- id: planetlib.radiation.line.extinction_coefficient
+  revision: '1'
+  latex: \chi_\nu
+  description: Signed inverse path length including absorption minus stimulated emission.
+  unit: cm^-1
+  domain: One line at the local state; negative values under population inversion are retained. This coefficient
+    does not establish the validity of a maser solver.
+  coordinates:
+  - {id: planetlib.radiation.line.frequency, revision: '1'}
+- id: planetlib.radiation.line.emission_coefficient
+  revision: '1'
+  latex: j_\nu
+  description: Isotropic spontaneous emitted energy per time, volume, solid angle, and ordinary frequency.
+  unit: erg s^-1 cm^-3 sr^-1 Hz^-1
+  domain: One line; the angle-integrated emission coefficient is 4 pi j_nu.
+  coordinates:
+  - {id: planetlib.radiation.line.frequency, revision: '1'}
+equations:
+- id: planetlib.radiation.line.extinction
+  revision: '2'
+  description: Absorption and stimulated emission for one bound-bound line.
+  scope: Supplied populations and a common normalized frequency profile at one local state.
+  symbols:
+    chi: {latex: \chi_\nu, description: Signed extinction, unit: cm^-1}
+    c: {latex: c, description: Vacuum light speed, unit: cm s^-1}
+    A: {latex: 'A_{ul}', description: Spontaneous downward rate, unit: s^-1}
+    nu0: {latex: \nu_0, description: Transition frequency, unit: Hz}
+    gu: {latex: g_u, description: Upper statistical weight, unit: '1'}
+    gl: {latex: g_l, description: Lower statistical weight, unit: '1'}
+    nl: {latex: n_l, description: Lower number density, unit: cm^-3}
+    nu_population: {latex: n_u, description: Upper number density, unit: cm^-3}
+    phi: {latex: \phi_\nu, description: Normalized frequency profile, unit: Hz^-1}
+    frequency: {latex: \nu, description: Ordinary frequency coordinate, unit: Hz}
+  assumptions:
+  - Scalar unpolarized coefficients; the same profile applies to absorption and stimulated emission.
+  - Line-center prefactors are the narrow-line convention; no population law is assumed.
+  - Signed extinction is not clipped to zero.
+  - SymPy symbols are numerical magnitudes in their declared cgs/Hz units; the coefficient relation is pointwise
+    in ordinary frequency.
+  evidence:
+  - planetlib.radiation.line.escape_source
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''chi''), Mul(Rational(1, 8), Pow(pi, Integer(-1)),
+      Symbol(''A''), Pow(Symbol(''c''), Integer(2)), Pow(Symbol(''nu0''), Integer(-2)), Symbol(''phi''), Add(Mul(Integer(-1),
+      Symbol(''nu_population'')), Mul(Pow(Symbol(''gl''), Integer(-1)), Symbol(''gu''), Symbol(''nl'')))))'}
+- id: planetlib.radiation.line.emission
+  revision: '2'
+  description: Isotropic spontaneous emission for the same bound-bound line.
+  scope: Energy per unit volume, time, solid angle, and ordinary frequency.
+  symbols:
+    j: {latex: j_\nu, description: Spontaneous emissivity per steradian, unit: erg s^-1 cm^-3 sr^-1 Hz^-1}
+    h: {latex: h, description: Planck constant, unit: erg s}
+    nu0: {latex: \nu_0, description: Transition frequency, unit: Hz}
+    A: {latex: 'A_{ul}', description: Spontaneous downward rate, unit: s^-1}
+    nu_population: {latex: n_u, description: Upper number density, unit: cm^-3}
+    phi: {latex: \phi_\nu, description: Normalized frequency profile, unit: Hz^-1}
+    frequency: {latex: \nu, description: Ordinary frequency coordinate, unit: Hz}
+  assumptions:
+  - Isotropic emission and the same scalar normalized profile used for extinction.
+  - The emitted photon energy is h nu0 under the line-center convention.
+  - SymPy symbols are numerical magnitudes in their declared cgs/Hz units; the coefficient relation is pointwise
+    in ordinary frequency.
+  evidence:
+  - planetlib.radiation.line.escape_source
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''j''), Mul(Rational(1, 4), Pow(pi, Integer(-1)),
+      Symbol(''A''), Symbol(''h''), Symbol(''nu0''), Symbol(''nu_population''), Symbol(''phi'')))'}
+- id: planetlib.radiation.line.extinction
+  revision: '1'
+  latex: \chi_\nu=\frac{c^2 A_{ul}}{8\pi\nu_0^2}\left(\frac{g_u}{g_l}n_l-n_u\right)\phi_\nu
+  description: Absorption and stimulated emission for one bound-bound line.
+  scope: Supplied populations and a common normalized frequency profile at one local state.
+  symbols:
+    chi: {latex: \chi_\nu, description: Signed extinction, unit: cm^-1}
+    c: {latex: c, description: Vacuum light speed, unit: cm s^-1}
+    A: {latex: 'A_{ul}', description: Spontaneous downward rate, unit: s^-1}
+    nu0: {latex: \nu_0, description: Transition frequency, unit: Hz}
+    gu: {latex: g_u, description: Upper statistical weight, unit: '1'}
+    gl: {latex: g_l, description: Lower statistical weight, unit: '1'}
+    nl: {latex: n_l, description: Lower number density, unit: cm^-3}
+    nu_population: {latex: n_u, description: Upper number density, unit: cm^-3}
+    phi: {latex: \phi_\nu, description: Normalized frequency profile, unit: Hz^-1}
+    frequency: {latex: \nu, description: Ordinary frequency coordinate, unit: Hz}
+  assumptions:
+  - Scalar unpolarized coefficients; the same profile applies to absorption and stimulated emission.
+  - Line-center prefactors are the narrow-line convention; no population law is assumed.
+  - Signed extinction is not clipped to zero.
+  evidence:
+  - planetlib.radiation.line.escape_source
+- id: planetlib.radiation.line.emission
+  revision: '1'
+  latex: j_\nu=\frac{h\nu_0 A_{ul}}{4\pi}n_u\phi_\nu
+  description: Isotropic spontaneous emission for the same bound-bound line.
+  scope: Energy per unit volume, time, solid angle, and ordinary frequency.
+  symbols:
+    j: {latex: j_\nu, description: Spontaneous emissivity per steradian, unit: erg s^-1 cm^-3 sr^-1 Hz^-1}
+    h: {latex: h, description: Planck constant, unit: erg s}
+    nu0: {latex: \nu_0, description: Transition frequency, unit: Hz}
+    A: {latex: 'A_{ul}', description: Spontaneous downward rate, unit: s^-1}
+    nu_population: {latex: n_u, description: Upper number density, unit: cm^-3}
+    phi: {latex: \phi_\nu, description: Normalized frequency profile, unit: Hz^-1}
+    frequency: {latex: \nu, description: Ordinary frequency coordinate, unit: Hz}
+  assumptions:
+  - Isotropic emission and the same scalar normalized profile used for extinction.
+  - The emitted photon energy is h nu0 under the line-center convention.
+  evidence:
+  - planetlib.radiation.line.escape_source
+mathematical_models:
+- id: planetlib.radiation.line.coefficients
+  revision: '2'
+  description: A coefficient pair sharing populations, transition data, and a frequency profile.
+  scope: External inputs are both level populations and the normalized profile; transition data and physical constants
+    are parameters. LTE, non-LTE population closure, broadening, transport, and boundary conditions remain unspecified.
+  quantities:
+    frequency: {quantity: {id: planetlib.radiation.line.frequency, revision: '1'}, role: coordinate}
+    nu0: {quantity: {id: planetlib.radiation.line.center, revision: '1'}, role: parameter}
+    A: {quantity: {id: planetlib.radiation.line.einstein_a, revision: '1'}, role: parameter}
+    gu: {quantity: {id: planetlib.radiation.line.upper_weight, revision: '1'}, role: parameter}
+    gl: {quantity: {id: planetlib.radiation.line.lower_weight, revision: '1'}, role: parameter}
+    upper: {quantity: {id: planetlib.radiation.line.upper_density, revision: '1'}, role: input}
+    lower: {quantity: {id: planetlib.radiation.line.lower_density, revision: '1'}, role: input}
+    profile: {quantity: {id: planetlib.radiation.line.profile, revision: '1'}, role: input}
+    c: {quantity: {id: planetlib.radiation.line.light_speed, revision: '1'}, role: parameter}
+    h: {quantity: {id: planetlib.radiation.line.planck_constant, revision: '1'}, role: parameter}
+    extinction: {quantity: {id: planetlib.radiation.line.extinction_coefficient, revision: '1'}, role: derived}
+    emission: {quantity: {id: planetlib.radiation.line.emission_coefficient, revision: '1'}, role: derived}
+  relations:
+  - id: planetlib.radiation.line.extinction_relation
+    equation: {id: planetlib.radiation.line.extinction, revision: '2'}
+    role: Net extinction including stimulated emission
+    quantities:
+      chi: extinction
+      c: c
+      A: A
+      nu0: nu0
+      gu: gu
+      gl: gl
+      nl: lower
+      nu_population: upper
+      phi: profile
+      frequency: frequency
+  - id: planetlib.radiation.line.emission_relation
+    equation: {id: planetlib.radiation.line.emission, revision: '2'}
+    role: Isotropic spontaneous emission
+    quantities:
+      j: emission
+      h: h
+      nu0: nu0
+      A: A
+      nu_population: upper
+      phi: profile
+      frequency: frequency
+- id: planetlib.radiation.line.coefficients
+  revision: '1'
+  description: A coefficient pair sharing populations, transition data, and a frequency profile.
+  scope: External inputs are both level populations and the normalized profile; transition data and physical constants
+    are parameters. LTE, non-LTE population closure, broadening, transport, and boundary conditions remain unspecified.
+  quantities:
+    frequency: {quantity: {id: planetlib.radiation.line.frequency, revision: '1'}, role: coordinate}
+    nu0: {quantity: {id: planetlib.radiation.line.center, revision: '1'}, role: parameter}
+    A: {quantity: {id: planetlib.radiation.line.einstein_a, revision: '1'}, role: parameter}
+    gu: {quantity: {id: planetlib.radiation.line.upper_weight, revision: '1'}, role: parameter}
+    gl: {quantity: {id: planetlib.radiation.line.lower_weight, revision: '1'}, role: parameter}
+    upper: {quantity: {id: planetlib.radiation.line.upper_density, revision: '1'}, role: input}
+    lower: {quantity: {id: planetlib.radiation.line.lower_density, revision: '1'}, role: input}
+    profile: {quantity: {id: planetlib.radiation.line.profile, revision: '1'}, role: input}
+    c: {quantity: {id: planetlib.radiation.line.light_speed, revision: '1'}, role: parameter}
+    h: {quantity: {id: planetlib.radiation.line.planck_constant, revision: '1'}, role: parameter}
+    extinction: {quantity: {id: planetlib.radiation.line.extinction_coefficient, revision: '1'}, role: derived}
+    emission: {quantity: {id: planetlib.radiation.line.emission_coefficient, revision: '1'}, role: derived}
+  relations:
+  - id: planetlib.radiation.line.extinction_relation
+    equation: {id: planetlib.radiation.line.extinction, revision: '1'}
+    role: Net extinction including stimulated emission
+    quantities:
+      chi: extinction
+      c: c
+      A: A
+      nu0: nu0
+      gu: gu
+      gl: gl
+      nl: lower
+      nu_population: upper
+      phi: profile
+      frequency: frequency
+  - id: planetlib.radiation.line.emission_relation
+    equation: {id: planetlib.radiation.line.emission, revision: '1'}
+    role: Isotropic spontaneous emission
+    quantities:
+      j: emission
+      h: h
+      nu0: nu0
+      A: A
+      nu_population: upper
+      phi: profile
+      frequency: frequency
+assessments:
+- id: planetlib.radiation.line.initial_assessment.symbolic_v2
+  kind: evidence_support
+  claim: planetlib.radiation.line.extraction
+  claim_revision: '2'
+  subject: planetlib.radiation.line.definition.symbolic_v2
+  context: planetlib.radiation.line.extraction_context
+  method: {id: planetlib.radiation.line.initial_inventory, revision: '1', description: Record a reusable definition
+      and retain the need for independent review.}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.radiation.line.escape_source
+  reasons:
+  - The extraction was authored from inspected source records; no independent review is recorded.
+  - Upstream implementation tests and coupled-model assessments are not transferred to this definition.
+  - The mathematical source changed to SymPy revision 2; prior support is not transferred.
+- id: planetlib.radiation.line.initial_assessment
+  kind: evidence_support
+  claim: planetlib.radiation.line.extraction
+  claim_revision: '1'
+  subject: planetlib.radiation.line.definition
+  context: planetlib.radiation.line.extraction_context
+  method: {id: planetlib.radiation.line.initial_inventory, revision: '1', description: Record a reusable definition
+      and retain the need for independent review.}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.radiation.line.escape_source
+  reasons:
+  - The extraction was authored from inspected source records; no independent review is recorded.
+  - Upstream implementation tests and coupled-model assessments are not transferred to this definition.

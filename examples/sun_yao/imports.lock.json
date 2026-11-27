@@ -1,0 +1,14 @@
+{
+  "format": "planetlib.imports.v1",
+  "imports": [
+    {
+      "path": "catalog/solubility/sun_yao2026.yaml",
+      "sha256": "4980c1709e81dc0b8fc9dc0f8e9fd5a7f6d409ea9cb6ac4d250d4a26e06a72cf",
+      "model": {
+        "id": "planetlib.solubility.sun_yao2026.binary_water",
+        "revision": "2",
+        "sha256": "c579e997ec4e59d3f507476f0b8a36d43184d644065af04ab9f0d861c4e85705"
+      }
+    }
+  ]
+}

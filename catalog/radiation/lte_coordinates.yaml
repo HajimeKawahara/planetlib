@@ -1,0 +1,525 @@
+schema_version: '0.6'
+model:
+  id: planetlib.radiation.lte.catalog
+  name: LTE closure and spectral-coordinate conventions
+  description: Scalar unpolarized radiation in a static local rest frame. Both populations refer to one transition
+    of energy h nu0, with positive T and matching statistical weights. Planck intensity is per steradian. Coordinate
+    conversions evaluate the same physical frequency f=c*wavenumber, with c in cm/s and wavenumber in inverse cm.
+    Spectral densities and normalized profiles acquire the Jacobian c; signed extinction, an inverse path length,
+    does not. The existing line-coefficient model uses line-center prefactors, so its LTE source function (for nonzero extinction) is B(nu0,T),
+    not B(f,T) throughout an arbitrary broad line. No transport or population solver is selected.
+  implementation: &id002
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:1
+    entry_points:
+    - catalog/radiation/lte_coordinates.yaml
+assumptions:
+- statement: Scalar unpolarized radiation in a static local rest frame. Both populations refer to one transition
+    of energy h nu0, with positive T and matching statistical weights. Planck intensity is per steradian. Coordinate
+    conversions evaluate the same physical frequency f=c*wavenumber, with c in cm/s and wavenumber in inverse cm.
+    Spectral densities and normalized profiles acquire the Jacobian c; signed extinction, an inverse path length,
+    does not. The existing line-coefficient model uses line-center prefactors, so its LTE source function (for nonzero extinction) is B(nu0,T),
+    not B(f,T) throughout an arbitrary broad line. No transport or population solver is selected.
+  evidence: &id001
+  - planetlib.radiation.lte.upstream
+domains:
+- kind: scientific_applicability
+  status: unknown
+  description: The intended algebraic domain is explicit; no target environment is validated.
+  conditions: []
+  evidence: *id001
+limitations:
+- statement: Symbolic consistency does not establish atomic data, numerical conditioning, provider correspondence
+    or physical applicability.
+  evidence: *id001
+claims:
+- id: planetlib.radiation.lte.line_source_function
+  revision: '1'
+  kind: theoretical
+  statement: Combining this Boltzmann closure with planetlib.radiation.line.coefficients@2 gives j=chi*B(nu0,T)
+    under the shared profile and line-center convention. The ratio j/chi is defined only where chi is nonzero.
+  scope: Conditional algebraic consistency of the recorded definitions; no provider equivalence or empirical accuracy
+    is inferred.
+  mathematical_models:
+  - {id: planetlib.radiation.lte.populations, revision: '1'}
+- id: planetlib.radiation.lte.coordinate_consistency
+  revision: '1'
+  kind: theoretical
+  statement: The coordinate changes preserve spectral integrals and transform transfer coefficients consistently;
+    isotropic hemispheric Planck flux is pi times the intensity.
+  scope: Conditional algebraic consistency of the recorded definitions; no provider equivalence or empirical accuracy
+    is inferred.
+  mathematical_models:
+  - {id: planetlib.radiation.lte.coordinates, revision: '1'}
+evidence:
+- id: planetlib.radiation.lte.upstream
+  kind: theory
+  summary: LTE closure and spectral-coordinate conventions extracted from inspected upstream mathematical conventions.
+  sources:
+  - https://github.com/HajimeKawahara/exojax-escape/blob/18064c9f743c38651b94c2a53d3890d2032852bb/src/escape/hydrogen_populations.py
+  - https://github.com/HajimeKawahara/exojax-escape/blob/18064c9f743c38651b94c2a53d3890d2032852bb/src/escape/hydrogen_continuum.py
+  - https://github.com/HajimeKawahara/exojax/blob/19fe37b5509d931e6fb85bcd731be60877751544/src/exojax/rt/planck.py
+  - https://github.com/HajimeKawahara/exojax/blob/19fe37b5509d931e6fb85bcd731be60877751544/src/exojax/database/core/line_strength.py
+  scope: Scalar unpolarized radiation in a static local rest frame. Both populations refer to one transition of
+    energy h nu0, with positive T and matching statistical weights. Planck intensity is per steradian. Coordinate
+    conversions evaluate the same physical frequency f=c*wavenumber, with c in cm/s and wavenumber in inverse cm.
+    Spectral densities and normalized profiles acquire the Jacobian c; signed extinction, an inverse path length,
+    does not. The existing line-coefficient model uses line-center prefactors, so its LTE source function (for nonzero extinction) is B(nu0,T),
+    not B(f,T) throughout an arbitrary broad line. No transport or population solver is selected.
+  provenance:
+    role: implementation
+    location: The selected source files and MCEG equations at the pinned commits.
+    inspection: inspected
+    note: Sources were read locally; provider test status and empirical support remain upstream.
+- id: planetlib.radiation.lte.checks
+  kind: theory
+  summary: Symbolic residual checks read the stored definitions.
+  sources:
+  - tests/test_atomic_relations.py
+  scope: Conditional identities only; a successful check is not an independent original-source or provider-code
+    review.
+- id: planetlib.radiation.lte.line_definition
+  kind: theory
+  summary: The existing line-coefficient definitions used by the LTE source-function check.
+  sources:
+  - catalog/radiation/line_coefficients.yaml
+  scope: Only planetlib.radiation.line.coefficients revision 2 is combined with the closure; finite-width and non-LTE
+    transport are outside this identity.
+  artifacts:
+  - {source: catalog/radiation/line_coefficients.yaml, sha256: ce64f95b887e2f39864173409b35de169a4c75348ab3c68cd59195cd014ddffe}
+- id: planetlib.radiation.lte.symbolic_run_20261127
+  kind: theory
+  subject: planetlib.radiation.lte.definition
+  context: planetlib.radiation.lte.symbolic_review_20261127
+  summary: The stored-expression derivations passed in the recorded 32-test run; their equations, assumptions
+    and claim scope were reviewed.
+  sources:
+  - tests/test_atomic_relations.py
+  - reviews/symbolic_checks_20261127.json
+  artifacts:
+  - source: tests/test_atomic_relations.py
+    sha256: 41045b86a1bb163296986efbf6993340e3981a9c23c98a1613ece14a3cd0ec6b
+  - source: reviews/symbolic_checks_20261127.json
+    sha256: 5fd7c6c961971a2911a29862432579cbca20022b227a8748d6b78cd45bb814d5
+  - source: catalog/radiation/line_coefficients.yaml
+    sha256: ce64f95b887e2f39864173409b35de169a4c75348ab3c68cd59195cd014ddffe
+  scope: Supports only the attached mathematical identities within their stated domains. A finite symbolic
+    check is not a formal proof certificate or a numerical-provider validation.
+subjects:
+- id: planetlib.radiation.lte.definition
+  implementation: *id002
+  selected_files: {catalog/radiation/lte_coordinates.yaml: null}
+contexts:
+- {id: planetlib.radiation.lte.authoring, scope: 'Scalar unpolarized radiation in a static local rest frame. Both
+    populations refer to one transition of energy h nu0, with positive T and matching statistical weights. Planck
+    intensity is per steradian. Coordinate conversions evaluate the same physical frequency f=c*wavenumber, with
+    c in cm/s and wavenumber in inverse cm. Spectral densities and normalized profiles acquire the Jacobian c; signed
+    extinction, an inverse path length, does not. The existing line-coefficient model uses line-center prefactors,
+    so its LTE source function (for nonzero extinction) is B(nu0,T), not B(f,T) throughout an arbitrary broad line. No transport or population
+    solver is selected.'}
+- id: planetlib.radiation.lte.symbolic_review_20261127
+  scope: Review of conditional symbolic identities on the domains declared by the selected definitions.
+    This context does not assess source correspondence, provider execution or physical applicability.
+  settings:
+    review_date: '2026-11-27'
+    sympy: 1.14.0
+quantities:
+- id: planetlib.radiation.lte.quantity.nl
+  revision: '1'
+  latex: n_l
+  description: Lower-level number density summed over its statistical weight.
+  unit: cm^-3
+  domain: Positive for the population ratio.
+- id: planetlib.radiation.lte.quantity.nu
+  revision: '1'
+  latex: n_u
+  description: Upper-level number density summed over its statistical weight.
+  unit: cm^-3
+  domain: Positive under the adopted Boltzmann closure.
+- id: planetlib.radiation.lte.quantity.gu
+  revision: '1'
+  latex: g_u
+  description: Upper-level statistical weight.
+  unit: '1'
+  domain: Positive; same grouping as the shared line coefficients.
+- id: planetlib.radiation.lte.quantity.gl
+  revision: '1'
+  latex: g_l
+  description: Lower-level statistical weight.
+  unit: '1'
+  domain: Positive; same grouping as the shared line coefficients.
+- id: planetlib.radiation.lte.quantity.nu0
+  revision: '1'
+  latex: \nu_0
+  description: Transition frequency corresponding to the upper-minus-lower energy.
+  unit: Hz
+  domain: Positive; distinct from the spectral evaluation coordinate.
+- id: planetlib.radiation.lte.quantity.T
+  revision: '1'
+  latex: T
+  description: LTE material and Planck radiation temperature.
+  unit: K
+  domain: Positive.
+- id: planetlib.radiation.lte.quantity.h
+  revision: '1'
+  latex: h
+  description: Planck constant for ordinary frequency.
+  unit: erg s
+  domain: Positive.
+- id: planetlib.radiation.lte.quantity.k
+  revision: '1'
+  latex: k_{\rm B}
+  description: Boltzmann constant.
+  unit: erg K^-1
+  domain: Positive.
+- id: planetlib.radiation.lte.quantity.c
+  revision: '1'
+  latex: c
+  description: Vacuum speed of light in cgs length units.
+  unit: cm s^-1
+  domain: Positive.
+- id: planetlib.radiation.lte.quantity.frequency
+  revision: '1'
+  latex: \nu
+  description: Ordinary spectral frequency.
+  unit: Hz
+  domain: Positive; evaluated at c times the wavenumber.
+- id: planetlib.radiation.lte.quantity.wavenumber
+  revision: '1'
+  latex: \widetilde\nu
+  description: Spectroscopic wavenumber, not angular wavenumber.
+  unit: cm^-1
+  domain: Positive; same photon as frequency.
+- id: planetlib.radiation.lte.quantity.Bf
+  revision: '1'
+  latex: B_\nu
+  description: Planck specific intensity per ordinary frequency.
+  unit: erg s^-1 cm^-2 sr^-1 Hz^-1
+  domain: Positive at positive frequency and temperature.
+- id: planetlib.radiation.lte.quantity.Bk
+  revision: '1'
+  latex: B_{\widetilde\nu}
+  description: Planck specific intensity per spectroscopic wavenumber.
+  unit: erg s^-1 cm^-2 sr^-1 (cm^-1)^-1
+  domain: The same spectral interval as Bf.
+- id: planetlib.radiation.lte.quantity.phif
+  revision: '1'
+  latex: \phi_\nu
+  description: Line profile normalized by its integral over ordinary frequency.
+  unit: Hz^-1
+  domain: Nonnegative; the same profile as phik under coordinate change.
+- id: planetlib.radiation.lte.quantity.phik
+  revision: '1'
+  latex: \phi_{\widetilde\nu}
+  description: Line profile normalized by its integral over wavenumber.
+  unit: (cm^-1)^-1
+  domain: Nonnegative; the same physical profile as phif.
+- id: planetlib.radiation.lte.quantity.jf
+  revision: '1'
+  latex: j_\nu
+  description: Emission coefficient per steradian and ordinary frequency.
+  unit: erg s^-1 cm^-3 sr^-1 Hz^-1
+  domain: Pointwise value at the matched frequency.
+- id: planetlib.radiation.lte.quantity.jk
+  revision: '1'
+  latex: j_{\widetilde\nu}
+  description: Emission coefficient per steradian and wavenumber.
+  unit: erg s^-1 cm^-3 sr^-1 (cm^-1)^-1
+  domain: Pointwise value at the matched wavenumber.
+- id: planetlib.radiation.lte.quantity.chif
+  revision: '1'
+  latex: \chi_\nu
+  description: Signed inverse-path extinction evaluated at ordinary frequency.
+  unit: cm^-1
+  domain: May be negative; it is not a spectral density.
+- id: planetlib.radiation.lte.quantity.chik
+  revision: '1'
+  latex: \chi_{\widetilde\nu}
+  description: The same signed inverse-path extinction evaluated at wavenumber.
+  unit: cm^-1
+  domain: No spectral-density Jacobian multiplies this quantity.
+- id: planetlib.radiation.lte.quantity.piB
+  revision: '1'
+  latex: \pi B_{\widetilde\nu}
+  description: Hemispheric blackbody flux per wavenumber, matching ExoJAX piB.
+  unit: erg s^-1 cm^-2 (cm^-1)^-1
+  domain: Isotropic intensity integrated over an outward hemisphere with cosine weight.
+equations:
+- id: planetlib.radiation.lte.boltzmann_ratio
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Mul(Pow(Symbol(''nl''), Integer(-1)), Symbol(''nu'')), Mul(Pow(Symbol(''gl''),
+      Integer(-1)), Symbol(''gu''), exp(Mul(Integer(-1), Pow(Symbol(''T''), Integer(-1)), Symbol(''h''), Pow(Symbol(''k''),
+      Integer(-1)), Symbol(''nu0'')))))'}
+  description: Boltzmann population ratio for a specified transition.
+  scope: LTE closure and spectral-coordinate conventions under the stated assumptions.
+  symbols:
+    T: {latex: T, unit: K, description: LTE material and Planck radiation temperature.}
+    gl: {latex: g_l, unit: '1', description: Lower-level statistical weight.}
+    gu: {latex: g_u, unit: '1', description: Upper-level statistical weight.}
+    h: {latex: h, unit: erg s, description: Planck constant for ordinary frequency.}
+    k: {latex: 'k_{\rm B}', unit: erg K^-1, description: Boltzmann constant.}
+    nl: {latex: n_l, unit: cm^-3, description: Lower-level number density summed over its statistical weight.}
+    nu: {latex: n_u, unit: cm^-3, description: Upper-level number density summed over its statistical weight.}
+    nu0: {latex: \nu_0, unit: Hz, description: Transition frequency corresponding to the upper-minus-lower energy.}
+  assumptions: &id003
+  - Scalar unpolarized radiation in a static local rest frame. Both populations refer to one transition of energy
+    h nu0, with positive T and matching statistical weights. Planck intensity is per steradian. Coordinate conversions
+    evaluate the same physical frequency f=c*wavenumber, with c in cm/s and wavenumber in inverse cm. Spectral densities
+    and normalized profiles acquire the Jacobian c; signed extinction, an inverse path length, does not. The existing
+    line-coefficient model uses line-center prefactors, so its LTE source function (for nonzero extinction) is B(nu0,T), not B(f,T) throughout
+    an arbitrary broad line. No transport or population solver is selected.
+  - All symbols denote numerical magnitudes in the declared units.
+  evidence: *id001
+- id: planetlib.radiation.lte.planck_frequency
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''Bf''), Mul(Integer(2), Pow(Symbol(''c''), Integer(-2)),
+      Pow(Symbol(''frequency''), Integer(3)), Symbol(''h''), Pow(Add(exp(Mul(Pow(Symbol(''T''), Integer(-1)), Symbol(''frequency''),
+      Symbol(''h''), Pow(Symbol(''k''), Integer(-1)))), Integer(-1)), Integer(-1))))'}
+  description: Planck specific intensity per ordinary frequency and steradian.
+  scope: LTE closure and spectral-coordinate conventions under the stated assumptions.
+  symbols:
+    Bf: {latex: B_\nu, unit: erg s^-1 cm^-2 sr^-1 Hz^-1, description: Planck specific intensity per ordinary frequency.}
+    T: {latex: T, unit: K, description: LTE material and Planck radiation temperature.}
+    c: {latex: c, unit: cm s^-1, description: Vacuum speed of light in cgs length units.}
+    frequency: {latex: \nu, unit: Hz, description: Ordinary spectral frequency.}
+    h: {latex: h, unit: erg s, description: Planck constant for ordinary frequency.}
+    k: {latex: 'k_{\rm B}', unit: erg K^-1, description: Boltzmann constant.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.radiation.lte.frequency_coordinate
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''frequency''), Mul(Symbol(''c''), Symbol(''wavenumber'')))'}
+  description: Coordinate transformation for ordinary frequency and spectroscopic wavenumber.
+  scope: LTE closure and spectral-coordinate conventions under the stated assumptions.
+  symbols:
+    c: {latex: c, unit: cm s^-1, description: Vacuum speed of light in cgs length units.}
+    frequency: {latex: \nu, unit: Hz, description: Ordinary spectral frequency.}
+    wavenumber: {latex: \widetilde\nu, unit: cm^-1, description: 'Spectroscopic wavenumber, not angular wavenumber.'}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.radiation.lte.profile_conversion
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''phik''), Mul(Symbol(''c''), Symbol(''phif'')))'}
+  description: Normalized profile transformed by the spectral Jacobian.
+  scope: LTE closure and spectral-coordinate conventions under the stated assumptions.
+  symbols:
+    c: {latex: c, unit: cm s^-1, description: Vacuum speed of light in cgs length units.}
+    phif: {latex: \phi_\nu, unit: Hz^-1, description: Line profile normalized by its integral over ordinary frequency.}
+    phik: {latex: '\phi_{\widetilde\nu}', unit: (cm^-1)^-1, description: Line profile normalized by its integral
+        over wavenumber.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.radiation.lte.emission_conversion
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''jk''), Mul(Symbol(''c''), Symbol(''jf'')))'}
+  description: Emission spectral density transformed by the same Jacobian.
+  scope: LTE closure and spectral-coordinate conventions under the stated assumptions.
+  symbols:
+    c: {latex: c, unit: cm s^-1, description: Vacuum speed of light in cgs length units.}
+    jf: {latex: j_\nu, unit: erg s^-1 cm^-3 sr^-1 Hz^-1, description: Emission coefficient per steradian and ordinary
+        frequency.}
+    jk: {latex: 'j_{\widetilde\nu}', unit: erg s^-1 cm^-3 sr^-1 (cm^-1)^-1, description: Emission coefficient per
+        steradian and wavenumber.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.radiation.lte.intensity_conversion
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''Bk''), Mul(Symbol(''Bf''), Symbol(''c'')))'}
+  description: Planck intensity transformed to the wavenumber coordinate.
+  scope: LTE closure and spectral-coordinate conventions under the stated assumptions.
+  symbols:
+    Bf: {latex: B_\nu, unit: erg s^-1 cm^-2 sr^-1 Hz^-1, description: Planck specific intensity per ordinary frequency.}
+    Bk: {latex: 'B_{\widetilde\nu}', unit: erg s^-1 cm^-2 sr^-1 (cm^-1)^-1, description: Planck specific intensity
+        per spectroscopic wavenumber.}
+    c: {latex: c, unit: cm s^-1, description: Vacuum speed of light in cgs length units.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.radiation.lte.extinction_conversion
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''chik''), Symbol(''chif''))'}
+  description: Inverse-path extinction is unchanged at matched coordinates.
+  scope: LTE closure and spectral-coordinate conventions under the stated assumptions.
+  symbols:
+    chif: {latex: \chi_\nu, unit: cm^-1, description: Signed inverse-path extinction evaluated at ordinary frequency.}
+    chik: {latex: '\chi_{\widetilde\nu}', unit: cm^-1, description: The same signed inverse-path extinction evaluated
+        at wavenumber.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.radiation.lte.hemisphere_planck
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''piB''), Mul(pi, Symbol(''Bk'')))'}
+  description: Hemispheric flux for isotropic blackbody intensity.
+  scope: LTE closure and spectral-coordinate conventions under the stated assumptions.
+  symbols:
+    Bk: {latex: 'B_{\widetilde\nu}', unit: erg s^-1 cm^-2 sr^-1 (cm^-1)^-1, description: Planck specific intensity
+        per spectroscopic wavenumber.}
+    piB: {latex: '\pi B_{\widetilde\nu}', unit: erg s^-1 cm^-2 (cm^-1)^-1, description: 'Hemispheric blackbody flux
+        per wavenumber, matching ExoJAX piB.'}
+  assumptions: *id003
+  evidence: *id001
+mathematical_models:
+- id: planetlib.radiation.lte.populations
+  revision: '1'
+  description: LTE closure and spectral-coordinate conventions
+  scope: Scalar unpolarized radiation in a static local rest frame. Both populations refer to one transition of
+    energy h nu0, with positive T and matching statistical weights. Planck intensity is per steradian. Coordinate
+    conversions evaluate the same physical frequency f=c*wavenumber, with c in cm/s and wavenumber in inverse cm.
+    Spectral densities and normalized profiles acquire the Jacobian c; signed extinction, an inverse path length,
+    does not. The existing line-coefficient model uses line-center prefactors, so its LTE source function (for nonzero extinction) is B(nu0,T),
+    not B(f,T) throughout an arbitrary broad line. No transport or population solver is selected.
+  quantities:
+    Bf: {quantity: {id: planetlib.radiation.lte.quantity.Bf, revision: '1'}, role: derived}
+    T: {quantity: {id: planetlib.radiation.lte.quantity.T, revision: '1'}, role: input}
+    c: {quantity: {id: planetlib.radiation.lte.quantity.c, revision: '1'}, role: input}
+    frequency: {quantity: {id: planetlib.radiation.lte.quantity.frequency, revision: '1'}, role: input}
+    gl: {quantity: {id: planetlib.radiation.lte.quantity.gl, revision: '1'}, role: input}
+    gu: {quantity: {id: planetlib.radiation.lte.quantity.gu, revision: '1'}, role: input}
+    h: {quantity: {id: planetlib.radiation.lte.quantity.h, revision: '1'}, role: input}
+    k: {quantity: {id: planetlib.radiation.lte.quantity.k, revision: '1'}, role: input}
+    nl: {quantity: {id: planetlib.radiation.lte.quantity.nl, revision: '1'}, role: input}
+    nu: {quantity: {id: planetlib.radiation.lte.quantity.nu, revision: '1'}, role: input}
+    nu0: {quantity: {id: planetlib.radiation.lte.quantity.nu0, revision: '1'}, role: input}
+  relations:
+  - id: planetlib.radiation.lte.relation.boltzmann_ratio
+    equation: {id: planetlib.radiation.lte.boltzmann_ratio, revision: '1'}
+    role: Boltzmann population ratio for a specified transition.
+    quantities:
+      T: T
+      gl: gl
+      gu: gu
+      h: h
+      k: k
+      nl: nl
+      nu: nu
+      nu0: nu0
+  - id: planetlib.radiation.lte.relation.planck_frequency
+    equation: {id: planetlib.radiation.lte.planck_frequency, revision: '1'}
+    role: Planck specific intensity per ordinary frequency and steradian.
+    quantities:
+      Bf: Bf
+      T: T
+      c: c
+      frequency: frequency
+      h: h
+      k: k
+- id: planetlib.radiation.lte.coordinates
+  revision: '1'
+  description: LTE closure and spectral-coordinate conventions
+  scope: Scalar unpolarized radiation in a static local rest frame. Both populations refer to one transition of
+    energy h nu0, with positive T and matching statistical weights. Planck intensity is per steradian. Coordinate
+    conversions evaluate the same physical frequency f=c*wavenumber, with c in cm/s and wavenumber in inverse cm.
+    Spectral densities and normalized profiles acquire the Jacobian c; signed extinction, an inverse path length,
+    does not. The existing line-coefficient model uses line-center prefactors, so its LTE source function (for nonzero extinction) is B(nu0,T),
+    not B(f,T) throughout an arbitrary broad line. No transport or population solver is selected.
+  quantities:
+    Bf: {quantity: {id: planetlib.radiation.lte.quantity.Bf, revision: '1'}, role: input}
+    Bk: {quantity: {id: planetlib.radiation.lte.quantity.Bk, revision: '1'}, role: derived}
+    c: {quantity: {id: planetlib.radiation.lte.quantity.c, revision: '1'}, role: input}
+    chif: {quantity: {id: planetlib.radiation.lte.quantity.chif, revision: '1'}, role: input}
+    chik: {quantity: {id: planetlib.radiation.lte.quantity.chik, revision: '1'}, role: derived}
+    frequency: {quantity: {id: planetlib.radiation.lte.quantity.frequency, revision: '1'}, role: derived}
+    jf: {quantity: {id: planetlib.radiation.lte.quantity.jf, revision: '1'}, role: input}
+    jk: {quantity: {id: planetlib.radiation.lte.quantity.jk, revision: '1'}, role: derived}
+    phif: {quantity: {id: planetlib.radiation.lte.quantity.phif, revision: '1'}, role: input}
+    phik: {quantity: {id: planetlib.radiation.lte.quantity.phik, revision: '1'}, role: derived}
+    piB: {quantity: {id: planetlib.radiation.lte.quantity.piB, revision: '1'}, role: derived}
+    wavenumber: {quantity: {id: planetlib.radiation.lte.quantity.wavenumber, revision: '1'}, role: input}
+  relations:
+  - id: planetlib.radiation.lte.relation.frequency_coordinate
+    equation: {id: planetlib.radiation.lte.frequency_coordinate, revision: '1'}
+    role: Coordinate transformation for ordinary frequency and spectroscopic wavenumber.
+    quantities: {c: c, frequency: frequency, wavenumber: wavenumber}
+  - id: planetlib.radiation.lte.relation.profile_conversion
+    equation: {id: planetlib.radiation.lte.profile_conversion, revision: '1'}
+    role: Normalized profile transformed by the spectral Jacobian.
+    quantities: {c: c, phif: phif, phik: phik}
+  - id: planetlib.radiation.lte.relation.emission_conversion
+    equation: {id: planetlib.radiation.lte.emission_conversion, revision: '1'}
+    role: Emission spectral density transformed by the same Jacobian.
+    quantities: {c: c, jf: jf, jk: jk}
+  - id: planetlib.radiation.lte.relation.intensity_conversion
+    equation: {id: planetlib.radiation.lte.intensity_conversion, revision: '1'}
+    role: Planck intensity transformed to the wavenumber coordinate.
+    quantities: {Bf: Bf, Bk: Bk, c: c}
+  - id: planetlib.radiation.lte.relation.extinction_conversion
+    equation: {id: planetlib.radiation.lte.extinction_conversion, revision: '1'}
+    role: Inverse-path extinction is unchanged at matched coordinates.
+    quantities: {chif: chif, chik: chik}
+  - id: planetlib.radiation.lte.relation.hemisphere_planck
+    equation: {id: planetlib.radiation.lte.hemisphere_planck, revision: '1'}
+    role: Hemispheric flux for isotropic blackbody intensity.
+    quantities: {Bk: Bk, piB: piB}
+assessments:
+- id: planetlib.radiation.lte.line_source_function.pending
+  kind: evidence_support
+  claim: planetlib.radiation.lte.line_source_function
+  claim_revision: '1'
+  subject: planetlib.radiation.lte.definition
+  context: planetlib.radiation.lte.authoring
+  method: {id: planetlib.radiation.lte.symbolic_inventory, revision: '1', description: Record explicit symbolic
+      checks for a separately reviewed assessment.}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.radiation.lte.checks
+  - planetlib.radiation.lte.line_definition
+  reasons:
+  - The shared definition and its test scope are recorded; no prior provider assessment is transferred.
+- id: planetlib.radiation.lte.coordinate_consistency.pending
+  kind: evidence_support
+  claim: planetlib.radiation.lte.coordinate_consistency
+  claim_revision: '1'
+  subject: planetlib.radiation.lte.definition
+  context: planetlib.radiation.lte.authoring
+  method: {id: planetlib.radiation.lte.symbolic_inventory, revision: '1', description: Record explicit symbolic
+      checks for a separately reviewed assessment.}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.radiation.lte.checks
+  reasons:
+  - The shared definition and its test scope are recorded; no prior provider assessment is transferred.
+- id: planetlib.radiation.lte.line_source_function.review_20261127
+  kind: evidence_support
+  claim: planetlib.radiation.lte.line_source_function
+  claim_revision: '1'
+  subject: planetlib.radiation.lte.definition
+  context: planetlib.radiation.lte.symbolic_review_20261127
+  method:
+    id: planetlib.radiation.lte.symbolic_derivation_review
+    revision: '1'
+    description: Inspect the derivation and domain; execute substitution, differentiation, simplification
+      and limiting-case checks against the serialized definitions.
+  status: supported
+  origin: reviewed
+  evidence:
+  - planetlib.radiation.lte.symbolic_run_20261127
+  reasons:
+  - The stated conditional identity follows in the reviewed symbolic checks. Source correspondence and
+    physical applicability are separate questions.
+  mathematical_model_pins:
+  - id: planetlib.radiation.lte.populations
+    revision: '1'
+    sha256: 87bd802c94020dc5a3d9fa17b7de52d5ffebb9412d65f009b0a47b1b407d6c3d
+- id: planetlib.radiation.lte.coordinate_consistency.review_20261127
+  kind: evidence_support
+  claim: planetlib.radiation.lte.coordinate_consistency
+  claim_revision: '1'
+  subject: planetlib.radiation.lte.definition
+  context: planetlib.radiation.lte.symbolic_review_20261127
+  method:
+    id: planetlib.radiation.lte.symbolic_derivation_review
+    revision: '1'
+    description: Inspect the derivation and domain; execute substitution, differentiation, simplification
+      and limiting-case checks against the serialized definitions.
+  status: supported
+  origin: reviewed
+  evidence:
+  - planetlib.radiation.lte.symbolic_run_20261127
+  reasons:
+  - The stated conditional identity follows in the reviewed symbolic checks. Source correspondence and
+    physical applicability are separate questions.
+  mathematical_model_pins:
+  - id: planetlib.radiation.lte.coordinates
+    revision: '1'
+    sha256: 31790f5fe2a48eb9b6f15f2d86e5901c890052b2d18d5328b23b6ea1bf7d7d33

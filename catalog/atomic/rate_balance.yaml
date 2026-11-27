@@ -1,0 +1,650 @@
+schema_version: '0.6'
+model:
+  id: planetlib.atomic.balance.catalog
+  name: Closed bound-state balance and a conditional Milne-Saha pair
+  description: Two bound states form a closed bound-bound example. The separate one-level bound-free model adopts
+    Saha populations and Planck radiation at the same positive T; it is a conditional inverse-process identity,
+    not a full-atom LTE closure. The common supplied cross section is nonnegative above the actual ionization threshold
+    and zero below it; no Kramers or Coulomb approximation is selected. One-way two-photon loss, external pumps,
+    other levels and advection are excluded from the two-state conservation example. Frequency integrands use ordinary
+    Hz and identical quadrature weights when integrated.
+  implementation: &id002
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:1
+    entry_points:
+    - catalog/atomic/rate_balance.yaml
+assumptions:
+- statement: Two bound states form a closed bound-bound example. The separate one-level bound-free model adopts
+    Saha populations and Planck radiation at the same positive T; it is a conditional inverse-process identity,
+    not a full-atom LTE closure. The common supplied cross section is nonnegative above the actual ionization threshold
+    and zero below it; no Kramers or Coulomb approximation is selected. One-way two-photon loss, external pumps,
+    other levels and advection are excluded from the two-state conservation example. Frequency integrands use ordinary
+    Hz and identical quadrature weights when integrated.
+  evidence: &id001
+  - planetlib.atomic.balance.upstream
+domains:
+- kind: scientific_applicability
+  status: unknown
+  description: The intended algebraic domain is explicit; no target environment is validated.
+  conditions: []
+  evidence: *id001
+limitations:
+- statement: Symbolic consistency does not establish atomic data, numerical conditioning, provider correspondence
+    or physical applicability.
+  evidence: *id001
+claims:
+- id: planetlib.atomic.balance.nuclear_conservation
+  revision: '1'
+  kind: theoretical
+  statement: The two closed bound-state source terms sum identically to zero.
+  scope: Conditional algebraic consistency of the recorded definitions; no provider equivalence or empirical accuracy
+    is inferred.
+  mathematical_models:
+  - {id: planetlib.atomic.balance.two_state, revision: '1'}
+- id: planetlib.atomic.balance.inverse_balance
+  revision: '1'
+  kind: theoretical
+  statement: Under the recorded Saha and Planck closures, forward and inverse rate integrands cancel and j_nu=chi_nu
+    B_nu.
+  scope: Conditional algebraic consistency of the recorded definitions; no provider equivalence or empirical accuracy
+    is inferred.
+  mathematical_models:
+  - {id: planetlib.atomic.balance.milne_saha, revision: '1'}
+evidence:
+- id: planetlib.atomic.balance.upstream
+  kind: theory
+  summary: Closed bound-state balance and a conditional Milne-Saha pair extracted from inspected upstream mathematical
+    conventions.
+  sources:
+  - https://github.com/HajimeKawahara/exojax-escape/blob/18064c9f743c38651b94c2a53d3890d2032852bb/src/escape/hydrogen_nlte.py
+  - https://github.com/HajimeKawahara/exojax-escape/blob/18064c9f743c38651b94c2a53d3890d2032852bb/src/escape/hydrogen_atom.py
+  - https://github.com/HajimeKawahara/exojax-escape/blob/18064c9f743c38651b94c2a53d3890d2032852bb/src/escape/hydrogen_continuum.py
+  - https://github.com/HajimeKawahara/exojax-escape/blob/18064c9f743c38651b94c2a53d3890d2032852bb/mceg/contracts/escape.cloudy_investigation.yaml
+  scope: Two bound states form a closed bound-bound example. The separate one-level bound-free model adopts Saha
+    populations and Planck radiation at the same positive T; it is a conditional inverse-process identity, not a
+    full-atom LTE closure. The common supplied cross section is nonnegative above the actual ionization threshold
+    and zero below it; no Kramers or Coulomb approximation is selected. One-way two-photon loss, external pumps,
+    other levels and advection are excluded from the two-state conservation example. Frequency integrands use ordinary
+    Hz and identical quadrature weights when integrated.
+  provenance:
+    role: implementation
+    location: The selected source files and MCEG equations at the pinned commits.
+    inspection: inspected
+    note: Sources were read locally; provider test status and empirical support remain upstream.
+- id: planetlib.atomic.balance.checks
+  kind: theory
+  summary: Symbolic residual checks read the stored definitions.
+  sources:
+  - tests/test_atomic_relations.py
+  scope: Conditional identities only; a successful check is not an independent original-source or provider-code
+    review.
+- id: planetlib.atomic.balance.symbolic_run_20261127
+  kind: theory
+  subject: planetlib.atomic.balance.definition
+  context: planetlib.atomic.balance.symbolic_review_20261127
+  summary: The stored-expression derivations passed in the recorded 32-test run; their equations, assumptions
+    and claim scope were reviewed.
+  sources:
+  - tests/test_atomic_relations.py
+  - reviews/symbolic_checks_20261127.json
+  artifacts:
+  - source: tests/test_atomic_relations.py
+    sha256: 41045b86a1bb163296986efbf6993340e3981a9c23c98a1613ece14a3cd0ec6b
+  - source: reviews/symbolic_checks_20261127.json
+    sha256: 5fd7c6c961971a2911a29862432579cbca20022b227a8748d6b78cd45bb814d5
+  scope: Supports only the attached mathematical identities within their stated domains. A finite symbolic
+    check is not a formal proof certificate or a numerical-provider validation.
+subjects:
+- id: planetlib.atomic.balance.definition
+  implementation: *id002
+  selected_files: {catalog/atomic/rate_balance.yaml: null}
+contexts:
+- {id: planetlib.atomic.balance.authoring, scope: 'Two bound states form a closed bound-bound example. The separate
+    one-level bound-free model adopts Saha populations and Planck radiation at the same positive T; it is a conditional
+    inverse-process identity, not a full-atom LTE closure. The common supplied cross section is nonnegative above
+    the actual ionization threshold and zero below it; no Kramers or Coulomb approximation is selected. One-way
+    two-photon loss, external pumps, other levels and advection are excluded from the two-state conservation example.
+    Frequency integrands use ordinary Hz and identical quadrature weights when integrated.'}
+- id: planetlib.atomic.balance.symbolic_review_20261127
+  scope: Review of conditional symbolic identities on the domains declared by the selected definitions.
+    This context does not assess source correspondence, provider execution or physical applicability.
+  settings:
+    review_date: '2026-11-27'
+    sympy: 1.14.0
+quantities:
+- id: planetlib.atomic.balance.quantity.nl
+  revision: '1'
+  latex: n_l
+  description: Lower-state particle number per volume.
+  unit: cm^-3
+  domain: Nonnegative; the closed example contains exactly these two bound states.
+- id: planetlib.atomic.balance.quantity.nu
+  revision: '1'
+  latex: n_u
+  description: Upper-state particle number per volume.
+  unit: cm^-3
+  domain: Nonnegative; same atomic species as the lower state.
+- id: planetlib.atomic.balance.quantity.Plu
+  revision: '1'
+  latex: P_{lu}
+  description: Per-particle upward rate from lower to upper state.
+  unit: s^-1
+  domain: Nonnegative; radiation and collisions may contribute.
+- id: planetlib.atomic.balance.quantity.Pul
+  revision: '1'
+  latex: P_{ul}
+  description: Per-particle downward rate from upper to lower state.
+  unit: s^-1
+  domain: Nonnegative; no unrecorded loss channel.
+- id: planetlib.atomic.balance.quantity.Ql
+  revision: '1'
+  latex: Q_l
+  description: Net lower-state particle production per volume.
+  unit: cm^-3 s^-1
+  domain: Finite numerical values in the declared units.
+- id: planetlib.atomic.balance.quantity.Qu
+  revision: '1'
+  latex: Q_u
+  description: Net upper-state particle production per volume.
+  unit: cm^-3 s^-1
+  domain: Finite numerical values in the declared units.
+- id: planetlib.atomic.balance.quantity.S
+  revision: '1'
+  latex: S_i
+  description: Saha ratio n_i/(n_e n_p), with the adopted electron-spin factor.
+  unit: cm^3
+  domain: Positive; same finite-state binding energy and statistical weight as the inverse kernel.
+- id: planetlib.atomic.balance.quantity.b
+  revision: '1'
+  latex: b^*_{i\nu}
+  description: Inverse-continuum population factor per electron-proton density product.
+  unit: cm^3
+  domain: Positive at finite positive frequency and temperature.
+- id: planetlib.atomic.balance.quantity.eta
+  revision: '1'
+  latex: \eta_\nu
+  description: Planck photon occupation at the same material temperature.
+  unit: '1'
+  domain: Positive; no dilution is applied in this conditional model.
+- id: planetlib.atomic.balance.quantity.T
+  revision: '1'
+  latex: T
+  description: Common electron, ion and Planck radiation temperature.
+  unit: K
+  domain: T > 0.
+- id: planetlib.atomic.balance.quantity.f
+  revision: '1'
+  latex: \nu
+  description: Ordinary photon frequency in the local rest frame.
+  unit: Hz
+  domain: f > 0; sigma is zero below the specified threshold.
+- id: planetlib.atomic.balance.quantity.h
+  revision: '1'
+  latex: h
+  description: Planck constant for ordinary frequency.
+  unit: erg s
+  domain: Positive physical constant.
+- id: planetlib.atomic.balance.quantity.k
+  revision: '1'
+  latex: k_{\rm B}
+  description: Boltzmann constant.
+  unit: erg K^-1
+  domain: Positive physical constant.
+- id: planetlib.atomic.balance.quantity.c
+  revision: '1'
+  latex: c
+  description: Vacuum speed of light.
+  unit: cm s^-1
+  domain: Positive physical constant.
+- id: planetlib.atomic.balance.quantity.me
+  revision: '1'
+  latex: m_e
+  description: Electron mass used in the thermal translational factor.
+  unit: g
+  domain: Positive physical constant; provider reduced-mass choices are not inferred.
+- id: planetlib.atomic.balance.quantity.g
+  revision: '1'
+  latex: g_i
+  description: Statistical weight of the selected bound state.
+  unit: '1'
+  domain: Positive; electron spin degeneracy is the explicit factor two.
+- id: planetlib.atomic.balance.quantity.binding
+  revision: '1'
+  latex: \chi_i
+  description: Ionization energy from the selected bound state.
+  unit: erg
+  domain: Positive; the same threshold defines the support of sigma.
+- id: planetlib.atomic.balance.quantity.sigma
+  revision: '1'
+  latex: \sigma_{i\nu}
+  description: Photoionization cross section shared by all forward and inverse coefficients.
+  unit: cm^2
+  domain: Nonnegative, externally supplied; zero below h f = binding.
+- id: planetlib.atomic.balance.quantity.ni
+  revision: '1'
+  latex: n_i
+  description: Number density of the selected bound state in the Saha closure.
+  unit: cm^-3
+  domain: Nonnegative; not the two-state example population nl or nu.
+- id: planetlib.atomic.balance.quantity.ne
+  revision: '1'
+  latex: n_e
+  description: Electron number density supplied to the one-level inverse pair.
+  unit: cm^-3
+  domain: Positive; full charge closure is outside this submodel.
+- id: planetlib.atomic.balance.quantity.np
+  revision: '1'
+  latex: n_p
+  description: Proton number density supplied to the one-level inverse pair.
+  unit: cm^-3
+  domain: Positive; full nuclear conservation is outside this submodel.
+- id: planetlib.atomic.balance.quantity.gamma
+  revision: '1'
+  latex: \Gamma_{i\nu}
+  description: Photoionization rate integrand per bound particle and ordinary frequency.
+  unit: s^-1 Hz^-1
+  domain: Finite numerical values in the declared units.
+- id: planetlib.atomic.balance.quantity.alpha
+  revision: '1'
+  latex: \alpha_{i\nu}
+  description: Radiative recombination coefficient integrand including stimulated recombination.
+  unit: cm^3 s^-1 Hz^-1
+  domain: Finite numerical values in the declared units.
+- id: planetlib.atomic.balance.quantity.chi
+  revision: '1'
+  latex: \chi_\nu^{\rm bf}
+  description: Signed bound-free extinction including stimulated recombination.
+  unit: cm^-1
+  domain: Finite numerical values in the declared units.
+- id: planetlib.atomic.balance.quantity.j
+  revision: '1'
+  latex: j_\nu^{\rm bf}
+  description: Spontaneous bound-free emissivity per steradian and ordinary frequency.
+  unit: erg s^-1 cm^-3 sr^-1 Hz^-1
+  domain: Finite numerical values in the declared units.
+equations:
+- id: planetlib.atomic.balance.lower_production
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''Ql''), Add(Mul(Integer(-1), Symbol(''Plu''), Symbol(''nl'')),
+      Mul(Symbol(''Pul''), Symbol(''nu''))))'}
+  description: Lower-state gain minus loss in a closed two-state transition.
+  scope: Closed bound-state balance and a conditional Milne-Saha pair under the stated assumptions.
+  symbols:
+    Plu: {latex: 'P_{lu}', unit: s^-1, description: Per-particle upward rate from lower to upper state.}
+    Pul: {latex: 'P_{ul}', unit: s^-1, description: Per-particle downward rate from upper to lower state.}
+    Ql: {latex: Q_l, unit: cm^-3 s^-1, description: Net lower-state particle production per volume.}
+    nl: {latex: n_l, unit: cm^-3, description: Lower-state particle number per volume.}
+    nu: {latex: n_u, unit: cm^-3, description: Upper-state particle number per volume.}
+  assumptions: &id003
+  - Two bound states form a closed bound-bound example. The separate one-level bound-free model adopts Saha populations
+    and Planck radiation at the same positive T; it is a conditional inverse-process identity, not a full-atom LTE
+    closure. The common supplied cross section is nonnegative above the actual ionization threshold and zero below
+    it; no Kramers or Coulomb approximation is selected. One-way two-photon loss, external pumps, other levels and
+    advection are excluded from the two-state conservation example. Frequency integrands use ordinary Hz and identical
+    quadrature weights when integrated.
+  - All symbols denote numerical magnitudes in the declared units.
+  evidence: *id001
+- id: planetlib.atomic.balance.upper_production
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''Qu''), Add(Mul(Symbol(''Plu''), Symbol(''nl'')),
+      Mul(Integer(-1), Symbol(''Pul''), Symbol(''nu''))))'}
+  description: Upper-state gain minus loss from exactly the same transition.
+  scope: Closed bound-state balance and a conditional Milne-Saha pair under the stated assumptions.
+  symbols:
+    Plu: {latex: 'P_{lu}', unit: s^-1, description: Per-particle upward rate from lower to upper state.}
+    Pul: {latex: 'P_{ul}', unit: s^-1, description: Per-particle downward rate from upper to lower state.}
+    Qu: {latex: Q_u, unit: cm^-3 s^-1, description: Net upper-state particle production per volume.}
+    nl: {latex: n_l, unit: cm^-3, description: Lower-state particle number per volume.}
+    nu: {latex: n_u, unit: cm^-3, description: Upper-state particle number per volume.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.balance.saha_factor
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''S''), Mul(Rational(1, 8), Pow(Integer(2), Rational(1,
+      2)), Pow(pi, Rational(-3, 2)), Symbol(''g''), Pow(Mul(Pow(Symbol(''T''), Integer(-1)), Pow(Symbol(''h''),
+      Integer(2)), Pow(Symbol(''k''), Integer(-1)), Pow(Symbol(''me''), Integer(-1))), Rational(3, 2)), exp(Mul(Pow(Symbol(''T''),
+      Integer(-1)), Symbol(''binding''), Pow(Symbol(''k''), Integer(-1))))))'}
+  description: Finite-state Saha factor with electron-spin degeneracy two.
+  scope: Closed bound-state balance and a conditional Milne-Saha pair under the stated assumptions.
+  symbols:
+    S: {latex: S_i, unit: cm^3, description: 'Saha ratio n_i/(n_e n_p), with the adopted electron-spin factor.'}
+    T: {latex: T, unit: K, description: 'Common electron, ion and Planck radiation temperature.'}
+    binding: {latex: \chi_i, unit: erg, description: Ionization energy from the selected bound state.}
+    g: {latex: g_i, unit: '1', description: Statistical weight of the selected bound state.}
+    h: {latex: h, unit: erg s, description: Planck constant for ordinary frequency.}
+    k: {latex: 'k_{\rm B}', unit: erg K^-1, description: Boltzmann constant.}
+    me: {latex: m_e, unit: g, description: Electron mass used in the thermal translational factor.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.balance.milne_factor
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''b''), Mul(Symbol(''S''), exp(Mul(Integer(-1), Pow(Symbol(''T''),
+      Integer(-1)), Symbol(''f''), Symbol(''h''), Pow(Symbol(''k''), Integer(-1))))))'}
+  description: Milne inverse population factor built from the same Saha factor.
+  scope: Closed bound-state balance and a conditional Milne-Saha pair under the stated assumptions.
+  symbols:
+    S: {latex: S_i, unit: cm^3, description: 'Saha ratio n_i/(n_e n_p), with the adopted electron-spin factor.'}
+    T: {latex: T, unit: K, description: 'Common electron, ion and Planck radiation temperature.'}
+    b: {latex: 'b^*_{i\nu}', unit: cm^3, description: Inverse-continuum population factor per electron-proton density
+        product.}
+    f: {latex: \nu, unit: Hz, description: Ordinary photon frequency in the local rest frame.}
+    h: {latex: h, unit: erg s, description: Planck constant for ordinary frequency.}
+    k: {latex: 'k_{\rm B}', unit: erg K^-1, description: Boltzmann constant.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.balance.planck_occupation
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''eta''), Pow(Add(exp(Mul(Pow(Symbol(''T''), Integer(-1)),
+      Symbol(''f''), Symbol(''h''), Pow(Symbol(''k''), Integer(-1)))), Integer(-1)), Integer(-1)))'}
+  description: Undiluted Planck photon occupation at the material temperature.
+  scope: Closed bound-state balance and a conditional Milne-Saha pair under the stated assumptions.
+  symbols:
+    T: {latex: T, unit: K, description: 'Common electron, ion and Planck radiation temperature.'}
+    eta: {latex: \eta_\nu, unit: '1', description: Planck photon occupation at the same material temperature.}
+    f: {latex: \nu, unit: Hz, description: Ordinary photon frequency in the local rest frame.}
+    h: {latex: h, unit: erg s, description: Planck constant for ordinary frequency.}
+    k: {latex: 'k_{\rm B}', unit: erg K^-1, description: Boltzmann constant.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.balance.saha_population
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''ni''), Mul(Symbol(''S''), Symbol(''ne''), Symbol(''np'')))'}
+  description: Conditional bound-state population for testing inverse-process consistency.
+  scope: Closed bound-state balance and a conditional Milne-Saha pair under the stated assumptions.
+  symbols:
+    S: {latex: S_i, unit: cm^3, description: 'Saha ratio n_i/(n_e n_p), with the adopted electron-spin factor.'}
+    ne: {latex: n_e, unit: cm^-3, description: Electron number density supplied to the one-level inverse pair.}
+    ni: {latex: n_i, unit: cm^-3, description: Number density of the selected bound state in the Saha closure.}
+    np: {latex: n_p, unit: cm^-3, description: Proton number density supplied to the one-level inverse pair.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.balance.photoionization_integrand
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''gamma''), Mul(Integer(8), pi, Pow(Symbol(''c''),
+      Integer(-2)), Symbol(''eta''), Pow(Symbol(''f''), Integer(2)), Symbol(''sigma'')))'}
+  description: Forward photon absorption kernel per unit frequency.
+  scope: Closed bound-state balance and a conditional Milne-Saha pair under the stated assumptions.
+  symbols:
+    c: {latex: c, unit: cm s^-1, description: Vacuum speed of light.}
+    eta: {latex: \eta_\nu, unit: '1', description: Planck photon occupation at the same material temperature.}
+    f: {latex: \nu, unit: Hz, description: Ordinary photon frequency in the local rest frame.}
+    gamma: {latex: '\Gamma_{i\nu}', unit: s^-1 Hz^-1, description: Photoionization rate integrand per bound particle
+        and ordinary frequency.}
+    sigma: {latex: '\sigma_{i\nu}', unit: cm^2, description: Photoionization cross section shared by all forward
+        and inverse coefficients.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.balance.recombination_integrand
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''alpha''), Mul(Integer(8), pi, Symbol(''b''), Pow(Symbol(''c''),
+      Integer(-2)), Pow(Symbol(''f''), Integer(2)), Symbol(''sigma''), Add(Symbol(''eta''), Integer(1))))'}
+  description: Matched spontaneous plus stimulated inverse kernel.
+  scope: Closed bound-state balance and a conditional Milne-Saha pair under the stated assumptions.
+  symbols:
+    alpha: {latex: '\alpha_{i\nu}', unit: cm^3 s^-1 Hz^-1, description: Radiative recombination coefficient integrand
+        including stimulated recombination.}
+    b: {latex: 'b^*_{i\nu}', unit: cm^3, description: Inverse-continuum population factor per electron-proton density
+        product.}
+    c: {latex: c, unit: cm s^-1, description: Vacuum speed of light.}
+    eta: {latex: \eta_\nu, unit: '1', description: Planck photon occupation at the same material temperature.}
+    f: {latex: \nu, unit: Hz, description: Ordinary photon frequency in the local rest frame.}
+    sigma: {latex: '\sigma_{i\nu}', unit: cm^2, description: Photoionization cross section shared by all forward
+        and inverse coefficients.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.balance.bound_free_extinction
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''chi''), Mul(Symbol(''sigma''), Add(Mul(Integer(-1),
+      Symbol(''b''), Symbol(''ne''), Symbol(''np'')), Symbol(''ni''))))'}
+  description: Net bound-free extinction from the shared cross section.
+  scope: Closed bound-state balance and a conditional Milne-Saha pair under the stated assumptions.
+  symbols:
+    b: {latex: 'b^*_{i\nu}', unit: cm^3, description: Inverse-continuum population factor per electron-proton density
+        product.}
+    chi: {latex: '\chi_\nu^{\rm bf}', unit: cm^-1, description: Signed bound-free extinction including stimulated
+        recombination.}
+    ne: {latex: n_e, unit: cm^-3, description: Electron number density supplied to the one-level inverse pair.}
+    ni: {latex: n_i, unit: cm^-3, description: Number density of the selected bound state in the Saha closure.}
+    np: {latex: n_p, unit: cm^-3, description: Proton number density supplied to the one-level inverse pair.}
+    sigma: {latex: '\sigma_{i\nu}', unit: cm^2, description: Photoionization cross section shared by all forward
+        and inverse coefficients.}
+  assumptions: *id003
+  evidence: *id001
+- id: planetlib.atomic.balance.bound_free_emission
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''j''), Mul(Integer(2), Symbol(''b''), Pow(Symbol(''c''),
+      Integer(-2)), Pow(Symbol(''f''), Integer(3)), Symbol(''h''), Symbol(''ne''), Symbol(''np''), Symbol(''sigma'')))'}
+  description: Matched spontaneous recombination emissivity.
+  scope: Closed bound-state balance and a conditional Milne-Saha pair under the stated assumptions.
+  symbols:
+    b: {latex: 'b^*_{i\nu}', unit: cm^3, description: Inverse-continuum population factor per electron-proton density
+        product.}
+    c: {latex: c, unit: cm s^-1, description: Vacuum speed of light.}
+    f: {latex: \nu, unit: Hz, description: Ordinary photon frequency in the local rest frame.}
+    h: {latex: h, unit: erg s, description: Planck constant for ordinary frequency.}
+    j: {latex: 'j_\nu^{\rm bf}', unit: erg s^-1 cm^-3 sr^-1 Hz^-1, description: Spontaneous bound-free emissivity
+        per steradian and ordinary frequency.}
+    ne: {latex: n_e, unit: cm^-3, description: Electron number density supplied to the one-level inverse pair.}
+    np: {latex: n_p, unit: cm^-3, description: Proton number density supplied to the one-level inverse pair.}
+    sigma: {latex: '\sigma_{i\nu}', unit: cm^2, description: Photoionization cross section shared by all forward
+        and inverse coefficients.}
+  assumptions: *id003
+  evidence: *id001
+mathematical_models:
+- id: planetlib.atomic.balance.two_state
+  revision: '1'
+  description: Closed bound-state balance and a conditional Milne-Saha pair
+  scope: Two bound states form a closed bound-bound example. The separate one-level bound-free model adopts Saha
+    populations and Planck radiation at the same positive T; it is a conditional inverse-process identity, not a
+    full-atom LTE closure. The common supplied cross section is nonnegative above the actual ionization threshold
+    and zero below it; no Kramers or Coulomb approximation is selected. One-way two-photon loss, external pumps,
+    other levels and advection are excluded from the two-state conservation example. Frequency integrands use ordinary
+    Hz and identical quadrature weights when integrated.
+  quantities:
+    Plu: {quantity: {id: planetlib.atomic.balance.quantity.Plu, revision: '1'}, role: input}
+    Pul: {quantity: {id: planetlib.atomic.balance.quantity.Pul, revision: '1'}, role: input}
+    Ql: {quantity: {id: planetlib.atomic.balance.quantity.Ql, revision: '1'}, role: derived}
+    Qu: {quantity: {id: planetlib.atomic.balance.quantity.Qu, revision: '1'}, role: derived}
+    nl: {quantity: {id: planetlib.atomic.balance.quantity.nl, revision: '1'}, role: input}
+    nu: {quantity: {id: planetlib.atomic.balance.quantity.nu, revision: '1'}, role: input}
+  relations:
+  - id: planetlib.atomic.balance.relation.lower_production
+    equation: {id: planetlib.atomic.balance.lower_production, revision: '1'}
+    role: Lower-state gain minus loss in a closed two-state transition.
+    quantities:
+      Plu: Plu
+      Pul: Pul
+      Ql: Ql
+      nl: nl
+      nu: nu
+  - id: planetlib.atomic.balance.relation.upper_production
+    equation: {id: planetlib.atomic.balance.upper_production, revision: '1'}
+    role: Upper-state gain minus loss from exactly the same transition.
+    quantities:
+      Plu: Plu
+      Pul: Pul
+      Qu: Qu
+      nl: nl
+      nu: nu
+- id: planetlib.atomic.balance.milne_saha
+  revision: '1'
+  description: Closed bound-state balance and a conditional Milne-Saha pair
+  scope: Two bound states form a closed bound-bound example. The separate one-level bound-free model adopts Saha
+    populations and Planck radiation at the same positive T; it is a conditional inverse-process identity, not a
+    full-atom LTE closure. The common supplied cross section is nonnegative above the actual ionization threshold
+    and zero below it; no Kramers or Coulomb approximation is selected. One-way two-photon loss, external pumps,
+    other levels and advection are excluded from the two-state conservation example. Frequency integrands use ordinary
+    Hz and identical quadrature weights when integrated.
+  quantities:
+    S: {quantity: {id: planetlib.atomic.balance.quantity.S, revision: '1'}, role: derived}
+    T: {quantity: {id: planetlib.atomic.balance.quantity.T, revision: '1'}, role: input}
+    alpha: {quantity: {id: planetlib.atomic.balance.quantity.alpha, revision: '1'}, role: derived}
+    b: {quantity: {id: planetlib.atomic.balance.quantity.b, revision: '1'}, role: derived}
+    binding: {quantity: {id: planetlib.atomic.balance.quantity.binding, revision: '1'}, role: input}
+    c: {quantity: {id: planetlib.atomic.balance.quantity.c, revision: '1'}, role: input}
+    chi: {quantity: {id: planetlib.atomic.balance.quantity.chi, revision: '1'}, role: derived}
+    eta: {quantity: {id: planetlib.atomic.balance.quantity.eta, revision: '1'}, role: derived}
+    f: {quantity: {id: planetlib.atomic.balance.quantity.f, revision: '1'}, role: input}
+    g: {quantity: {id: planetlib.atomic.balance.quantity.g, revision: '1'}, role: input}
+    gamma: {quantity: {id: planetlib.atomic.balance.quantity.gamma, revision: '1'}, role: derived}
+    h: {quantity: {id: planetlib.atomic.balance.quantity.h, revision: '1'}, role: input}
+    j: {quantity: {id: planetlib.atomic.balance.quantity.j, revision: '1'}, role: derived}
+    k: {quantity: {id: planetlib.atomic.balance.quantity.k, revision: '1'}, role: input}
+    me: {quantity: {id: planetlib.atomic.balance.quantity.me, revision: '1'}, role: input}
+    ne: {quantity: {id: planetlib.atomic.balance.quantity.ne, revision: '1'}, role: input}
+    ni: {quantity: {id: planetlib.atomic.balance.quantity.ni, revision: '1'}, role: derived}
+    np: {quantity: {id: planetlib.atomic.balance.quantity.np, revision: '1'}, role: input}
+    sigma: {quantity: {id: planetlib.atomic.balance.quantity.sigma, revision: '1'}, role: input}
+  relations:
+  - id: planetlib.atomic.balance.relation.saha_factor
+    equation: {id: planetlib.atomic.balance.saha_factor, revision: '1'}
+    role: Finite-state Saha factor with electron-spin degeneracy two.
+    quantities:
+      S: S
+      T: T
+      binding: binding
+      g: g
+      h: h
+      k: k
+      me: me
+  - id: planetlib.atomic.balance.relation.milne_factor
+    equation: {id: planetlib.atomic.balance.milne_factor, revision: '1'}
+    role: Milne inverse population factor built from the same Saha factor.
+    quantities:
+      S: S
+      T: T
+      b: b
+      f: f
+      h: h
+      k: k
+  - id: planetlib.atomic.balance.relation.planck_occupation
+    equation: {id: planetlib.atomic.balance.planck_occupation, revision: '1'}
+    role: Undiluted Planck photon occupation at the material temperature.
+    quantities:
+      T: T
+      eta: eta
+      f: f
+      h: h
+      k: k
+  - id: planetlib.atomic.balance.relation.saha_population
+    equation: {id: planetlib.atomic.balance.saha_population, revision: '1'}
+    role: Conditional bound-state population for testing inverse-process consistency.
+    quantities:
+      S: S
+      ne: ne
+      ni: ni
+      np: np
+  - id: planetlib.atomic.balance.relation.photoionization_integrand
+    equation: {id: planetlib.atomic.balance.photoionization_integrand, revision: '1'}
+    role: Forward photon absorption kernel per unit frequency.
+    quantities:
+      c: c
+      eta: eta
+      f: f
+      gamma: gamma
+      sigma: sigma
+  - id: planetlib.atomic.balance.relation.recombination_integrand
+    equation: {id: planetlib.atomic.balance.recombination_integrand, revision: '1'}
+    role: Matched spontaneous plus stimulated inverse kernel.
+    quantities:
+      alpha: alpha
+      b: b
+      c: c
+      eta: eta
+      f: f
+      sigma: sigma
+  - id: planetlib.atomic.balance.relation.bound_free_extinction
+    equation: {id: planetlib.atomic.balance.bound_free_extinction, revision: '1'}
+    role: Net bound-free extinction from the shared cross section.
+    quantities:
+      b: b
+      chi: chi
+      ne: ne
+      ni: ni
+      np: np
+      sigma: sigma
+  - id: planetlib.atomic.balance.relation.bound_free_emission
+    equation: {id: planetlib.atomic.balance.bound_free_emission, revision: '1'}
+    role: Matched spontaneous recombination emissivity.
+    quantities:
+      b: b
+      c: c
+      f: f
+      h: h
+      j: j
+      ne: ne
+      np: np
+      sigma: sigma
+assessments:
+- id: planetlib.atomic.balance.nuclear_conservation.pending
+  kind: evidence_support
+  claim: planetlib.atomic.balance.nuclear_conservation
+  claim_revision: '1'
+  subject: planetlib.atomic.balance.definition
+  context: planetlib.atomic.balance.authoring
+  method: {id: planetlib.atomic.balance.symbolic_inventory, revision: '1', description: Record explicit symbolic
+      checks for a separately reviewed assessment.}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.atomic.balance.checks
+  reasons:
+  - The shared definition and its test scope are recorded; no prior provider assessment is transferred.
+- id: planetlib.atomic.balance.nuclear_conservation.review_20261127
+  kind: evidence_support
+  claim: planetlib.atomic.balance.nuclear_conservation
+  claim_revision: '1'
+  subject: planetlib.atomic.balance.definition
+  context: planetlib.atomic.balance.symbolic_review_20261127
+  method:
+    id: planetlib.atomic.balance.symbolic_derivation_review
+    revision: '1'
+    description: Inspect the derivation and domain; execute substitution, differentiation, simplification
+      and limiting-case checks against the serialized definitions.
+  status: supported
+  origin: reviewed
+  evidence:
+  - planetlib.atomic.balance.symbolic_run_20261127
+  reasons:
+  - The stated conditional identity follows in the reviewed symbolic checks. Source correspondence and
+    physical applicability are separate questions.
+  mathematical_model_pins:
+  - id: planetlib.atomic.balance.two_state
+    revision: '1'
+    sha256: 1b6804bd17193c48e054b7d183325f632bae7dc266bd46f318eceac934c10437
+- id: planetlib.atomic.balance.inverse_balance.review_20261127
+  kind: evidence_support
+  claim: planetlib.atomic.balance.inverse_balance
+  claim_revision: '1'
+  subject: planetlib.atomic.balance.definition
+  context: planetlib.atomic.balance.symbolic_review_20261127
+  method:
+    id: planetlib.atomic.balance.symbolic_derivation_review
+    revision: '1'
+    description: Inspect the derivation and domain; execute substitution, differentiation, simplification
+      and limiting-case checks against the serialized definitions.
+  status: supported
+  origin: reviewed
+  evidence:
+  - planetlib.atomic.balance.symbolic_run_20261127
+  reasons:
+  - The stated conditional identity follows in the reviewed symbolic checks. Source correspondence and
+    physical applicability are separate questions.
+  mathematical_model_pins:
+  - id: planetlib.atomic.balance.milne_saha
+    revision: '1'
+    sha256: 99a59722e6cc0aa344194d53a97c900e86e8c6de3e8cced92a65778e0f114158
+- id: planetlib.atomic.balance.inverse_balance.pending
+  kind: evidence_support
+  claim: planetlib.atomic.balance.inverse_balance
+  claim_revision: '1'
+  subject: planetlib.atomic.balance.definition
+  context: planetlib.atomic.balance.authoring
+  method: {id: planetlib.atomic.balance.symbolic_inventory, revision: '1', description: Record explicit symbolic
+      checks for a separately reviewed assessment.}
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.atomic.balance.checks
+  reasons:
+  - The shared definition and its test scope are recorded; no prior provider assessment is transferred.

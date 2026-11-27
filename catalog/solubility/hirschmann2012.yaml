@@ -1,0 +1,381 @@
+schema_version: '0.6'
+model:
+  id: planetlib.solubility.hirschmann2012
+  name: Hirschmann basalt hydrogen regression and endmember variant
+  description: Shared regression constants with explicitly different dissolved-hydrogen concentration bases.
+  implementation:
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:2
+    entry_points:
+    - catalog/solubility/hirschmann2012.yaml
+assumptions:
+- statement: Molecular H2 fugacity in bar and melt total pressure in GPa are distinct inputs; neither is substituted
+    for the other.
+  evidence:
+  - planetlib.solubility.hirschmann2012.upstream_review
+- statement: The endmember variant describes the ExoEOS equilibrium concentration at zero additional H2 standard-state
+    offset.
+  evidence:
+  - planetlib.solubility.hirschmann2012.provider
+domains:
+- kind: numerical_evaluation
+  status: documented
+  description: Algebraic domain of the recorded logarithmic relations.
+  conditions:
+  - Positive fugacity
+  - positive melt pressure
+  - and a molecular H2 mole fraction strictly between zero and one.
+  evidence:
+  - planetlib.solubility.hirschmann2012.definition
+- kind: scientific_applicability
+  status: unknown
+  description: No new source replay or physical transfer assessment is supplied by this extraction.
+  conditions: []
+  evidence:
+  - planetlib.solubility.hirschmann2012.upstream_review
+limitations:
+- statement: The oxide denominator is the explicit reconstruction used by the ExoEOS review; exact reproduction
+    of the authors' unpublished normalization remains unresolved.
+  evidence:
+  - planetlib.solubility.hirschmann2012.upstream_review
+- statement: Basalt experiments span 1673.15 to 1723.15 K and 0.7 to 3 GPa as marginal bounds, not a validated joint
+    rectangle. The pressure regression supplies no calibrated temperature law.
+  evidence:
+  - planetlib.solubility.hirschmann2012.upstream_review
+- statement: One mole of Mg2SiO4 counts as three dry oxide moles but one MELTS endmember mole. Identical coefficients
+    and dimensionless units do not make the two concentration definitions equivalent; no correction or refit is
+    provided.
+  evidence:
+  - planetlib.solubility.hirschmann2012.upstream_review
+- statement: The full extensive Gibbs scalar, its host derivatives, gas standards and nonzero H2 offsets remain
+    provider choices outside these regression models.
+  evidence:
+  - planetlib.solubility.hirschmann2012.provider
+claims:
+- id: planetlib.solubility.hirschmann2012.source_correspondence
+  revision: '2'
+  kind: theoretical
+  statement: The extracted definitions preserve the regression and concentration distinctions documented in the
+    pinned ExoEOS review.
+  scope: A proposed transcription awaiting a separate review; this is not a new inspection of the original paper
+    or a proof of provider correspondence.
+  mathematical_models:
+  - {id: planetlib.solubility.hirschmann2012.oxide_model, revision: '2'}
+  - {id: planetlib.solubility.hirschmann2012.endmember_model, revision: '2'}
+- id: planetlib.solubility.hirschmann2012.physical_transfer
+  revision: '2'
+  kind: physical_validation
+  statement: The selected concentration variant has established physical accuracy for a consumer's target melt and
+    conditions.
+  scope: Requires a specified host, gas model and independent empirical comparison; none is supplied here.
+  mathematical_models:
+  - {id: planetlib.solubility.hirschmann2012.oxide_model, revision: '2'}
+  - {id: planetlib.solubility.hirschmann2012.endmember_model, revision: '2'}
+- id: planetlib.solubility.hirschmann2012.source_correspondence
+  revision: '1'
+  kind: theoretical
+  statement: The extracted definitions preserve the regression and concentration distinctions documented in the
+    pinned ExoEOS review.
+  scope: A proposed transcription awaiting a separate review; this is not a new inspection of the original paper
+    or a proof of provider correspondence.
+  mathematical_models:
+  - {id: planetlib.solubility.hirschmann2012.oxide_model, revision: '1'}
+  - {id: planetlib.solubility.hirschmann2012.endmember_model, revision: '1'}
+- id: planetlib.solubility.hirschmann2012.physical_transfer
+  revision: '1'
+  kind: physical_validation
+  statement: The selected concentration variant has established physical accuracy for a consumer's target melt and
+    conditions.
+  scope: Requires a specified host, gas model and independent empirical comparison; none is supplied here.
+  mathematical_models:
+  - {id: planetlib.solubility.hirschmann2012.oxide_model, revision: '1'}
+  - {id: planetlib.solubility.hirschmann2012.endmember_model, revision: '1'}
+evidence:
+- id: planetlib.solubility.hirschmann2012.paper
+  kind: literature
+  summary: Hirschmann et al. (2012), molecular hydrogen solubility in silicate melts.
+  sources:
+  - https://doi.org/10.1016/j.epsl.2012.06.031
+  scope: Bibliographic origin recorded by ExoEOS; the original paper was not inspected anew for this extraction.
+  provenance:
+    role: primary
+    location: Fig. 4 basalt regression, Table 2 concentration convention and Eq. 6.
+    inspection: not_inspected
+    note: Original-source review remains attributed to the dated ExoEOS records below.
+- id: planetlib.solubility.hirschmann2012.upstream_review
+  kind: literature
+  summary: Pinned ExoEOS coefficient, concentration-basis and supplementary-data reviews.
+  sources:
+  - https://github.com/HajimeKawahara/exoeos/blob/1032f58872bdef9d48c8b1ce2a16a473ced97f3c/mceg/contracts/magma_volatiles.yaml
+  - https://github.com/HajimeKawahara/exoeos/blob/1032f58872bdef9d48c8b1ce2a16a473ced97f3c/results/mceg/20261029_source_review/review.json
+  - https://github.com/HajimeKawahara/exoeos/blob/1032f58872bdef9d48c8b1ce2a16a473ced97f3c/results/mceg/20261029_remaining_source_review/review.json
+  scope: The review records -11.403 and -0.76 per GPa for basalt, fugacity in bar, and oxide versus MELTS endmember
+    counting. Its five matched-run oxide reconstructions leave ln K residuals from -0.091864 to +0.018066. Supplement
+    B808 is not silently identified with main-paper A808. Historical physical assessments remain unknown. Basalt
+    experiment bounds of 1673.15 to 1723.15 K and 0.7 to 3 GPa are marginal ranges, not a joint validation rectangle;
+    the fit has no calibrated temperature law.
+  provenance:
+    role: secondary
+    location: hirschmann2012_20261029, h2_basis_comparison_20261029, hirschmann_supplement_20261029 and the associated
+      review JSON records.
+    inspection: inspected
+    note: Local files at the pinned clean checkout were read; historical source inspections and assessments are
+      not reassigned to Planetlib.
+    derived_from:
+    - {evidence: planetlib.solubility.hirschmann2012.paper, comparison: not_checked, note: The original PDF and
+        supplementary document were not re-inspected here.}
+- id: planetlib.solubility.hirschmann2012.provider
+  kind: implementation
+  summary: ExoEOS adds molecular-H2 dilution to a dry MELTS endmember plus water host.
+  sources:
+  - https://github.com/HajimeKawahara/exoeos/blob/1032f58872bdef9d48c8b1ce2a16a473ced97f3c/src/exoeos/magma_volatiles.py
+  scope: gibbs_j uses host=sum(dry)+water and an H2 standard offset 11.403+0.76*P_Pa/1e9+h2_offset_rt. Differentiating
+    its H2 dilution contribution yields ln(n_H2/(host+n_H2)). The recorded regression variant selects h2_offset_rt=0
+    and a common one-bar gas standard.
+  provenance:
+    role: implementation
+    location: src/exoeos/magma_volatiles.py, gibbs_j, H2 contribution.
+    inspection: inspected
+    note: Code inspection only; no provider execution, empirical replay or new EquationBinding validation.
+- id: planetlib.solubility.hirschmann2012.definition
+  kind: theory
+  summary: Authored extraction retaining two distinct concentration definitions.
+  sources:
+  - catalog/solubility/hirschmann2012.yaml
+  scope: Definition only; an algebraic record does not establish experimental applicability.
+subjects:
+- id: planetlib.solubility.hirschmann2012.definition_subject
+  implementation:
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:1
+    entry_points:
+    - catalog/solubility/hirschmann2012.yaml
+  selected_files: {catalog/solubility/hirschmann2012.yaml: null}
+- id: planetlib.solubility.hirschmann2012.definition_subject.symbolic_v2
+  implementation:
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:2
+    entry_points:
+    - catalog/solubility/hirschmann2012.yaml
+  selected_files: {catalog/solubility/hirschmann2012.yaml: null}
+contexts:
+- id: planetlib.solubility.hirschmann2012.extraction_context
+  scope: Initial extraction from pinned local ExoEOS records, with no new original-source or numerical validation.
+  settings: {extraction_date: '2026-11-27'}
+quantities:
+- id: planetlib.solubility.hirschmann2012.melt_pressure
+  revision: '1'
+  latex: P
+  description: Total mechanical pressure of the melt; separate from hydrogen fugacity.
+  unit: GPa
+  domain: Positive melt pressure supplied by the consumer.
+- id: planetlib.solubility.hirschmann2012.hydrogen_fugacity
+  revision: '1'
+  latex: f_{\mathrm{H_2}}
+  description: Molecular hydrogen gas fugacity, with the regression using f_H2 divided by one bar.
+  unit: bar
+  domain: Positive fugacity supplied by a separately selected gas model.
+- id: planetlib.solubility.hirschmann2012.oxide_fraction
+  revision: '1'
+  latex: X_{\mathrm{H_2}}^{\mathrm{ox}}=n_{\mathrm{H_2}}/(N_{\mathrm{dry,ox}}+n_{\mathrm{H_2O}}+n_{\mathrm{H_2}})
+  description: Molecular H2 amount divided by total dry oxide component, H2O-equivalent and molecular H2 amounts.
+    H2O includes dissolved water and OH expressed as H2O. This is the review's declared source reconstruction, not
+    exact recovery of the authors' arithmetic.
+  unit: '1'
+  domain: A positive dry oxide host and a molecular H2 fraction strictly between zero and one; other guests are
+    excluded.
+- id: planetlib.solubility.hirschmann2012.endmember_fraction
+  revision: '1'
+  latex: X_{\mathrm{H_2}}^{\mathrm{em}}=n_{\mathrm{H_2}}/(N_{\mathrm{dry,em}}+n_{\mathrm{H_2O}}+n_{\mathrm{H_2}})
+  description: Molecular H2 amount divided by total dry MELTS endmember, H2O and molecular H2 amounts. The dry-host
+    sum counts each MELTS endmember amount once, rather than its oxide stoichiometric count.
+  unit: '1'
+  domain: The ExoEOS dry11 plus water host, excluding helium from this denominator; fraction strictly between zero
+    and one.
+equations:
+- id: planetlib.solubility.hirschmann2012.oxide_regression
+  revision: '2'
+  description: Basalt Fig. 4 pressure regression using the reviewed oxide-based concentration reconstruction.
+  scope: Paper coefficient values and oxide-component meaning retained with the unresolved normalization caveat.
+  symbols:
+    X: {latex: X, description: Molecular H2 fraction on the reconstructed oxide-plus-water-plus-H2 basis., unit: '1'}
+    f: {latex: f, description: Molecular hydrogen fugacity., unit: bar}
+    P: {latex: P, description: Melt total pressure., unit: GPa}
+  assumptions:
+  - No fitted temperature dependence is added.
+  - The two pressure quantities retain their separate physical meanings.
+  - 'SymPy symbols are numerical magnitudes: P in GPa, f in bar, and X dimensionless; log(X/f) uses fugacity divided
+    by one bar.'
+  evidence:
+  - planetlib.solubility.hirschmann2012.upstream_review
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(log(Mul(Symbol(''X''), Pow(Symbol(''f''), Integer(-1)))),
+      Add(Mul(Integer(-1), Rational(19, 25), Symbol(''P'')), Rational(-11403, 1000)))'}
+- id: planetlib.solubility.hirschmann2012.endmember_regression
+  revision: '2'
+  description: ExoEOS conditional variant using the same fitted numbers on an endmember-based concentration.
+  scope: Equilibrium H2 relation of the provider scalar with zero extra H2 offset; not identified with the original
+    oxide-based fit.
+  symbols:
+    X: {latex: X, description: Molecular H2 fraction on the dry MELTS endmember-plus-water-plus-H2 basis., unit: '1'}
+    f: {latex: f, description: Molecular hydrogen fugacity., unit: bar}
+    P: {latex: P, description: Melt total pressure., unit: GPa}
+  assumptions:
+  - The gas and dissolved H2 standards share a one-bar reference.
+  - The extra h2_offset_rt is zero.
+  - No oxide-basis correction or new empirical calibration is inferred.
+  - 'SymPy symbols are numerical magnitudes: P in GPa, f in bar, and X dimensionless; log(X/f) uses fugacity divided
+    by one bar.'
+  evidence:
+  - planetlib.solubility.hirschmann2012.provider
+  - planetlib.solubility.hirschmann2012.upstream_review
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(log(Mul(Symbol(''X''), Pow(Symbol(''f''), Integer(-1)))),
+      Add(Mul(Integer(-1), Rational(19, 25), Symbol(''P'')), Rational(-11403, 1000)))'}
+- id: planetlib.solubility.hirschmann2012.oxide_regression
+  revision: '1'
+  latex: \ln\!\left(\frac{X}{f/(1\,\mathrm{bar})}\right)=-11.403-0.76\frac{P}{1\,\mathrm{GPa}}
+  description: Basalt Fig. 4 pressure regression using the reviewed oxide-based concentration reconstruction.
+  scope: Paper coefficient values and oxide-component meaning retained with the unresolved normalization caveat.
+  symbols:
+    X: {latex: X, description: Molecular H2 fraction on the reconstructed oxide-plus-water-plus-H2 basis., unit: '1'}
+    f: {latex: f, description: Molecular hydrogen fugacity., unit: bar}
+    P: {latex: P, description: Melt total pressure., unit: GPa}
+  assumptions:
+  - No fitted temperature dependence is added.
+  - The two pressure quantities retain their separate physical meanings.
+  evidence:
+  - planetlib.solubility.hirschmann2012.upstream_review
+- id: planetlib.solubility.hirschmann2012.endmember_regression
+  revision: '1'
+  latex: \ln\!\left(\frac{X}{f/(1\,\mathrm{bar})}\right)=-11.403-0.76\frac{P}{1\,\mathrm{GPa}}
+  description: ExoEOS conditional variant using the same fitted numbers on an endmember-based concentration.
+  scope: Equilibrium H2 relation of the provider scalar with zero extra H2 offset; not identified with the original
+    oxide-based fit.
+  symbols:
+    X: {latex: X, description: Molecular H2 fraction on the dry MELTS endmember-plus-water-plus-H2 basis., unit: '1'}
+    f: {latex: f, description: Molecular hydrogen fugacity., unit: bar}
+    P: {latex: P, description: Melt total pressure., unit: GPa}
+  assumptions:
+  - The gas and dissolved H2 standards share a one-bar reference.
+  - The extra h2_offset_rt is zero.
+  - No oxide-basis correction or new empirical calibration is inferred.
+  evidence:
+  - planetlib.solubility.hirschmann2012.provider
+  - planetlib.solubility.hirschmann2012.upstream_review
+mathematical_models:
+- id: planetlib.solubility.hirschmann2012.oxide_model
+  revision: '2'
+  description: Source-style basalt regression on a declared oxide concentration basis.
+  scope: The consumer supplies melt pressure and gas fugacity; host composition, gas closure, temperature and empirical
+    applicability need separate selection and review.
+  quantities:
+    pressure: {quantity: {id: planetlib.solubility.hirschmann2012.melt_pressure, revision: '1'}, role: input}
+    fugacity: {quantity: {id: planetlib.solubility.hirschmann2012.hydrogen_fugacity, revision: '1'}, role: input}
+    fraction: {quantity: {id: planetlib.solubility.hirschmann2012.oxide_fraction, revision: '1'}, role: unknown}
+  relations:
+  - id: planetlib.solubility.hirschmann2012.oxide_relation
+    equation: {id: planetlib.solubility.hirschmann2012.oxide_regression, revision: '2'}
+    role: Adopt the pressure regression with the oxide fraction meaning.
+    quantities: {P: pressure, f: fugacity, X: fraction}
+- id: planetlib.solubility.hirschmann2012.endmember_model
+  revision: '2'
+  description: Conditional ExoEOS variant on a dry MELTS endmember concentration basis.
+  scope: The consumer supplies melt pressure and gas fugacity; the full Gibbs scalar, host derivatives and nonzero
+    offsets are outside this partial model.
+  quantities:
+    pressure: {quantity: {id: planetlib.solubility.hirschmann2012.melt_pressure, revision: '1'}, role: input}
+    fugacity: {quantity: {id: planetlib.solubility.hirschmann2012.hydrogen_fugacity, revision: '1'}, role: input}
+    fraction: {quantity: {id: planetlib.solubility.hirschmann2012.endmember_fraction, revision: '1'}, role: unknown}
+  relations:
+  - id: planetlib.solubility.hirschmann2012.endmember_relation
+    equation: {id: planetlib.solubility.hirschmann2012.endmember_regression, revision: '2'}
+    role: Adopt the coefficient values with the distinct endmember fraction meaning.
+    quantities: {P: pressure, f: fugacity, X: fraction}
+- id: planetlib.solubility.hirschmann2012.oxide_model
+  revision: '1'
+  description: Source-style basalt regression on a declared oxide concentration basis.
+  scope: The consumer supplies melt pressure and gas fugacity; host composition, gas closure, temperature and empirical
+    applicability need separate selection and review.
+  quantities:
+    pressure: {quantity: {id: planetlib.solubility.hirschmann2012.melt_pressure, revision: '1'}, role: input}
+    fugacity: {quantity: {id: planetlib.solubility.hirschmann2012.hydrogen_fugacity, revision: '1'}, role: input}
+    fraction: {quantity: {id: planetlib.solubility.hirschmann2012.oxide_fraction, revision: '1'}, role: unknown}
+  relations:
+  - id: planetlib.solubility.hirschmann2012.oxide_relation
+    equation: {id: planetlib.solubility.hirschmann2012.oxide_regression, revision: '1'}
+    role: Adopt the pressure regression with the oxide fraction meaning.
+    quantities: {P: pressure, f: fugacity, X: fraction}
+- id: planetlib.solubility.hirschmann2012.endmember_model
+  revision: '1'
+  description: Conditional ExoEOS variant on a dry MELTS endmember concentration basis.
+  scope: The consumer supplies melt pressure and gas fugacity; the full Gibbs scalar, host derivatives and nonzero
+    offsets are outside this partial model.
+  quantities:
+    pressure: {quantity: {id: planetlib.solubility.hirschmann2012.melt_pressure, revision: '1'}, role: input}
+    fugacity: {quantity: {id: planetlib.solubility.hirschmann2012.hydrogen_fugacity, revision: '1'}, role: input}
+    fraction: {quantity: {id: planetlib.solubility.hirschmann2012.endmember_fraction, revision: '1'}, role: unknown}
+  relations:
+  - id: planetlib.solubility.hirschmann2012.endmember_relation
+    equation: {id: planetlib.solubility.hirschmann2012.endmember_regression, revision: '1'}
+    role: Adopt the coefficient values with the distinct endmember fraction meaning.
+    quantities: {P: pressure, f: fugacity, X: fraction}
+assessments:
+- id: planetlib.solubility.hirschmann2012.initial_correspondence.symbolic_v2
+  kind: evidence_support
+  claim: planetlib.solubility.hirschmann2012.source_correspondence
+  claim_revision: '2'
+  subject: planetlib.solubility.hirschmann2012.definition_subject.symbolic_v2
+  context: planetlib.solubility.hirschmann2012.extraction_context
+  method: {id: planetlib.solubility.hirschmann2012.inventory, revision: '1', description: Extract definitions while
+      preserving the distinction between historical review and new support.}
+  evidence:
+  - planetlib.solubility.hirschmann2012.upstream_review
+  - planetlib.solubility.hirschmann2012.provider
+  reasons:
+  - The extraction has no separate source-correspondence review; structural validation does not supply one.
+  - The mathematical source changed to SymPy revision 2; prior support is not transferred.
+  status: unknown
+  origin: reviewed
+- id: planetlib.solubility.hirschmann2012.initial_physical_transfer.symbolic_v2
+  kind: evidence_support
+  claim: planetlib.solubility.hirschmann2012.physical_transfer
+  claim_revision: '2'
+  subject: planetlib.solubility.hirschmann2012.definition_subject.symbolic_v2
+  context: planetlib.solubility.hirschmann2012.extraction_context
+  method: {id: planetlib.solubility.hirschmann2012.empirical_scope, revision: '1', description: Require a target-specific
+      empirical assessment separately from coefficient transcription.}
+  evidence:
+  - planetlib.solubility.hirschmann2012.upstream_review
+  reasons:
+  - No target melt or independent empirical error criterion is specified; upstream physical assessments remain unknown.
+  - The mathematical source changed to SymPy revision 2; prior support is not transferred.
+  status: unknown
+  origin: reviewed
+- id: planetlib.solubility.hirschmann2012.initial_correspondence
+  kind: evidence_support
+  claim: planetlib.solubility.hirschmann2012.source_correspondence
+  claim_revision: '1'
+  subject: planetlib.solubility.hirschmann2012.definition_subject
+  context: planetlib.solubility.hirschmann2012.extraction_context
+  method: {id: planetlib.solubility.hirschmann2012.inventory, revision: '1', description: Extract definitions while
+      preserving the distinction between historical review and new support.}
+  evidence:
+  - planetlib.solubility.hirschmann2012.upstream_review
+  - planetlib.solubility.hirschmann2012.provider
+  reasons:
+  - The extraction has no separate source-correspondence review; structural validation does not supply one.
+  status: unknown
+  origin: reviewed
+- id: planetlib.solubility.hirschmann2012.initial_physical_transfer
+  kind: evidence_support
+  claim: planetlib.solubility.hirschmann2012.physical_transfer
+  claim_revision: '1'
+  subject: planetlib.solubility.hirschmann2012.definition_subject
+  context: planetlib.solubility.hirschmann2012.extraction_context
+  method: {id: planetlib.solubility.hirschmann2012.empirical_scope, revision: '1', description: Require a target-specific
+      empirical assessment separately from coefficient transcription.}
+  evidence:
+  - planetlib.solubility.hirschmann2012.upstream_review
+  reasons:
+  - No target melt or independent empirical error criterion is specified; upstream physical assessments remain unknown.
+  status: unknown
+  origin: reviewed
