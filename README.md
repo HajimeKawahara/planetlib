@@ -14,8 +14,8 @@ nor MCEG at runtime.
 
 ## Initial catalog
 
-All catalog files are ordinary MCEG schema `0.6` contracts. Current Equations
-use serialized SymPy expressions as the authoritative definition;
+All catalog files are ordinary MCEG schema `0.6` contracts. Each current Equation
+is maintained only in the YAML catalog's `sympy` field as a serialized SymPy expression;
 MCEG derives display LaTeX from those expressions and the declared symbol labels.
 The SymPy backend is a development dependency for authoring and checking.
 
@@ -43,9 +43,8 @@ explicit reconstruction, with its remaining discrepancies preserved.
 
 ## Relations with symbolic consistency checks
 
-The additional families start at revision `1`. Checks read the stored expressions
+The additional families start at revision `1`. Checks read the catalog expressions
 and derive a second relation, eliminate a variable, or take a physical limit.
-They do not compare the authoring script with a second copy of the same formula.
 
 | Definition | Checked relationship | Scope retained |
 | --- | --- | --- |
@@ -82,7 +81,6 @@ schema. Installation needs network access; checks and builds then work offline.
 ```bash
 python -m venv .venv
 .venv/bin/python -m pip install -r requirements-dev.txt
-.venv/bin/python tools/define_equations.py --check
 .venv/bin/python tools/planetlib.py check
 .venv/bin/python -m pytest -q
 .venv/bin/python -m mceg catalog/solubility/sun_yao2026.yaml
@@ -102,14 +100,15 @@ MCEG can render the definitions without Planetlib-specific rendering code:
   --model planetlib.solubility.sun_yao2026.binary_water --revision 2 --format tex
 ```
 
-The [authoring script](tools/define_equations.py) collects explicit `(ID, revision)`
-pairs from its initial definitions and the thermodynamics, atomic and escape
-modules. It constructs expressions using SymPy and MCEG's `from_sympy`; it does
-not parse LaTeX or select a newest revision automatically.
-Its `--check` mode compares the serialized definitions without changing files.
-After an intentional definition edit, running it without `--check` writes the
-expressions; review revisions and adoption pins separately. Loading a contract
-never executes this script.
+The YAML catalog is the sole maintained source of each equation. MCEG schema
+`0.6` stores SymPy constructor expressions in `Equation.sympy`; it does not
+require a companion Python definition module or a generation step.
+For interactive editing, use `mceg.symbolic.to_sympy(equation.sympy)` to recover
+the expression and `mceg.symbolic.from_sympy(expression).model_dump(mode="json")`
+to serialize an edited SymPy object into the selected YAML record. Keep the
+resulting definition in the catalog. Tests read that same record, and MCEG
+derives its displayed LaTeX. Review definition revisions and adoption pins
+when changing an equation or its meaning.
 
 Symbols represent numerical magnitudes in the units declared by each Equation:
 Sun–Yao uses K and bar; Hirschmann uses GPa for melt pressure and bar for fugacity;
