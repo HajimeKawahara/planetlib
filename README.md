@@ -57,6 +57,14 @@ and derive a second relation, eliminate a variable, or take a physical limit.
 | [Mass-fraction solute](catalog/thermodynamics/mass_fraction_solute.yaml) | Solute and host derivatives of the same extensive scalar | Two host components; solute standard independent of host composition; this does not supply the nonlinear Sun–Yao Gibbs continuation |
 | [NASA9](catalog/thermodynamics/nasa9.yaml) | Enthalpy, entropy, Gibbs energy and heat-capacity derivative identities | One coefficient interval, positive temperature, explicit reference units; no coefficient dataset or interval stitching |
 | [Molar Helmholtz responses](catalog/thermodynamics/helmholtz.yaml) | Maxwell relation, heat-capacity difference, sound speed and ideal-gas limit | Smooth single phase, fixed composition, molar density; stable response domain and no equilibrium sound speed |
+| [Radiative-convective equilibrium](catalog/atmosphere/radiative_convective_equilibrium.yaml) | Net flux signs, top boundary, complementarity, separate finite gradient/entropy criteria, fixed-mask residuals and implicit tangents | Supplied radiation and thermodynamics; no solver, opacity/grid convergence or derivative across a branch switch |
+
+The RCE catalog contains ten relations assembled into five partial models.
+Its entropy and neutral-gradient criteria retain distinct meanings; an adopter
+must select and justify the criterion. The symbolic checks include inadmissible
+zero-residual states and singular tangent systems. All three initial RCE
+assessments remain unknown; no earlier review or provider convergence result
+is transferred to this new catalog.
 
 The energy model keeps the integrated moment distinct from physical flux and
 the spherical area factor. Its conserved total includes material excitation
