@@ -1,0 +1,665 @@
+schema_version: '0.6'
+model:
+  id: planetlib.spectroscopy.observation
+  name: Spectral broadening and first-order Doppler sampling
+  description: Continuous normalized velocity kernels and first-order Doppler sampling of a supplied spectrum. Velocity
+    quantities use km/s consistently. Rotation assumes a rigid spherical disk with a spatially common local spectrum
+    and the stated quadratic limb-darkening law. Finite sampled kernels, log-grid approximations, interpolation,
+    endpoint padding and zero-rotation delta handling remain provider choices.
+  implementation: &id001
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:1
+    entry_points:
+    - catalog/spectroscopy/observation.yaml
+assumptions:
+- statement: beta and vsini are positive. The limb-darkening profile is nonnegative on 0 <= mu <= 1 and 1-u1/3-u2/6
+    > 0.
+  evidence:
+  - planetlib.spectroscopy.observation.source
+- statement: The first-order radial-velocity rule uses |RV/c| << 1 and samples the input spectrum at w_obs*(1+RV/c);
+    it is not a relativistic transformation or a spectral-flux amplitude transformation.
+  evidence:
+  - planetlib.spectroscopy.observation.source
+- statement: Continuous convolution preserves an integrable spectrum over the whole real coordinate when the chosen
+    kernel integrates to one. Finite grids may lose edge flux.
+  evidence:
+  - planetlib.spectroscopy.observation.source
+domains:
+- kind: scientific_applicability
+  status: unknown
+  description: The definition is a conditional partial model, with no adopted empirical validation.
+  conditions: []
+  evidence:
+  - planetlib.spectroscopy.observation.source
+limitations:
+- statement: Continuous normalized velocity kernels and first-order Doppler sampling of a supplied spectrum. Velocity
+    quantities use km/s consistently. Rotation assumes a rigid spherical disk with a spatially common local spectrum
+    and the stated quadratic limb-darkening law. Finite sampled kernels, log-grid approximations, interpolation,
+    endpoint padding and zero-rotation delta handling remain provider choices.
+  evidence:
+  - planetlib.spectroscopy.observation.source
+- statement: Numerical algorithms, fitted data, discretization choices and floating-point accuracy remain provider
+    responsibilities.
+  evidence:
+  - planetlib.spectroscopy.observation.source
+claims:
+- id: planetlib.spectroscopy.observation.mathematical_consistency
+  revision: '1'
+  kind: theoretical
+  statement: The Gaussian and physical quadratic-limb rotation kernels integrate to one; the rotational strip integral
+    agrees with the stated disk intensity law, and zero radial velocity preserves the sampling coordinate.
+  scope: Conditional mathematical checks only; neither provider equivalence nor physical applicability is inferred.
+  mathematical_models:
+  - id: planetlib.spectroscopy.observation.model
+    revision: '1'
+- id: planetlib.spectroscopy.observation.source_correspondence
+  revision: '1'
+  kind: theoretical
+  statement: The shared definitions preserve the selected conventions of the inspected implementation.
+  scope: The source supplied the extraction target; a separate correspondence review is required.
+  mathematical_models:
+  - id: planetlib.spectroscopy.observation.model
+    revision: '1'
+- id: planetlib.spectroscopy.observation.physical_applicability
+  revision: '1'
+  kind: physical_validation
+  statement: The selected relations have adequate accuracy for a specified physical target.
+  scope: No target, empirical error criterion or independent observation is selected by this library entry.
+  mathematical_models:
+  - id: planetlib.spectroscopy.observation.model
+    revision: '1'
+evidence:
+- id: planetlib.spectroscopy.observation.source
+  kind: implementation
+  summary: Mathematical conventions extracted from immutable ExoJAX source.
+  sources:
+  - https://github.com/HajimeKawahara/exojax/blob/38cb2e44f153ad6d729e3253e235702de52920cf/src/exojax/postproc/response.py
+  - https://github.com/HajimeKawahara/exojax/blob/38cb2e44f153ad6d729e3253e235702de52920cf/src/exojax/postproc/spin_rotation.py
+  - https://github.com/HajimeKawahara/exojax/blob/38cb2e44f153ad6d729e3253e235702de52920cf/src/exojax/postproc/limb_darkening.py
+  scope: The cited source implementations were inspected. This is not a new inspection of their original literature
+    or a transferred provider assessment.
+  provenance:
+    role: implementation
+    location: The functions and conventions identified by the immutable source paths.
+    inspection: inspected
+    note: Shared mathematical definitions are distinct from numerical approximation and physical applicability.
+subjects:
+- id: planetlib.spectroscopy.observation.definition
+  implementation: *id001
+  selected_files:
+    catalog/spectroscopy/observation.yaml: null
+contexts:
+- id: planetlib.spectroscopy.observation.initial_review
+  scope: Initial shared-definition extraction; test executions and reviewed support are recorded independently.
+quantities:
+- id: planetlib.spectroscopy.observation.quantity.v
+  revision: '1'
+  latex: v
+  description: Velocity-offset coordinate for the chosen broadening kernel.
+  unit: km s^-1
+  domain: Finite real value within the stated scope.
+- id: planetlib.spectroscopy.observation.quantity.u
+  revision: '1'
+  latex: u
+  description: Integration velocity offset in continuous convolution.
+  unit: km s^-1
+  domain: Finite real value within the stated scope.
+- id: planetlib.spectroscopy.observation.quantity.beta
+  revision: '1'
+  latex: \beta
+  description: Gaussian instrumental velocity standard deviation.
+  unit: km s^-1
+  domain: Positive.
+- id: planetlib.spectroscopy.observation.quantity.K_G
+  revision: '1'
+  latex: K_{G}
+  description: Normalized continuous Gaussian kernel.
+  unit: (km s^-1)^-1
+  domain: Finite real value within the stated scope.
+  coordinates:
+  - id: planetlib.spectroscopy.observation.quantity.v
+    revision: '1'
+- id: planetlib.spectroscopy.observation.quantity.w_sample
+  revision: '1'
+  latex: w_{sample}
+  description: Input spectral wavenumber sampled for an observed grid point.
+  unit: cm^-1
+  domain: Finite real value within the stated scope.
+- id: planetlib.spectroscopy.observation.quantity.w_obs
+  revision: '1'
+  latex: w_{obs}
+  description: Observed spectroscopic wavenumber.
+  unit: cm^-1
+  domain: Positive.
+- id: planetlib.spectroscopy.observation.quantity.RV
+  revision: '1'
+  latex: RV
+  description: Signed radial velocity under the explicit sampling convention.
+  unit: km s^-1
+  domain: Magnitude much smaller than c.
+- id: planetlib.spectroscopy.observation.quantity.c
+  revision: '1'
+  latex: c
+  description: Speed of light in the same velocity units as RV.
+  unit: km s^-1
+  domain: Positive.
+- id: planetlib.spectroscopy.observation.quantity.mu
+  revision: '1'
+  latex: \mu
+  description: Cosine of the disk surface angle.
+  unit: '1'
+  domain: Between zero and one.
+- id: planetlib.spectroscopy.observation.quantity.u1
+  revision: '1'
+  latex: u_{1}
+  description: Linear coefficient in the standard quadratic limb-darkening law.
+  unit: '1'
+  domain: Finite real value within the stated scope.
+- id: planetlib.spectroscopy.observation.quantity.u2
+  revision: '1'
+  latex: u_{2}
+  description: Quadratic coefficient in the standard quadratic limb-darkening law.
+  unit: '1'
+  domain: Finite real value within the stated scope.
+- id: planetlib.spectroscopy.observation.quantity.L_mu
+  revision: '1'
+  latex: L_{\mu}
+  description: Local disk intensity divided by its central intensity.
+  unit: '1'
+  domain: Finite real value within the stated scope.
+  coordinates:
+  - id: planetlib.spectroscopy.observation.quantity.mu
+    revision: '1'
+- id: planetlib.spectroscopy.observation.quantity.x
+  revision: '1'
+  latex: x
+  description: Projected rotation velocity divided by vsini.
+  unit: '1'
+  domain: Finite real value within the stated scope.
+- id: planetlib.spectroscopy.observation.quantity.vsini
+  revision: '1'
+  latex: vsini
+  description: Positive projected equatorial rotation speed.
+  unit: km s^-1
+  domain: Positive.
+- id: planetlib.spectroscopy.observation.quantity.K_raw
+  revision: '1'
+  latex: K_{raw}
+  description: Unnormalized rigid-rotation strip integral in dimensionless velocity.
+  unit: '1'
+  domain: Finite real value within the stated scope.
+  coordinates:
+  - id: planetlib.spectroscopy.observation.quantity.x
+    revision: '1'
+- id: planetlib.spectroscopy.observation.quantity.K_rot
+  revision: '1'
+  latex: K_{rot}
+  description: Continuous rotation kernel normalized over physical velocity.
+  unit: (km s^-1)^-1
+  domain: Finite real value within the stated scope.
+  coordinates:
+  - id: planetlib.spectroscopy.observation.quantity.v
+    revision: '1'
+- id: planetlib.spectroscopy.observation.quantity.K
+  revision: '1'
+  latex: K
+  description: Chosen externally supplied normalized broadening kernel.
+  unit: (km s^-1)^-1
+  domain: Integrates to one.
+  coordinates:
+  - id: planetlib.spectroscopy.observation.quantity.v
+    revision: '1'
+- id: planetlib.spectroscopy.observation.quantity.F_in
+  revision: '1'
+  latex: F_{in}
+  description: Supplied continuum-normalized spectrum on the chosen velocity coordinate.
+  unit: '1'
+  domain: Finite real value within the stated scope.
+  coordinates:
+  - id: planetlib.spectroscopy.observation.quantity.v
+    revision: '1'
+- id: planetlib.spectroscopy.observation.quantity.F_out
+  revision: '1'
+  latex: F_{out}
+  description: Continuum-normalized spectrum after continuous convolution.
+  unit: '1'
+  domain: Finite real value within the stated scope.
+  coordinates:
+  - id: planetlib.spectroscopy.observation.quantity.v
+    revision: '1'
+equations:
+- id: planetlib.spectroscopy.observation.gaussian_kernel
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Function('K_G')(Symbol('v', real=True)), Mul(Rational(1, 2), Pow(Integer(2), Rational(1,
+      2)), Pow(pi, Rational(-1, 2)), Pow(Symbol('beta', real=True), Integer(-1)), exp(Mul(Integer(-1), Rational(1,
+      2), Pow(Symbol('beta', real=True), Integer(-2)), Pow(Symbol('v', real=True), Integer(2))))))
+  description: Continuous normalized Gaussian broadening kernel.
+  scope: Continuous normalized velocity kernels and first-order Doppler sampling of a supplied spectrum. Velocity
+    quantities use km/s consistently. Rotation assumes a rigid spherical disk with a spatially common local spectrum
+    and the stated quadratic limb-darkening law. Finite sampled kernels, log-grid approximations, interpolation,
+    endpoint padding and zero-rotation delta handling remain provider choices.
+  assumptions: &id002
+  - beta and vsini are positive. The limb-darkening profile is nonnegative on 0 <= mu <= 1 and 1-u1/3-u2/6 > 0.
+  - The first-order radial-velocity rule uses |RV/c| << 1 and samples the input spectrum at w_obs*(1+RV/c); it is
+    not a relativistic transformation or a spectral-flux amplitude transformation.
+  - Continuous convolution preserves an integrable spectrum over the whole real coordinate when the chosen kernel
+    integrates to one. Finite grids may lose edge flux.
+  symbols:
+    K_G:
+      latex: K_{G}
+      description: Normalized continuous Gaussian kernel.
+      unit: (km s^-1)^-1
+    beta:
+      latex: \beta
+      description: Gaussian instrumental velocity standard deviation.
+      unit: km s^-1
+    v:
+      latex: v
+      description: Velocity-offset coordinate for the chosen broadening kernel.
+      unit: km s^-1
+  evidence:
+  - planetlib.spectroscopy.observation.source
+- id: planetlib.spectroscopy.observation.doppler_sampling
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Symbol('w_sample', real=True), Mul(Symbol('w_obs', real=True), Add(Mul(Symbol('RV', real=True),
+      Pow(Symbol('c', real=True), Integer(-1))), Integer(1))))
+  description: First-order signed radial-velocity sampling coordinate.
+  scope: Continuous normalized velocity kernels and first-order Doppler sampling of a supplied spectrum. Velocity
+    quantities use km/s consistently. Rotation assumes a rigid spherical disk with a spatially common local spectrum
+    and the stated quadratic limb-darkening law. Finite sampled kernels, log-grid approximations, interpolation,
+    endpoint padding and zero-rotation delta handling remain provider choices.
+  assumptions: *id002
+  symbols:
+    RV:
+      latex: RV
+      description: Signed radial velocity under the explicit sampling convention.
+      unit: km s^-1
+    c:
+      latex: c
+      description: Speed of light in the same velocity units as RV.
+      unit: km s^-1
+    w_obs:
+      latex: w_{obs}
+      description: Observed spectroscopic wavenumber.
+      unit: cm^-1
+    w_sample:
+      latex: w_{sample}
+      description: Input spectral wavenumber sampled for an observed grid point.
+      unit: cm^-1
+  evidence:
+  - planetlib.spectroscopy.observation.source
+- id: planetlib.spectroscopy.observation.limb_darkening
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Function('L_mu')(Symbol('mu', real=True)), Add(Mul(Integer(-1), Symbol('u1', real=True),
+      Add(Integer(1), Mul(Integer(-1), Symbol('mu', real=True)))), Mul(Integer(-1), Symbol('u2', real=True), Pow(Add(Integer(1),
+      Mul(Integer(-1), Symbol('mu', real=True))), Integer(2))), Integer(1)))
+  description: Standard quadratic limb-darkening law.
+  scope: Continuous normalized velocity kernels and first-order Doppler sampling of a supplied spectrum. Velocity
+    quantities use km/s consistently. Rotation assumes a rigid spherical disk with a spatially common local spectrum
+    and the stated quadratic limb-darkening law. Finite sampled kernels, log-grid approximations, interpolation,
+    endpoint padding and zero-rotation delta handling remain provider choices.
+  assumptions: *id002
+  symbols:
+    L_mu:
+      latex: L_{\mu}
+      description: Local disk intensity divided by its central intensity.
+      unit: '1'
+    mu:
+      latex: \mu
+      description: Cosine of the disk surface angle.
+      unit: '1'
+    u1:
+      latex: u_{1}
+      description: Linear coefficient in the standard quadratic limb-darkening law.
+      unit: '1'
+    u2:
+      latex: u_{2}
+      description: Quadratic coefficient in the standard quadratic limb-darkening law.
+      unit: '1'
+  evidence:
+  - planetlib.spectroscopy.observation.source
+- id: planetlib.spectroscopy.observation.rotation_raw
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Function('K_raw')(Symbol('x', real=True)), Add(Mul(Integer(-1), Rational(4, 3), Symbol('u2',
+      real=True), Pow(Max(Integer(0), Add(Integer(1), Mul(Integer(-1), Pow(Symbol('x', real=True), Integer(2))))),
+      Rational(3, 2))), Mul(Rational(1, 2), pi, Add(Symbol('u1', real=True), Mul(Integer(2), Symbol('u2', real=True))),
+      Max(Integer(0), Add(Integer(1), Mul(Integer(-1), Pow(Symbol('x', real=True), Integer(2)))))), Mul(Add(Mul(Integer(-1),
+      Integer(2), Symbol('u1', real=True)), Mul(Integer(-1), Integer(2), Symbol('u2', real=True)), Integer(2)),
+      Pow(Max(Integer(0), Add(Integer(1), Mul(Integer(-1), Pow(Symbol('x', real=True), Integer(2))))), Rational(1,
+      2)))))
+  description: Rigid-rotation strip integral, zero outside the rotational support.
+  scope: Continuous normalized velocity kernels and first-order Doppler sampling of a supplied spectrum. Velocity
+    quantities use km/s consistently. Rotation assumes a rigid spherical disk with a spatially common local spectrum
+    and the stated quadratic limb-darkening law. Finite sampled kernels, log-grid approximations, interpolation,
+    endpoint padding and zero-rotation delta handling remain provider choices.
+  assumptions: *id002
+  symbols:
+    K_raw:
+      latex: K_{raw}
+      description: Unnormalized rigid-rotation strip integral in dimensionless velocity.
+      unit: '1'
+    u1:
+      latex: u_{1}
+      description: Linear coefficient in the standard quadratic limb-darkening law.
+      unit: '1'
+    u2:
+      latex: u_{2}
+      description: Quadratic coefficient in the standard quadratic limb-darkening law.
+      unit: '1'
+    x:
+      latex: x
+      description: Projected rotation velocity divided by vsini.
+      unit: '1'
+  evidence:
+  - planetlib.spectroscopy.observation.source
+- id: planetlib.spectroscopy.observation.rotation_normalized
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Function('K_rot')(Symbol('v', real=True)), Mul(Pow(pi, Integer(-1)), Pow(Symbol('vsini',
+      real=True), Integer(-1)), Pow(Add(Mul(Integer(-1), Rational(1, 3), Symbol('u1', real=True)), Mul(Integer(-1),
+      Rational(1, 6), Symbol('u2', real=True)), Integer(1)), Integer(-1)), Function('K_raw')(Mul(Symbol('v', real=True),
+      Pow(Symbol('vsini', real=True), Integer(-1))))))
+  description: Normalize the rotational strip integral over velocity.
+  scope: Continuous normalized velocity kernels and first-order Doppler sampling of a supplied spectrum. Velocity
+    quantities use km/s consistently. Rotation assumes a rigid spherical disk with a spatially common local spectrum
+    and the stated quadratic limb-darkening law. Finite sampled kernels, log-grid approximations, interpolation,
+    endpoint padding and zero-rotation delta handling remain provider choices.
+  assumptions: *id002
+  symbols:
+    K_raw:
+      latex: K_{raw}
+      description: Unnormalized rigid-rotation strip integral in dimensionless velocity.
+      unit: '1'
+    K_rot:
+      latex: K_{rot}
+      description: Continuous rotation kernel normalized over physical velocity.
+      unit: (km s^-1)^-1
+    u1:
+      latex: u_{1}
+      description: Linear coefficient in the standard quadratic limb-darkening law.
+      unit: '1'
+    u2:
+      latex: u_{2}
+      description: Quadratic coefficient in the standard quadratic limb-darkening law.
+      unit: '1'
+    v:
+      latex: v
+      description: Velocity-offset coordinate for the chosen broadening kernel.
+      unit: km s^-1
+    vsini:
+      latex: vsini
+      description: Positive projected equatorial rotation speed.
+      unit: km s^-1
+  evidence:
+  - planetlib.spectroscopy.observation.source
+- id: planetlib.spectroscopy.observation.convolution
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Function('F_out')(Symbol('v', real=True)), Integral(Add(Mul(Function('F_in')(Add(Mul(Integer(-1),
+      Symbol('u', real=True)), Symbol('v', real=True))), Function('K')(Symbol('u', real=True))), Mul(Function('F_in')(Add(Symbol('u',
+      real=True), Symbol('v', real=True))), Function('K')(Mul(Integer(-1), Symbol('u', real=True))))), Tuple(Symbol('u',
+      real=True), Integer(0), oo)))
+  description: Continuous convolution with an externally selected normalized kernel.
+  scope: Continuous normalized velocity kernels and first-order Doppler sampling of a supplied spectrum. Velocity
+    quantities use km/s consistently. Rotation assumes a rigid spherical disk with a spatially common local spectrum
+    and the stated quadratic limb-darkening law. Finite sampled kernels, log-grid approximations, interpolation,
+    endpoint padding and zero-rotation delta handling remain provider choices.
+  assumptions: *id002
+  symbols:
+    F_in:
+      latex: F_{in}
+      description: Supplied continuum-normalized spectrum on the chosen velocity coordinate.
+      unit: '1'
+    F_out:
+      latex: F_{out}
+      description: Continuum-normalized spectrum after continuous convolution.
+      unit: '1'
+    K:
+      latex: K
+      description: Chosen externally supplied normalized broadening kernel.
+      unit: (km s^-1)^-1
+    u:
+      latex: u
+      description: Integration velocity offset in continuous convolution.
+      unit: km s^-1
+    v:
+      latex: v
+      description: Velocity-offset coordinate for the chosen broadening kernel.
+      unit: km s^-1
+  evidence:
+  - planetlib.spectroscopy.observation.source
+mathematical_models:
+- id: planetlib.spectroscopy.observation.model
+  revision: '1'
+  description: Spectral broadening and first-order Doppler sampling
+  scope: Continuous normalized velocity kernels and first-order Doppler sampling of a supplied spectrum. Velocity
+    quantities use km/s consistently. Rotation assumes a rigid spherical disk with a spatially common local spectrum
+    and the stated quadratic limb-darkening law. Finite sampled kernels, log-grid approximations, interpolation,
+    endpoint padding and zero-rotation delta handling remain provider choices.
+  quantities:
+    v:
+      quantity:
+        id: planetlib.spectroscopy.observation.quantity.v
+        revision: '1'
+      role: coordinate
+    u:
+      quantity:
+        id: planetlib.spectroscopy.observation.quantity.u
+        revision: '1'
+      role: coordinate
+    beta:
+      quantity:
+        id: planetlib.spectroscopy.observation.quantity.beta
+        revision: '1'
+      role: input
+    K_G:
+      quantity:
+        id: planetlib.spectroscopy.observation.quantity.K_G
+        revision: '1'
+      role: derived
+    w_sample:
+      quantity:
+        id: planetlib.spectroscopy.observation.quantity.w_sample
+        revision: '1'
+      role: derived
+    w_obs:
+      quantity:
+        id: planetlib.spectroscopy.observation.quantity.w_obs
+        revision: '1'
+      role: input
+    RV:
+      quantity:
+        id: planetlib.spectroscopy.observation.quantity.RV
+        revision: '1'
+      role: input
+    c:
+      quantity:
+        id: planetlib.spectroscopy.observation.quantity.c
+        revision: '1'
+      role: parameter
+    mu:
+      quantity:
+        id: planetlib.spectroscopy.observation.quantity.mu
+        revision: '1'
+      role: coordinate
+    u1:
+      quantity:
+        id: planetlib.spectroscopy.observation.quantity.u1
+        revision: '1'
+      role: input
+    u2:
+      quantity:
+        id: planetlib.spectroscopy.observation.quantity.u2
+        revision: '1'
+      role: input
+    L_mu:
+      quantity:
+        id: planetlib.spectroscopy.observation.quantity.L_mu
+        revision: '1'
+      role: derived
+    x:
+      quantity:
+        id: planetlib.spectroscopy.observation.quantity.x
+        revision: '1'
+      role: coordinate
+    vsini:
+      quantity:
+        id: planetlib.spectroscopy.observation.quantity.vsini
+        revision: '1'
+      role: input
+    K_raw:
+      quantity:
+        id: planetlib.spectroscopy.observation.quantity.K_raw
+        revision: '1'
+      role: derived
+    K_rot:
+      quantity:
+        id: planetlib.spectroscopy.observation.quantity.K_rot
+        revision: '1'
+      role: derived
+    K:
+      quantity:
+        id: planetlib.spectroscopy.observation.quantity.K
+        revision: '1'
+      role: input
+    F_in:
+      quantity:
+        id: planetlib.spectroscopy.observation.quantity.F_in
+        revision: '1'
+      role: input
+    F_out:
+      quantity:
+        id: planetlib.spectroscopy.observation.quantity.F_out
+        revision: '1'
+      role: derived
+  relations:
+  - id: gaussian_kernel
+    equation:
+      id: planetlib.spectroscopy.observation.gaussian_kernel
+      revision: '1'
+    kind: equation
+    role: Continuous normalized Gaussian broadening kernel.
+    quantities:
+      K_G: K_G
+      beta: beta
+      v: v
+  - id: doppler_sampling
+    equation:
+      id: planetlib.spectroscopy.observation.doppler_sampling
+      revision: '1'
+    kind: equation
+    role: First-order signed radial-velocity sampling coordinate.
+    quantities:
+      RV: RV
+      c: c
+      w_obs: w_obs
+      w_sample: w_sample
+  - id: limb_darkening
+    equation:
+      id: planetlib.spectroscopy.observation.limb_darkening
+      revision: '1'
+    kind: equation
+    role: Standard quadratic limb-darkening law.
+    quantities:
+      L_mu: L_mu
+      mu: mu
+      u1: u1
+      u2: u2
+  - id: rotation_raw
+    equation:
+      id: planetlib.spectroscopy.observation.rotation_raw
+      revision: '1'
+    kind: equation
+    role: Rigid-rotation strip integral, zero outside the rotational support.
+    quantities:
+      K_raw: K_raw
+      u1: u1
+      u2: u2
+      x: x
+  - id: rotation_normalized
+    equation:
+      id: planetlib.spectroscopy.observation.rotation_normalized
+      revision: '1'
+    kind: equation
+    role: Normalize the rotational strip integral over velocity.
+    quantities:
+      K_raw: K_raw
+      K_rot: K_rot
+      u1: u1
+      u2: u2
+      v: v
+      vsini: vsini
+  - id: convolution
+    equation:
+      id: planetlib.spectroscopy.observation.convolution
+      revision: '1'
+    kind: equation
+    role: Continuous convolution with an externally selected normalized kernel.
+    quantities:
+      F_in: F_in
+      F_out: F_out
+      K: K
+      u: u
+      v: v
+assessments:
+- id: planetlib.spectroscopy.observation.mathematical_consistency.initial
+  kind: evidence_support
+  claim: planetlib.spectroscopy.observation.mathematical_consistency
+  claim_revision: '1'
+  subject: planetlib.spectroscopy.observation.definition
+  context: planetlib.spectroscopy.observation.initial_review
+  method:
+    id: planetlib.spectroscopy.observation.initial_review
+    revision: '1'
+    description: Keep mathematical consistency, source correspondence and physical applicability as separate review
+      targets.
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.spectroscopy.observation.source
+  reasons:
+  - No archived scoped review is assigned to this new definition by its initial extraction.
+- id: planetlib.spectroscopy.observation.source_correspondence.initial
+  kind: evidence_support
+  claim: planetlib.spectroscopy.observation.source_correspondence
+  claim_revision: '1'
+  subject: planetlib.spectroscopy.observation.definition
+  context: planetlib.spectroscopy.observation.initial_review
+  method:
+    id: planetlib.spectroscopy.observation.initial_review
+    revision: '1'
+    description: Keep mathematical consistency, source correspondence and physical applicability as separate review
+      targets.
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.spectroscopy.observation.source
+  reasons:
+  - No archived scoped review is assigned to this new definition by its initial extraction.
+- id: planetlib.spectroscopy.observation.physical_applicability.initial
+  kind: evidence_support
+  claim: planetlib.spectroscopy.observation.physical_applicability
+  claim_revision: '1'
+  subject: planetlib.spectroscopy.observation.definition
+  context: planetlib.spectroscopy.observation.initial_review
+  method:
+    id: planetlib.spectroscopy.observation.initial_review
+    revision: '1'
+    description: Keep mathematical consistency, source correspondence and physical applicability as separate review
+      targets.
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.spectroscopy.observation.source
+  reasons:
+  - No archived scoped review is assigned to this new definition by its initial extraction.

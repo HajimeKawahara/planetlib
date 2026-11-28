@@ -1,0 +1,467 @@
+schema_version: '0.6'
+model:
+  id: planetlib.radiation.pure_absorption
+  name: Pure-absorption ray and plane-parallel layer transfer
+  description: Static pure absorption and supplied source function at one spectral wavenumber. I and S are physical
+    specific intensities per steradian per cm^-1. The layer relation has a source constant across the layer, positive
+    direction cosine and optical-depth difference; it is not a linear-source or two-stream closure. The boundary
+    I_in is external.
+  implementation: &id001
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:1
+    entry_points:
+    - catalog/radiation/pure_absorption.yaml
+assumptions:
+- statement: There is no scattering or frequency redistribution. The source function is supplied; setting it to
+    Planck intensity is an additional thermal/LTE choice.
+  evidence:
+  - planetlib.radiation.pure_absorption.source
+- statement: s increases along the ray, while tau denotes a nonnegative vertical optical-depth increment and mu
+    is the absolute direction cosine.
+  evidence:
+  - planetlib.radiation.pure_absorption.source
+- statement: Azimuthal symmetry is assumed only for the hemispheric angular-flux relation. A provider may internally
+    store pi*I or pi*S, which requires an explicit local conversion.
+  evidence:
+  - planetlib.radiation.pure_absorption.source
+domains:
+- kind: scientific_applicability
+  status: unknown
+  description: The definition is a conditional partial model, with no adopted empirical validation.
+  conditions: []
+  evidence:
+  - planetlib.radiation.pure_absorption.source
+limitations:
+- statement: Static pure absorption and supplied source function at one spectral wavenumber. I and S are physical
+    specific intensities per steradian per cm^-1. The layer relation has a source constant across the layer, positive
+    direction cosine and optical-depth difference; it is not a linear-source or two-stream closure. The boundary
+    I_in is external.
+  evidence:
+  - planetlib.radiation.pure_absorption.source
+- statement: Numerical algorithms, fitted data, discretization choices and floating-point accuracy remain provider
+    responsibilities.
+  evidence:
+  - planetlib.radiation.pure_absorption.source
+claims:
+- id: planetlib.radiation.pure_absorption.mathematical_consistency
+  revision: '1'
+  kind: theoretical
+  statement: The layer solution has the transparent and opaque limits, composes for a common constant source, and
+    is an equilibrium fixed point when I_in=S; an isotropic intensity gives F=pi*I.
+  scope: Conditional mathematical checks only; neither provider equivalence nor physical applicability is inferred.
+  mathematical_models:
+  - id: planetlib.radiation.pure_absorption.model
+    revision: '1'
+- id: planetlib.radiation.pure_absorption.source_correspondence
+  revision: '1'
+  kind: theoretical
+  statement: The shared definitions preserve the selected conventions of the inspected implementation.
+  scope: The source supplied the extraction target; a separate correspondence review is required.
+  mathematical_models:
+  - id: planetlib.radiation.pure_absorption.model
+    revision: '1'
+- id: planetlib.radiation.pure_absorption.physical_applicability
+  revision: '1'
+  kind: physical_validation
+  statement: The selected relations have adequate accuracy for a specified physical target.
+  scope: No target, empirical error criterion or independent observation is selected by this library entry.
+  mathematical_models:
+  - id: planetlib.radiation.pure_absorption.model
+    revision: '1'
+evidence:
+- id: planetlib.radiation.pure_absorption.source
+  kind: implementation
+  summary: Mathematical conventions extracted from immutable ExoJAX source.
+  sources:
+  - https://github.com/HajimeKawahara/exojax/blob/38cb2e44f153ad6d729e3253e235702de52920cf/src/exojax/rt/rtransfer.py
+  - https://github.com/HajimeKawahara/exojax/blob/38cb2e44f153ad6d729e3253e235702de52920cf/src/exojax/rt/emis.py
+  - https://github.com/HajimeKawahara/exojax/blob/38cb2e44f153ad6d729e3253e235702de52920cf/src/exojax/rt/flux.py
+  scope: The cited source implementations were inspected. This is not a new inspection of their original literature
+    or a transferred provider assessment.
+  provenance:
+    role: implementation
+    location: The functions and conventions identified by the immutable source paths.
+    inspection: inspected
+    note: Shared mathematical definitions are distinct from numerical approximation and physical applicability.
+subjects:
+- id: planetlib.radiation.pure_absorption.definition
+  implementation: *id001
+  selected_files:
+    catalog/radiation/pure_absorption.yaml: null
+contexts:
+- id: planetlib.radiation.pure_absorption.initial_review
+  scope: Initial shared-definition extraction; test executions and reviewed support are recorded independently.
+quantities:
+- id: planetlib.radiation.pure_absorption.quantity.s
+  revision: '1'
+  latex: s
+  description: Path coordinate increasing in the propagation direction.
+  unit: cm
+  domain: Finite real value within the stated scope.
+- id: planetlib.radiation.pure_absorption.quantity.I
+  revision: '1'
+  latex: I
+  description: Physical spectral specific intensity along a ray.
+  unit: erg s^-1 cm^-2 sr^-1 (cm^-1)^-1
+  domain: Finite real value within the stated scope.
+  coordinates:
+  - id: planetlib.radiation.pure_absorption.quantity.s
+    revision: '1'
+- id: planetlib.radiation.pure_absorption.quantity.alpha
+  revision: '1'
+  latex: \alpha
+  description: Nonnegative absorption coefficient along the ray.
+  unit: cm^-1
+  domain: Nonnegative.
+  coordinates:
+  - id: planetlib.radiation.pure_absorption.quantity.s
+    revision: '1'
+- id: planetlib.radiation.pure_absorption.quantity.S_ray
+  revision: '1'
+  latex: S_{ray}
+  description: Supplied spectral source function along the ray.
+  unit: erg s^-1 cm^-2 sr^-1 (cm^-1)^-1
+  domain: Finite real value within the stated scope.
+  coordinates:
+  - id: planetlib.radiation.pure_absorption.quantity.s
+    revision: '1'
+- id: planetlib.radiation.pure_absorption.quantity.transmission
+  revision: '1'
+  latex: transmission
+  description: Layer transmission along the selected ray.
+  unit: '1'
+  domain: Between zero and one.
+- id: planetlib.radiation.pure_absorption.quantity.tau
+  revision: '1'
+  latex: \tau
+  description: Nonnegative vertical optical-depth difference across the layer.
+  unit: '1'
+  domain: Nonnegative.
+- id: planetlib.radiation.pure_absorption.quantity.mu
+  revision: '1'
+  latex: \mu
+  description: Absolute direction cosine relative to the layer normal.
+  unit: '1'
+  domain: 0 < mu <= 1; zero is only an angular-integral endpoint.
+- id: planetlib.radiation.pure_absorption.quantity.I_in
+  revision: '1'
+  latex: I_{in}
+  description: Incident boundary intensity for this ray.
+  unit: erg s^-1 cm^-2 sr^-1 (cm^-1)^-1
+  domain: Finite real value within the stated scope.
+- id: planetlib.radiation.pure_absorption.quantity.I_out
+  revision: '1'
+  latex: I_{out}
+  description: Outgoing boundary intensity for this ray.
+  unit: erg s^-1 cm^-2 sr^-1 (cm^-1)^-1
+  domain: Finite real value within the stated scope.
+- id: planetlib.radiation.pure_absorption.quantity.S
+  revision: '1'
+  latex: S
+  description: Source function constant throughout the layer.
+  unit: erg s^-1 cm^-2 sr^-1 (cm^-1)^-1
+  domain: Finite real value within the stated scope.
+- id: planetlib.radiation.pure_absorption.quantity.I_mu
+  revision: '1'
+  latex: I_{\mu}
+  description: Physical intensity at a boundary as a function of outward direction cosine.
+  unit: erg s^-1 cm^-2 sr^-1 (cm^-1)^-1
+  domain: Finite real value within the stated scope.
+  coordinates:
+  - id: planetlib.radiation.pure_absorption.quantity.mu
+    revision: '1'
+- id: planetlib.radiation.pure_absorption.quantity.F
+  revision: '1'
+  latex: F
+  description: Outgoing hemispheric spectral flux.
+  unit: erg s^-1 cm^-2 (cm^-1)^-1
+  domain: Finite real value within the stated scope.
+equations:
+- id: planetlib.radiation.pure_absorption.transfer_equation
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Derivative(Function('I')(Symbol('s', real=True)), Tuple(Symbol('s', real=True), Integer(1))),
+      Mul(Integer(-1), Add(Function('I')(Symbol('s', real=True)), Mul(Integer(-1), Function('S_ray')(Symbol('s',
+      real=True)))), Function('alpha')(Symbol('s', real=True))))
+  description: Absorption transfer along an oriented ray.
+  scope: Static pure absorption and supplied source function at one spectral wavenumber. I and S are physical specific
+    intensities per steradian per cm^-1. The layer relation has a source constant across the layer, positive direction
+    cosine and optical-depth difference; it is not a linear-source or two-stream closure. The boundary I_in is external.
+  assumptions: &id002
+  - There is no scattering or frequency redistribution. The source function is supplied; setting it to Planck intensity
+    is an additional thermal/LTE choice.
+  - s increases along the ray, while tau denotes a nonnegative vertical optical-depth increment and mu is the absolute
+    direction cosine.
+  - Azimuthal symmetry is assumed only for the hemispheric angular-flux relation. A provider may internally store
+    pi*I or pi*S, which requires an explicit local conversion.
+  symbols:
+    I:
+      latex: I
+      description: Physical spectral specific intensity along a ray.
+      unit: erg s^-1 cm^-2 sr^-1 (cm^-1)^-1
+    S_ray:
+      latex: S_{ray}
+      description: Supplied spectral source function along the ray.
+      unit: erg s^-1 cm^-2 sr^-1 (cm^-1)^-1
+    alpha:
+      latex: \alpha
+      description: Nonnegative absorption coefficient along the ray.
+      unit: cm^-1
+    s:
+      latex: s
+      description: Path coordinate increasing in the propagation direction.
+      unit: cm
+  evidence:
+  - planetlib.radiation.pure_absorption.source
+- id: planetlib.radiation.pure_absorption.transmission
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Symbol('transmission', real=True), exp(Mul(Integer(-1), Pow(Symbol('mu', real=True), Integer(-1)),
+      Symbol('tau', real=True))))
+  description: Transmission through a homogeneous optical-depth interval.
+  scope: Static pure absorption and supplied source function at one spectral wavenumber. I and S are physical specific
+    intensities per steradian per cm^-1. The layer relation has a source constant across the layer, positive direction
+    cosine and optical-depth difference; it is not a linear-source or two-stream closure. The boundary I_in is external.
+  assumptions: *id002
+  symbols:
+    mu:
+      latex: \mu
+      description: Absolute direction cosine relative to the layer normal.
+      unit: '1'
+    tau:
+      latex: \tau
+      description: Nonnegative vertical optical-depth difference across the layer.
+      unit: '1'
+    transmission:
+      latex: transmission
+      description: Layer transmission along the selected ray.
+      unit: '1'
+  evidence:
+  - planetlib.radiation.pure_absorption.source
+- id: planetlib.radiation.pure_absorption.homogeneous_layer
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Symbol('I_out', real=True), Add(Mul(Symbol('I_in', real=True), exp(Mul(Integer(-1), Pow(Symbol('mu',
+      real=True), Integer(-1)), Symbol('tau', real=True)))), Mul(Symbol('S', real=True), Add(Integer(1), Mul(Integer(-1),
+      exp(Mul(Integer(-1), Pow(Symbol('mu', real=True), Integer(-1)), Symbol('tau', real=True))))))))
+  description: Formal solution for a constant-source plane-parallel layer.
+  scope: Static pure absorption and supplied source function at one spectral wavenumber. I and S are physical specific
+    intensities per steradian per cm^-1. The layer relation has a source constant across the layer, positive direction
+    cosine and optical-depth difference; it is not a linear-source or two-stream closure. The boundary I_in is external.
+  assumptions: *id002
+  symbols:
+    I_in:
+      latex: I_{in}
+      description: Incident boundary intensity for this ray.
+      unit: erg s^-1 cm^-2 sr^-1 (cm^-1)^-1
+    I_out:
+      latex: I_{out}
+      description: Outgoing boundary intensity for this ray.
+      unit: erg s^-1 cm^-2 sr^-1 (cm^-1)^-1
+    S:
+      latex: S
+      description: Source function constant throughout the layer.
+      unit: erg s^-1 cm^-2 sr^-1 (cm^-1)^-1
+    mu:
+      latex: \mu
+      description: Absolute direction cosine relative to the layer normal.
+      unit: '1'
+    tau:
+      latex: \tau
+      description: Nonnegative vertical optical-depth difference across the layer.
+      unit: '1'
+  evidence:
+  - planetlib.radiation.pure_absorption.source
+- id: planetlib.radiation.pure_absorption.flux
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Symbol('F', real=True), Mul(Integer(2), pi, Integral(Mul(Symbol('mu', real=True), Function('I_mu')(Symbol('mu',
+      real=True))), Tuple(Symbol('mu', real=True), Integer(0), Integer(1)))))
+  description: Hemispheric angular flux from physical specific intensity.
+  scope: Static pure absorption and supplied source function at one spectral wavenumber. I and S are physical specific
+    intensities per steradian per cm^-1. The layer relation has a source constant across the layer, positive direction
+    cosine and optical-depth difference; it is not a linear-source or two-stream closure. The boundary I_in is external.
+  assumptions: *id002
+  symbols:
+    F:
+      latex: F
+      description: Outgoing hemispheric spectral flux.
+      unit: erg s^-1 cm^-2 (cm^-1)^-1
+    I_mu:
+      latex: I_{\mu}
+      description: Physical intensity at a boundary as a function of outward direction cosine.
+      unit: erg s^-1 cm^-2 sr^-1 (cm^-1)^-1
+    mu:
+      latex: \mu
+      description: Absolute direction cosine relative to the layer normal.
+      unit: '1'
+  evidence:
+  - planetlib.radiation.pure_absorption.source
+mathematical_models:
+- id: planetlib.radiation.pure_absorption.model
+  revision: '1'
+  description: Pure-absorption ray and plane-parallel layer transfer
+  scope: Static pure absorption and supplied source function at one spectral wavenumber. I and S are physical specific
+    intensities per steradian per cm^-1. The layer relation has a source constant across the layer, positive direction
+    cosine and optical-depth difference; it is not a linear-source or two-stream closure. The boundary I_in is external.
+  quantities:
+    s:
+      quantity:
+        id: planetlib.radiation.pure_absorption.quantity.s
+        revision: '1'
+      role: coordinate
+    I:
+      quantity:
+        id: planetlib.radiation.pure_absorption.quantity.I
+        revision: '1'
+      role: unknown
+    alpha:
+      quantity:
+        id: planetlib.radiation.pure_absorption.quantity.alpha
+        revision: '1'
+      role: input
+    S_ray:
+      quantity:
+        id: planetlib.radiation.pure_absorption.quantity.S_ray
+        revision: '1'
+      role: input
+    transmission:
+      quantity:
+        id: planetlib.radiation.pure_absorption.quantity.transmission
+        revision: '1'
+      role: derived
+    tau:
+      quantity:
+        id: planetlib.radiation.pure_absorption.quantity.tau
+        revision: '1'
+      role: input
+    mu:
+      quantity:
+        id: planetlib.radiation.pure_absorption.quantity.mu
+        revision: '1'
+      role: coordinate
+    I_in:
+      quantity:
+        id: planetlib.radiation.pure_absorption.quantity.I_in
+        revision: '1'
+      role: input
+    I_out:
+      quantity:
+        id: planetlib.radiation.pure_absorption.quantity.I_out
+        revision: '1'
+      role: derived
+    S:
+      quantity:
+        id: planetlib.radiation.pure_absorption.quantity.S
+        revision: '1'
+      role: input
+    I_mu:
+      quantity:
+        id: planetlib.radiation.pure_absorption.quantity.I_mu
+        revision: '1'
+      role: input
+    F:
+      quantity:
+        id: planetlib.radiation.pure_absorption.quantity.F
+        revision: '1'
+      role: derived
+  relations:
+  - id: transfer_equation
+    equation:
+      id: planetlib.radiation.pure_absorption.transfer_equation
+      revision: '1'
+    kind: equation
+    role: Absorption transfer along an oriented ray.
+    quantities:
+      I: I
+      S_ray: S_ray
+      alpha: alpha
+      s: s
+  - id: transmission
+    equation:
+      id: planetlib.radiation.pure_absorption.transmission
+      revision: '1'
+    kind: equation
+    role: Transmission through a homogeneous optical-depth interval.
+    quantities:
+      mu: mu
+      tau: tau
+      transmission: transmission
+  - id: homogeneous_layer
+    equation:
+      id: planetlib.radiation.pure_absorption.homogeneous_layer
+      revision: '1'
+    kind: equation
+    role: Formal solution for a constant-source plane-parallel layer.
+    quantities:
+      I_in: I_in
+      I_out: I_out
+      S: S
+      mu: mu
+      tau: tau
+  - id: flux
+    equation:
+      id: planetlib.radiation.pure_absorption.flux
+      revision: '1'
+    kind: equation
+    role: Hemispheric angular flux from physical specific intensity.
+    quantities:
+      F: F
+      I_mu: I_mu
+      mu: mu
+assessments:
+- id: planetlib.radiation.pure_absorption.mathematical_consistency.initial
+  kind: evidence_support
+  claim: planetlib.radiation.pure_absorption.mathematical_consistency
+  claim_revision: '1'
+  subject: planetlib.radiation.pure_absorption.definition
+  context: planetlib.radiation.pure_absorption.initial_review
+  method:
+    id: planetlib.radiation.pure_absorption.initial_review
+    revision: '1'
+    description: Keep mathematical consistency, source correspondence and physical applicability as separate review
+      targets.
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.radiation.pure_absorption.source
+  reasons:
+  - No archived scoped review is assigned to this new definition by its initial extraction.
+- id: planetlib.radiation.pure_absorption.source_correspondence.initial
+  kind: evidence_support
+  claim: planetlib.radiation.pure_absorption.source_correspondence
+  claim_revision: '1'
+  subject: planetlib.radiation.pure_absorption.definition
+  context: planetlib.radiation.pure_absorption.initial_review
+  method:
+    id: planetlib.radiation.pure_absorption.initial_review
+    revision: '1'
+    description: Keep mathematical consistency, source correspondence and physical applicability as separate review
+      targets.
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.radiation.pure_absorption.source
+  reasons:
+  - No archived scoped review is assigned to this new definition by its initial extraction.
+- id: planetlib.radiation.pure_absorption.physical_applicability.initial
+  kind: evidence_support
+  claim: planetlib.radiation.pure_absorption.physical_applicability
+  claim_revision: '1'
+  subject: planetlib.radiation.pure_absorption.definition
+  context: planetlib.radiation.pure_absorption.initial_review
+  method:
+    id: planetlib.radiation.pure_absorption.initial_review
+    revision: '1'
+    description: Keep mathematical consistency, source correspondence and physical applicability as separate review
+      targets.
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.radiation.pure_absorption.source
+  reasons:
+  - No archived scoped review is assigned to this new definition by its initial extraction.

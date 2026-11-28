@@ -1,0 +1,786 @@
+schema_version: '0.6'
+model:
+  id: planetlib.atmosphere.columns
+  name: Atmospheric absorber columns and optical depth
+  description: Local cgs absorber-column relations with positive gravity and particle masses. Pressure differences
+    are in dyn cm^-2, not bar. Pressure-column formulas assume constant composition and gravity over the pressure
+    interval. The separate differential hydrostatic relation allows inverse-square gravity; integrating a finite
+    atmosphere still requires thermal/composition profiles and a boundary.
+  implementation: &id001
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:1
+    entry_points:
+    - catalog/atmosphere/columns.yaml
+assumptions:
+- statement: Cross section is per absorbing particle; mass mixing ratio is absorber mass divided by total gas mass,
+    whereas volume mixing ratio is absorber number divided by total gas particle number.
+  evidence:
+  - planetlib.atmosphere.columns.source
+- statement: CIA coefficient k_cia is defined by alpha=k_cia*n1*n2. Its supplied convention already accounts for
+    identical partners; no additional factor 1/2 is applied.
+  evidence:
+  - planetlib.atmosphere.columns.source
+- statement: The pressure-column approximation and the differential inverse-square hydrostatic relation are distinct
+    relations, not a claim that finite layers have exactly constant gravity. The scalar m_mean is the selected layer
+    value of the separately supplied radial mean-mass field m_mean_r.
+  evidence:
+  - planetlib.atmosphere.columns.source
+domains:
+- kind: scientific_applicability
+  status: unknown
+  description: The definition is a conditional partial model, with no adopted empirical validation.
+  conditions: []
+  evidence:
+  - planetlib.atmosphere.columns.source
+limitations:
+- statement: Local cgs absorber-column relations with positive gravity and particle masses. Pressure differences
+    are in dyn cm^-2, not bar. Pressure-column formulas assume constant composition and gravity over the pressure
+    interval. The separate differential hydrostatic relation allows inverse-square gravity; integrating a finite
+    atmosphere still requires thermal/composition profiles and a boundary.
+  evidence:
+  - planetlib.atmosphere.columns.source
+- statement: Numerical algorithms, fitted data, discretization choices and floating-point accuracy remain provider
+    responsibilities.
+  evidence:
+  - planetlib.atmosphere.columns.source
+claims:
+- id: planetlib.atmosphere.columns.mathematical_consistency
+  revision: '1'
+  kind: theoretical
+  statement: Mass- and volume-based columns agree under the explicit mixing conversion; CIA vanishes at zero path
+    or either zero density; isothermal inverse-square hydrostatic balance has the stated differential consequence.
+  scope: Conditional mathematical checks only; neither provider equivalence nor physical applicability is inferred.
+  mathematical_models:
+  - id: planetlib.atmosphere.columns.model
+    revision: '1'
+- id: planetlib.atmosphere.columns.source_correspondence
+  revision: '1'
+  kind: theoretical
+  statement: The shared definitions preserve the selected conventions of the inspected implementation.
+  scope: The source supplied the extraction target; a separate correspondence review is required.
+  mathematical_models:
+  - id: planetlib.atmosphere.columns.model
+    revision: '1'
+- id: planetlib.atmosphere.columns.physical_applicability
+  revision: '1'
+  kind: physical_validation
+  statement: The selected relations have adequate accuracy for a specified physical target.
+  scope: No target, empirical error criterion or independent observation is selected by this library entry.
+  mathematical_models:
+  - id: planetlib.atmosphere.columns.model
+    revision: '1'
+evidence:
+- id: planetlib.atmosphere.columns.source
+  kind: implementation
+  summary: Mathematical conventions extracted from immutable ExoJAX source.
+  sources:
+  - https://github.com/HajimeKawahara/exojax/blob/38cb2e44f153ad6d729e3253e235702de52920cf/src/exojax/rt/layeropacity.py
+  - https://github.com/HajimeKawahara/exojax/blob/38cb2e44f153ad6d729e3253e235702de52920cf/src/exojax/atm/atmprof.py
+  - https://github.com/HajimeKawahara/exojax/blob/38cb2e44f153ad6d729e3253e235702de52920cf/src/exojax/atm/idealgas.py
+  scope: The cited source implementations were inspected. This is not a new inspection of their original literature
+    or a transferred provider assessment.
+  provenance:
+    role: implementation
+    location: The functions and conventions identified by the immutable source paths.
+    inspection: inspected
+    note: Shared mathematical definitions are distinct from numerical approximation and physical applicability.
+subjects:
+- id: planetlib.atmosphere.columns.definition
+  implementation: *id001
+  selected_files:
+    catalog/atmosphere/columns.yaml: null
+contexts:
+- id: planetlib.atmosphere.columns.initial_review
+  scope: Initial shared-definition extraction; test executions and reviewed support are recorded independently.
+quantities:
+- id: planetlib.atmosphere.columns.quantity.tau
+  revision: '1'
+  latex: \tau
+  description: Vertical absorption optical depth of the chosen layer.
+  unit: '1'
+  domain: Finite real value within the stated scope.
+- id: planetlib.atmosphere.columns.quantity.sigma_abs
+  revision: '1'
+  latex: \sigma_{abs}
+  description: Absorption cross section per absorber.
+  unit: cm^2
+  domain: Nonnegative.
+- id: planetlib.atmosphere.columns.quantity.N_abs
+  revision: '1'
+  latex: N_{abs}
+  description: Number of absorbing particles per unit area through the layer.
+  unit: cm^-2
+  domain: Nonnegative.
+- id: planetlib.atmosphere.columns.quantity.n_abs
+  revision: '1'
+  latex: n_{abs}
+  description: Uniform absorber number density on the supplied geometric path.
+  unit: cm^-3
+  domain: Nonnegative.
+- id: planetlib.atmosphere.columns.quantity.dz
+  revision: '1'
+  latex: dz
+  description: Positive geometric path length for the local column.
+  unit: cm
+  domain: Nonnegative.
+- id: planetlib.atmosphere.columns.quantity.dP
+  revision: '1'
+  latex: dP
+  description: Positive pressure difference between lower and upper faces.
+  unit: dyn cm^-2
+  domain: Nonnegative.
+- id: planetlib.atmosphere.columns.quantity.q
+  revision: '1'
+  latex: q
+  description: Absorber mass mixing ratio.
+  unit: '1'
+  domain: Between zero and one.
+- id: planetlib.atmosphere.columns.quantity.m_abs
+  revision: '1'
+  latex: m_{abs}
+  description: Mass of one absorber.
+  unit: g
+  domain: Positive.
+- id: planetlib.atmosphere.columns.quantity.g
+  revision: '1'
+  latex: g
+  description: Constant gravitational acceleration used for this pressure interval.
+  unit: cm s^-2
+  domain: Positive.
+- id: planetlib.atmosphere.columns.quantity.x_abs
+  revision: '1'
+  latex: x_{abs}
+  description: Absorber particle-number or volume mixing ratio.
+  unit: '1'
+  domain: Between zero and one.
+- id: planetlib.atmosphere.columns.quantity.m_mean
+  revision: '1'
+  latex: m_{mean}
+  description: Mean mass per gas particle, not molar mass.
+  unit: g
+  domain: Positive.
+- id: planetlib.atmosphere.columns.quantity.tau_cia
+  revision: '1'
+  latex: \tau_{cia}
+  description: CIA optical depth for the declared collision-pair convention.
+  unit: '1'
+  domain: Finite real value within the stated scope.
+- id: planetlib.atmosphere.columns.quantity.k_cia
+  revision: '1'
+  latex: k_{cia}
+  description: CIA absorption coefficient defined by alpha=k_cia*n1*n2.
+  unit: cm^5
+  domain: Nonnegative.
+- id: planetlib.atmosphere.columns.quantity.n1
+  revision: '1'
+  latex: n_{1}
+  description: Number density of first collision partner.
+  unit: cm^-3
+  domain: Nonnegative.
+- id: planetlib.atmosphere.columns.quantity.n2
+  revision: '1'
+  latex: n_{2}
+  description: Number density of second collision partner, possibly the same species.
+  unit: cm^-3
+  domain: Nonnegative.
+- id: planetlib.atmosphere.columns.quantity.r
+  revision: '1'
+  latex: r
+  description: Outward radial coordinate.
+  unit: cm
+  domain: Positive.
+- id: planetlib.atmosphere.columns.quantity.r0
+  revision: '1'
+  latex: r_{0}
+  description: Reference radius for the supplied gravity.
+  unit: cm
+  domain: Positive.
+- id: planetlib.atmosphere.columns.quantity.g0
+  revision: '1'
+  latex: g_{0}
+  description: Gravity at reference radius r0.
+  unit: cm s^-2
+  domain: Positive.
+- id: planetlib.atmosphere.columns.quantity.P
+  revision: '1'
+  latex: P
+  description: Total gas pressure field.
+  unit: dyn cm^-2
+  domain: Finite real value within the stated scope.
+  coordinates:
+  - id: planetlib.atmosphere.columns.quantity.r
+    revision: '1'
+- id: planetlib.atmosphere.columns.quantity.rho
+  revision: '1'
+  latex: \rho
+  description: Total gas mass-density field.
+  unit: g cm^-3
+  domain: Finite real value within the stated scope.
+  coordinates:
+  - id: planetlib.atmosphere.columns.quantity.r
+    revision: '1'
+- id: planetlib.atmosphere.columns.quantity.T
+  revision: '1'
+  latex: T
+  description: Externally supplied local temperature field.
+  unit: K
+  domain: Positive.
+  coordinates:
+  - id: planetlib.atmosphere.columns.quantity.r
+    revision: '1'
+- id: planetlib.atmosphere.columns.quantity.m_mean_r
+  revision: '1'
+  latex: m_{mean r}
+  description: Externally supplied mean mass per gas particle as a radial field.
+  unit: g
+  domain: Positive.
+  coordinates:
+  - id: planetlib.atmosphere.columns.quantity.r
+    revision: '1'
+- id: planetlib.atmosphere.columns.quantity.k_B
+  revision: '1'
+  latex: k_{B}
+  description: Boltzmann constant.
+  unit: erg K^-1
+  domain: Positive.
+equations:
+- id: planetlib.atmosphere.columns.cross_section_depth
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Symbol('tau', real=True), Mul(Symbol('N_abs', real=True), Symbol('sigma_abs', real=True)))
+  description: Absorption optical depth from absorber column.
+  scope: Local cgs absorber-column relations with positive gravity and particle masses. Pressure differences are
+    in dyn cm^-2, not bar. Pressure-column formulas assume constant composition and gravity over the pressure interval.
+    The separate differential hydrostatic relation allows inverse-square gravity; integrating a finite atmosphere
+    still requires thermal/composition profiles and a boundary.
+  assumptions: &id002
+  - Cross section is per absorbing particle; mass mixing ratio is absorber mass divided by total gas mass, whereas
+    volume mixing ratio is absorber number divided by total gas particle number.
+  - CIA coefficient k_cia is defined by alpha=k_cia*n1*n2. Its supplied convention already accounts for identical
+    partners; no additional factor 1/2 is applied.
+  - The pressure-column approximation and the differential inverse-square hydrostatic relation are distinct relations,
+    not a claim that finite layers have exactly constant gravity. The scalar m_mean is the selected layer value
+    of the separately supplied radial mean-mass field m_mean_r.
+  symbols:
+    N_abs:
+      latex: N_{abs}
+      description: Number of absorbing particles per unit area through the layer.
+      unit: cm^-2
+    sigma_abs:
+      latex: \sigma_{abs}
+      description: Absorption cross section per absorber.
+      unit: cm^2
+    tau:
+      latex: \tau
+      description: Vertical absorption optical depth of the chosen layer.
+      unit: '1'
+  evidence:
+  - planetlib.atmosphere.columns.source
+- id: planetlib.atmosphere.columns.geometric_column
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Symbol('N_abs', real=True), Mul(Symbol('dz', real=True), Symbol('n_abs', real=True)))
+  description: Uniform-density geometric absorber column.
+  scope: Local cgs absorber-column relations with positive gravity and particle masses. Pressure differences are
+    in dyn cm^-2, not bar. Pressure-column formulas assume constant composition and gravity over the pressure interval.
+    The separate differential hydrostatic relation allows inverse-square gravity; integrating a finite atmosphere
+    still requires thermal/composition profiles and a boundary.
+  assumptions: *id002
+  symbols:
+    N_abs:
+      latex: N_{abs}
+      description: Number of absorbing particles per unit area through the layer.
+      unit: cm^-2
+    dz:
+      latex: dz
+      description: Positive geometric path length for the local column.
+      unit: cm
+    n_abs:
+      latex: n_{abs}
+      description: Uniform absorber number density on the supplied geometric path.
+      unit: cm^-3
+  evidence:
+  - planetlib.atmosphere.columns.source
+- id: planetlib.atmosphere.columns.pressure_column_mass
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Symbol('N_abs', real=True), Mul(Symbol('dP', real=True), Pow(Symbol('g', real=True), Integer(-1)),
+      Pow(Symbol('m_abs', real=True), Integer(-1)), Symbol('q', real=True)))
+  description: Hydrostatic absorber column from mass mixing ratio.
+  scope: Local cgs absorber-column relations with positive gravity and particle masses. Pressure differences are
+    in dyn cm^-2, not bar. Pressure-column formulas assume constant composition and gravity over the pressure interval.
+    The separate differential hydrostatic relation allows inverse-square gravity; integrating a finite atmosphere
+    still requires thermal/composition profiles and a boundary.
+  assumptions: *id002
+  symbols:
+    N_abs:
+      latex: N_{abs}
+      description: Number of absorbing particles per unit area through the layer.
+      unit: cm^-2
+    dP:
+      latex: dP
+      description: Positive pressure difference between lower and upper faces.
+      unit: dyn cm^-2
+    g:
+      latex: g
+      description: Constant gravitational acceleration used for this pressure interval.
+      unit: cm s^-2
+    m_abs:
+      latex: m_{abs}
+      description: Mass of one absorber.
+      unit: g
+    q:
+      latex: q
+      description: Absorber mass mixing ratio.
+      unit: '1'
+  evidence:
+  - planetlib.atmosphere.columns.source
+- id: planetlib.atmosphere.columns.pressure_column_volume
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Symbol('N_abs', real=True), Mul(Symbol('dP', real=True), Pow(Symbol('g', real=True), Integer(-1)),
+      Pow(Symbol('m_mean', real=True), Integer(-1)), Symbol('x_abs', real=True)))
+  description: Hydrostatic absorber column from volume mixing ratio.
+  scope: Local cgs absorber-column relations with positive gravity and particle masses. Pressure differences are
+    in dyn cm^-2, not bar. Pressure-column formulas assume constant composition and gravity over the pressure interval.
+    The separate differential hydrostatic relation allows inverse-square gravity; integrating a finite atmosphere
+    still requires thermal/composition profiles and a boundary.
+  assumptions: *id002
+  symbols:
+    N_abs:
+      latex: N_{abs}
+      description: Number of absorbing particles per unit area through the layer.
+      unit: cm^-2
+    dP:
+      latex: dP
+      description: Positive pressure difference between lower and upper faces.
+      unit: dyn cm^-2
+    g:
+      latex: g
+      description: Constant gravitational acceleration used for this pressure interval.
+      unit: cm s^-2
+    m_mean:
+      latex: m_{mean}
+      description: Mean mass per gas particle, not molar mass.
+      unit: g
+    x_abs:
+      latex: x_{abs}
+      description: Absorber particle-number or volume mixing ratio.
+      unit: '1'
+  evidence:
+  - planetlib.atmosphere.columns.source
+- id: planetlib.atmosphere.columns.mixing_conversion
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Symbol('q', real=True), Mul(Symbol('m_abs', real=True), Pow(Symbol('m_mean', real=True),
+      Integer(-1)), Symbol('x_abs', real=True)))
+  description: Mass and particle-number mixing-ratio conversion.
+  scope: Local cgs absorber-column relations with positive gravity and particle masses. Pressure differences are
+    in dyn cm^-2, not bar. Pressure-column formulas assume constant composition and gravity over the pressure interval.
+    The separate differential hydrostatic relation allows inverse-square gravity; integrating a finite atmosphere
+    still requires thermal/composition profiles and a boundary.
+  assumptions: *id002
+  symbols:
+    m_abs:
+      latex: m_{abs}
+      description: Mass of one absorber.
+      unit: g
+    m_mean:
+      latex: m_{mean}
+      description: Mean mass per gas particle, not molar mass.
+      unit: g
+    q:
+      latex: q
+      description: Absorber mass mixing ratio.
+      unit: '1'
+    x_abs:
+      latex: x_{abs}
+      description: Absorber particle-number or volume mixing ratio.
+      unit: '1'
+  evidence:
+  - planetlib.atmosphere.columns.source
+- id: planetlib.atmosphere.columns.cia_depth
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Symbol('tau_cia', real=True), Mul(Symbol('dz', real=True), Symbol('k_cia', real=True),
+      Symbol('n1', real=True), Symbol('n2', real=True)))
+  description: CIA optical depth under the explicit pair convention.
+  scope: Local cgs absorber-column relations with positive gravity and particle masses. Pressure differences are
+    in dyn cm^-2, not bar. Pressure-column formulas assume constant composition and gravity over the pressure interval.
+    The separate differential hydrostatic relation allows inverse-square gravity; integrating a finite atmosphere
+    still requires thermal/composition profiles and a boundary.
+  assumptions: *id002
+  symbols:
+    dz:
+      latex: dz
+      description: Positive geometric path length for the local column.
+      unit: cm
+    k_cia:
+      latex: k_{cia}
+      description: CIA absorption coefficient defined by alpha=k_cia*n1*n2.
+      unit: cm^5
+    n1:
+      latex: n_{1}
+      description: Number density of first collision partner.
+      unit: cm^-3
+    n2:
+      latex: n_{2}
+      description: Number density of second collision partner, possibly the same species.
+      unit: cm^-3
+    tau_cia:
+      latex: \tau_{cia}
+      description: CIA optical depth for the declared collision-pair convention.
+      unit: '1'
+  evidence:
+  - planetlib.atmosphere.columns.source
+- id: planetlib.atmosphere.columns.hydrostatic
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Derivative(Function('P')(Symbol('r', real=True)), Tuple(Symbol('r', real=True), Integer(1))),
+      Mul(Integer(-1), Symbol('g0', real=True), Pow(Symbol('r', real=True), Integer(-2)), Pow(Symbol('r0', real=True),
+      Integer(2)), Function('rho')(Symbol('r', real=True))))
+  description: Inverse-square spherical hydrostatic balance.
+  scope: Local cgs absorber-column relations with positive gravity and particle masses. Pressure differences are
+    in dyn cm^-2, not bar. Pressure-column formulas assume constant composition and gravity over the pressure interval.
+    The separate differential hydrostatic relation allows inverse-square gravity; integrating a finite atmosphere
+    still requires thermal/composition profiles and a boundary.
+  assumptions: *id002
+  symbols:
+    P:
+      latex: P
+      description: Total gas pressure field.
+      unit: dyn cm^-2
+    g0:
+      latex: g_{0}
+      description: Gravity at reference radius r0.
+      unit: cm s^-2
+    r:
+      latex: r
+      description: Outward radial coordinate.
+      unit: cm
+    r0:
+      latex: r_{0}
+      description: Reference radius for the supplied gravity.
+      unit: cm
+    rho:
+      latex: \rho
+      description: Total gas mass-density field.
+      unit: g cm^-3
+  evidence:
+  - planetlib.atmosphere.columns.source
+- id: planetlib.atmosphere.columns.ideal_gas_density
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Function('rho')(Symbol('r', real=True)), Mul(Pow(Symbol('k_B', real=True), Integer(-1)),
+      Function('P')(Symbol('r', real=True)), Pow(Function('T')(Symbol('r', real=True)), Integer(-1)), Function('m_mean_r')(Symbol('r',
+      real=True))))
+  description: Ideal-gas mass density using mean particle mass.
+  scope: Local cgs absorber-column relations with positive gravity and particle masses. Pressure differences are
+    in dyn cm^-2, not bar. Pressure-column formulas assume constant composition and gravity over the pressure interval.
+    The separate differential hydrostatic relation allows inverse-square gravity; integrating a finite atmosphere
+    still requires thermal/composition profiles and a boundary.
+  assumptions: *id002
+  symbols:
+    P:
+      latex: P
+      description: Total gas pressure field.
+      unit: dyn cm^-2
+    T:
+      latex: T
+      description: Externally supplied local temperature field.
+      unit: K
+    k_B:
+      latex: k_{B}
+      description: Boltzmann constant.
+      unit: erg K^-1
+    m_mean_r:
+      latex: m_{mean r}
+      description: Externally supplied mean mass per gas particle as a radial field.
+      unit: g
+    r:
+      latex: r
+      description: Outward radial coordinate.
+      unit: cm
+    rho:
+      latex: \rho
+      description: Total gas mass-density field.
+      unit: g cm^-3
+  evidence:
+  - planetlib.atmosphere.columns.source
+mathematical_models:
+- id: planetlib.atmosphere.columns.model
+  revision: '1'
+  description: Atmospheric absorber columns and optical depth
+  scope: Local cgs absorber-column relations with positive gravity and particle masses. Pressure differences are
+    in dyn cm^-2, not bar. Pressure-column formulas assume constant composition and gravity over the pressure interval.
+    The separate differential hydrostatic relation allows inverse-square gravity; integrating a finite atmosphere
+    still requires thermal/composition profiles and a boundary.
+  quantities:
+    tau:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.tau
+        revision: '1'
+      role: derived
+    sigma_abs:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.sigma_abs
+        revision: '1'
+      role: input
+    N_abs:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.N_abs
+        revision: '1'
+      role: derived
+    n_abs:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.n_abs
+        revision: '1'
+      role: input
+    dz:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.dz
+        revision: '1'
+      role: input
+    dP:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.dP
+        revision: '1'
+      role: input
+    q:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.q
+        revision: '1'
+      role: derived
+    m_abs:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.m_abs
+        revision: '1'
+      role: input
+    g:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.g
+        revision: '1'
+      role: input
+    x_abs:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.x_abs
+        revision: '1'
+      role: input
+    m_mean:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.m_mean
+        revision: '1'
+      role: input
+    tau_cia:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.tau_cia
+        revision: '1'
+      role: derived
+    k_cia:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.k_cia
+        revision: '1'
+      role: input
+    n1:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.n1
+        revision: '1'
+      role: input
+    n2:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.n2
+        revision: '1'
+      role: input
+    r:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.r
+        revision: '1'
+      role: coordinate
+    r0:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.r0
+        revision: '1'
+      role: input
+    g0:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.g0
+        revision: '1'
+      role: input
+    P:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.P
+        revision: '1'
+      role: unknown
+    rho:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.rho
+        revision: '1'
+      role: derived
+    T:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.T
+        revision: '1'
+      role: input
+    m_mean_r:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.m_mean_r
+        revision: '1'
+      role: input
+    k_B:
+      quantity:
+        id: planetlib.atmosphere.columns.quantity.k_B
+        revision: '1'
+      role: parameter
+  relations:
+  - id: cross_section_depth
+    equation:
+      id: planetlib.atmosphere.columns.cross_section_depth
+      revision: '1'
+    kind: equation
+    role: Absorption optical depth from absorber column.
+    quantities:
+      N_abs: N_abs
+      sigma_abs: sigma_abs
+      tau: tau
+  - id: geometric_column
+    equation:
+      id: planetlib.atmosphere.columns.geometric_column
+      revision: '1'
+    kind: equation
+    role: Uniform-density geometric absorber column.
+    quantities:
+      N_abs: N_abs
+      dz: dz
+      n_abs: n_abs
+  - id: pressure_column_mass
+    equation:
+      id: planetlib.atmosphere.columns.pressure_column_mass
+      revision: '1'
+    kind: equation
+    role: Hydrostatic absorber column from mass mixing ratio.
+    quantities:
+      N_abs: N_abs
+      dP: dP
+      g: g
+      m_abs: m_abs
+      q: q
+  - id: pressure_column_volume
+    equation:
+      id: planetlib.atmosphere.columns.pressure_column_volume
+      revision: '1'
+    kind: equation
+    role: Hydrostatic absorber column from volume mixing ratio.
+    quantities:
+      N_abs: N_abs
+      dP: dP
+      g: g
+      m_mean: m_mean
+      x_abs: x_abs
+  - id: mixing_conversion
+    equation:
+      id: planetlib.atmosphere.columns.mixing_conversion
+      revision: '1'
+    kind: equation
+    role: Mass and particle-number mixing-ratio conversion.
+    quantities:
+      m_abs: m_abs
+      m_mean: m_mean
+      q: q
+      x_abs: x_abs
+  - id: cia_depth
+    equation:
+      id: planetlib.atmosphere.columns.cia_depth
+      revision: '1'
+    kind: equation
+    role: CIA optical depth under the explicit pair convention.
+    quantities:
+      dz: dz
+      k_cia: k_cia
+      n1: n1
+      n2: n2
+      tau_cia: tau_cia
+  - id: hydrostatic
+    equation:
+      id: planetlib.atmosphere.columns.hydrostatic
+      revision: '1'
+    kind: equation
+    role: Inverse-square spherical hydrostatic balance.
+    quantities:
+      P: P
+      g0: g0
+      r: r
+      r0: r0
+      rho: rho
+  - id: ideal_gas_density
+    equation:
+      id: planetlib.atmosphere.columns.ideal_gas_density
+      revision: '1'
+    kind: equation
+    role: Ideal-gas mass density using mean particle mass.
+    quantities:
+      P: P
+      T: T
+      k_B: k_B
+      m_mean_r: m_mean_r
+      r: r
+      rho: rho
+assessments:
+- id: planetlib.atmosphere.columns.mathematical_consistency.initial
+  kind: evidence_support
+  claim: planetlib.atmosphere.columns.mathematical_consistency
+  claim_revision: '1'
+  subject: planetlib.atmosphere.columns.definition
+  context: planetlib.atmosphere.columns.initial_review
+  method:
+    id: planetlib.atmosphere.columns.initial_review
+    revision: '1'
+    description: Keep mathematical consistency, source correspondence and physical applicability as separate review
+      targets.
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.atmosphere.columns.source
+  reasons:
+  - No archived scoped review is assigned to this new definition by its initial extraction.
+- id: planetlib.atmosphere.columns.source_correspondence.initial
+  kind: evidence_support
+  claim: planetlib.atmosphere.columns.source_correspondence
+  claim_revision: '1'
+  subject: planetlib.atmosphere.columns.definition
+  context: planetlib.atmosphere.columns.initial_review
+  method:
+    id: planetlib.atmosphere.columns.initial_review
+    revision: '1'
+    description: Keep mathematical consistency, source correspondence and physical applicability as separate review
+      targets.
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.atmosphere.columns.source
+  reasons:
+  - No archived scoped review is assigned to this new definition by its initial extraction.
+- id: planetlib.atmosphere.columns.physical_applicability.initial
+  kind: evidence_support
+  claim: planetlib.atmosphere.columns.physical_applicability
+  claim_revision: '1'
+  subject: planetlib.atmosphere.columns.definition
+  context: planetlib.atmosphere.columns.initial_review
+  method:
+    id: planetlib.atmosphere.columns.initial_review
+    revision: '1'
+    description: Keep mathematical consistency, source correspondence and physical applicability as separate review
+      targets.
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.atmosphere.columns.source
+  reasons:
+  - No archived scoped review is assigned to this new definition by its initial extraction.
