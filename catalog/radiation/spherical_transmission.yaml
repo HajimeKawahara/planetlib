@@ -1,0 +1,448 @@
+schema_version: '0.6'
+model:
+  id: planetlib.radiation.spherical_transmission
+  name: Spherical pure-absorption transit geometry
+  description: A spherical atmosphere at one spectral coordinate, straight parallel rays, pure absorption, and an
+    opaque bottom radius R0 beneath a finite top R_top. The apparent blocked radius, its normalization by R0, and
+    transit depth normalized by a uniformly illuminated stellar disk are distinct quantities. Stellar limb darkening,
+    refraction, multiple scattering and overlap geometry are external.
+  implementation: &id001
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:1
+    entry_points:
+    - catalog/radiation/spherical_transmission.yaml
+assumptions:
+- statement: R_star >= R_top > R0 > 0, with a central unocculted stellar background for the simple area ratio.
+  evidence:
+  - planetlib.radiation.spherical_transmission.source
+- statement: alpha is nonnegative and radial only; the chord integral applies for R0 <= b < R_top, with zero atmospheric
+    opacity beyond R_top.
+  evidence:
+  - planetlib.radiation.spherical_transmission.source
+- statement: The opaque lower disk contributes pi*R0^2 even when the atmosphere is transparent. Numerical quadrature
+    and cellwise geometric reconstruction are provider choices.
+  evidence:
+  - planetlib.radiation.spherical_transmission.source
+domains:
+- kind: scientific_applicability
+  status: unknown
+  description: The definition is a conditional partial model, with no adopted empirical validation.
+  conditions: []
+  evidence:
+  - planetlib.radiation.spherical_transmission.source
+limitations:
+- statement: A spherical atmosphere at one spectral coordinate, straight parallel rays, pure absorption, and an
+    opaque bottom radius R0 beneath a finite top R_top. The apparent blocked radius, its normalization by R0, and
+    transit depth normalized by a uniformly illuminated stellar disk are distinct quantities. Stellar limb darkening,
+    refraction, multiple scattering and overlap geometry are external.
+  evidence:
+  - planetlib.radiation.spherical_transmission.source
+- statement: Numerical algorithms, fitted data, discretization choices and floating-point accuracy remain provider
+    responsibilities.
+  evidence:
+  - planetlib.radiation.spherical_transmission.source
+claims:
+- id: planetlib.radiation.spherical_transmission.mathematical_consistency
+  revision: '1'
+  kind: theoretical
+  statement: A transparent atmosphere leaves R_tr_sq=R0^2, an everywhere opaque atmosphere approaches R_top^2, and
+    normalizing by R0 differs explicitly from normalizing by the stellar radius.
+  scope: Conditional mathematical checks only; neither provider equivalence nor physical applicability is inferred.
+  mathematical_models:
+  - id: planetlib.radiation.spherical_transmission.model
+    revision: '1'
+- id: planetlib.radiation.spherical_transmission.source_correspondence
+  revision: '1'
+  kind: theoretical
+  statement: The shared definitions preserve the selected conventions of the inspected implementation.
+  scope: The source supplied the extraction target; a separate correspondence review is required.
+  mathematical_models:
+  - id: planetlib.radiation.spherical_transmission.model
+    revision: '1'
+- id: planetlib.radiation.spherical_transmission.physical_applicability
+  revision: '1'
+  kind: physical_validation
+  statement: The selected relations have adequate accuracy for a specified physical target.
+  scope: No target, empirical error criterion or independent observation is selected by this library entry.
+  mathematical_models:
+  - id: planetlib.radiation.spherical_transmission.model
+    revision: '1'
+evidence:
+- id: planetlib.radiation.spherical_transmission.source
+  kind: implementation
+  summary: Mathematical conventions extracted from immutable ExoJAX source.
+  sources:
+  - https://github.com/HajimeKawahara/exojax/blob/38cb2e44f153ad6d729e3253e235702de52920cf/src/exojax/rt/chord.py
+  - https://github.com/HajimeKawahara/exojax/blob/38cb2e44f153ad6d729e3253e235702de52920cf/src/exojax/rt/trans.py
+  - https://github.com/HajimeKawahara/exojax/blob/38cb2e44f153ad6d729e3253e235702de52920cf/src/exojax/rt/rtransfer.py
+  scope: The cited source implementations were inspected. This is not a new inspection of their original literature
+    or a transferred provider assessment.
+  provenance:
+    role: implementation
+    location: The functions and conventions identified by the immutable source paths.
+    inspection: inspected
+    note: Shared mathematical definitions are distinct from numerical approximation and physical applicability.
+subjects:
+- id: planetlib.radiation.spherical_transmission.definition
+  implementation: *id001
+  selected_files:
+    catalog/radiation/spherical_transmission.yaml: null
+contexts:
+- id: planetlib.radiation.spherical_transmission.initial_review
+  scope: Initial shared-definition extraction; test executions and reviewed support are recorded independently.
+quantities:
+- id: planetlib.radiation.spherical_transmission.quantity.r
+  revision: '1'
+  latex: r
+  description: Radius along the chord integral.
+  unit: cm
+  domain: Positive.
+- id: planetlib.radiation.spherical_transmission.quantity.b
+  revision: '1'
+  latex: b
+  description: Ray impact parameter relative to planet center.
+  unit: cm
+  domain: R0 <= b < R_top.
+- id: planetlib.radiation.spherical_transmission.quantity.R0
+  revision: '1'
+  latex: R_{0}
+  description: Opaque lower boundary radius.
+  unit: cm
+  domain: Positive.
+- id: planetlib.radiation.spherical_transmission.quantity.R_top
+  revision: '1'
+  latex: R_{top}
+  description: Atmospheric top radius.
+  unit: cm
+  domain: Greater than R0.
+- id: planetlib.radiation.spherical_transmission.quantity.R_star
+  revision: '1'
+  latex: R_{star}
+  description: Radius of the uniformly bright stellar disk.
+  unit: cm
+  domain: At least R_top.
+- id: planetlib.radiation.spherical_transmission.quantity.alpha
+  revision: '1'
+  latex: \alpha
+  description: Radial absorption coefficient at the chosen spectral coordinate.
+  unit: cm^-1
+  domain: Nonnegative.
+  coordinates:
+  - id: planetlib.radiation.spherical_transmission.quantity.r
+    revision: '1'
+- id: planetlib.radiation.spherical_transmission.quantity.tau_chord
+  revision: '1'
+  latex: \tau_{chord}
+  description: Total near-side plus far-side chord optical depth.
+  unit: '1'
+  domain: Nonnegative.
+  coordinates:
+  - id: planetlib.radiation.spherical_transmission.quantity.b
+    revision: '1'
+- id: planetlib.radiation.spherical_transmission.quantity.R_tr_sq
+  revision: '1'
+  latex: R_{tr sq}
+  description: Square of the effective opaque-disk transit radius.
+  unit: cm^2
+  domain: Finite real value within the stated scope.
+- id: planetlib.radiation.spherical_transmission.quantity.A
+  revision: '1'
+  latex: A
+  description: Transit radius squared divided by the opaque bottom radius squared.
+  unit: '1'
+  domain: Finite real value within the stated scope.
+- id: planetlib.radiation.spherical_transmission.quantity.D
+  revision: '1'
+  latex: D
+  description: Uniform-star transit depth under complete projected overlap.
+  unit: '1'
+  domain: Finite real value within the stated scope.
+equations:
+- id: planetlib.radiation.spherical_transmission.chord_depth
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Function('tau_chord')(Symbol('b', real=True)), Mul(Integer(2), Integral(Mul(Symbol('r',
+      real=True), Pow(Add(Mul(Integer(-1), Pow(Symbol('b', real=True), Integer(2))), Pow(Symbol('r', real=True),
+      Integer(2))), Rational(-1, 2)), Function('alpha')(Symbol('r', real=True))), Tuple(Symbol('r', real=True),
+      Symbol('b', real=True), Symbol('R_top', real=True)))))
+  description: Two-sided spherical chord optical depth.
+  scope: A spherical atmosphere at one spectral coordinate, straight parallel rays, pure absorption, and an opaque
+    bottom radius R0 beneath a finite top R_top. The apparent blocked radius, its normalization by R0, and transit
+    depth normalized by a uniformly illuminated stellar disk are distinct quantities. Stellar limb darkening, refraction,
+    multiple scattering and overlap geometry are external.
+  assumptions: &id002
+  - R_star >= R_top > R0 > 0, with a central unocculted stellar background for the simple area ratio.
+  - alpha is nonnegative and radial only; the chord integral applies for R0 <= b < R_top, with zero atmospheric
+    opacity beyond R_top.
+  - The opaque lower disk contributes pi*R0^2 even when the atmosphere is transparent. Numerical quadrature and
+    cellwise geometric reconstruction are provider choices.
+  symbols:
+    R_top:
+      latex: R_{top}
+      description: Atmospheric top radius.
+      unit: cm
+    alpha:
+      latex: \alpha
+      description: Radial absorption coefficient at the chosen spectral coordinate.
+      unit: cm^-1
+    b:
+      latex: b
+      description: Ray impact parameter relative to planet center.
+      unit: cm
+    r:
+      latex: r
+      description: Radius along the chord integral.
+      unit: cm
+    tau_chord:
+      latex: \tau_{chord}
+      description: Total near-side plus far-side chord optical depth.
+      unit: '1'
+  evidence:
+  - planetlib.radiation.spherical_transmission.source
+- id: planetlib.radiation.spherical_transmission.blocked_area
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Symbol('R_tr_sq', real=True), Add(Pow(Symbol('R0', real=True), Integer(2)), Mul(Integer(2),
+      Integral(Mul(Symbol('b', real=True), Add(Integer(1), Mul(Integer(-1), exp(Mul(Integer(-1), Function('tau_chord')(Symbol('b',
+      real=True))))))), Tuple(Symbol('b', real=True), Symbol('R0', real=True), Symbol('R_top', real=True))))))
+  description: Opaque-bottom disk plus atmospheric blocked area, divided by pi.
+  scope: A spherical atmosphere at one spectral coordinate, straight parallel rays, pure absorption, and an opaque
+    bottom radius R0 beneath a finite top R_top. The apparent blocked radius, its normalization by R0, and transit
+    depth normalized by a uniformly illuminated stellar disk are distinct quantities. Stellar limb darkening, refraction,
+    multiple scattering and overlap geometry are external.
+  assumptions: *id002
+  symbols:
+    R0:
+      latex: R_{0}
+      description: Opaque lower boundary radius.
+      unit: cm
+    R_top:
+      latex: R_{top}
+      description: Atmospheric top radius.
+      unit: cm
+    R_tr_sq:
+      latex: R_{tr sq}
+      description: Square of the effective opaque-disk transit radius.
+      unit: cm^2
+    b:
+      latex: b
+      description: Ray impact parameter relative to planet center.
+      unit: cm
+    tau_chord:
+      latex: \tau_{chord}
+      description: Total near-side plus far-side chord optical depth.
+      unit: '1'
+  evidence:
+  - planetlib.radiation.spherical_transmission.source
+- id: planetlib.radiation.spherical_transmission.normalized_radius
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Symbol('A', real=True), Mul(Pow(Symbol('R0', real=True), Integer(-2)), Symbol('R_tr_sq',
+      real=True)))
+  description: Transit-radius normalization used independently of stellar size.
+  scope: A spherical atmosphere at one spectral coordinate, straight parallel rays, pure absorption, and an opaque
+    bottom radius R0 beneath a finite top R_top. The apparent blocked radius, its normalization by R0, and transit
+    depth normalized by a uniformly illuminated stellar disk are distinct quantities. Stellar limb darkening, refraction,
+    multiple scattering and overlap geometry are external.
+  assumptions: *id002
+  symbols:
+    A:
+      latex: A
+      description: Transit radius squared divided by the opaque bottom radius squared.
+      unit: '1'
+    R0:
+      latex: R_{0}
+      description: Opaque lower boundary radius.
+      unit: cm
+    R_tr_sq:
+      latex: R_{tr sq}
+      description: Square of the effective opaque-disk transit radius.
+      unit: cm^2
+  evidence:
+  - planetlib.radiation.spherical_transmission.source
+- id: planetlib.radiation.spherical_transmission.transit_depth
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Symbol('D', real=True), Mul(Pow(Symbol('R_star', real=True), Integer(-2)), Symbol('R_tr_sq',
+      real=True)))
+  description: Conversion to the transit depth for a uniform stellar disk.
+  scope: A spherical atmosphere at one spectral coordinate, straight parallel rays, pure absorption, and an opaque
+    bottom radius R0 beneath a finite top R_top. The apparent blocked radius, its normalization by R0, and transit
+    depth normalized by a uniformly illuminated stellar disk are distinct quantities. Stellar limb darkening, refraction,
+    multiple scattering and overlap geometry are external.
+  assumptions: *id002
+  symbols:
+    D:
+      latex: D
+      description: Uniform-star transit depth under complete projected overlap.
+      unit: '1'
+    R_star:
+      latex: R_{star}
+      description: Radius of the uniformly bright stellar disk.
+      unit: cm
+    R_tr_sq:
+      latex: R_{tr sq}
+      description: Square of the effective opaque-disk transit radius.
+      unit: cm^2
+  evidence:
+  - planetlib.radiation.spherical_transmission.source
+mathematical_models:
+- id: planetlib.radiation.spherical_transmission.model
+  revision: '1'
+  description: Spherical pure-absorption transit geometry
+  scope: A spherical atmosphere at one spectral coordinate, straight parallel rays, pure absorption, and an opaque
+    bottom radius R0 beneath a finite top R_top. The apparent blocked radius, its normalization by R0, and transit
+    depth normalized by a uniformly illuminated stellar disk are distinct quantities. Stellar limb darkening, refraction,
+    multiple scattering and overlap geometry are external.
+  quantities:
+    r:
+      quantity:
+        id: planetlib.radiation.spherical_transmission.quantity.r
+        revision: '1'
+      role: coordinate
+    b:
+      quantity:
+        id: planetlib.radiation.spherical_transmission.quantity.b
+        revision: '1'
+      role: coordinate
+    R0:
+      quantity:
+        id: planetlib.radiation.spherical_transmission.quantity.R0
+        revision: '1'
+      role: input
+    R_top:
+      quantity:
+        id: planetlib.radiation.spherical_transmission.quantity.R_top
+        revision: '1'
+      role: input
+    R_star:
+      quantity:
+        id: planetlib.radiation.spherical_transmission.quantity.R_star
+        revision: '1'
+      role: input
+    alpha:
+      quantity:
+        id: planetlib.radiation.spherical_transmission.quantity.alpha
+        revision: '1'
+      role: input
+    tau_chord:
+      quantity:
+        id: planetlib.radiation.spherical_transmission.quantity.tau_chord
+        revision: '1'
+      role: derived
+    R_tr_sq:
+      quantity:
+        id: planetlib.radiation.spherical_transmission.quantity.R_tr_sq
+        revision: '1'
+      role: derived
+    A:
+      quantity:
+        id: planetlib.radiation.spherical_transmission.quantity.A
+        revision: '1'
+      role: derived
+    D:
+      quantity:
+        id: planetlib.radiation.spherical_transmission.quantity.D
+        revision: '1'
+      role: derived
+  relations:
+  - id: chord_depth
+    equation:
+      id: planetlib.radiation.spherical_transmission.chord_depth
+      revision: '1'
+    kind: equation
+    role: Two-sided spherical chord optical depth.
+    quantities:
+      R_top: R_top
+      alpha: alpha
+      b: b
+      r: r
+      tau_chord: tau_chord
+  - id: blocked_area
+    equation:
+      id: planetlib.radiation.spherical_transmission.blocked_area
+      revision: '1'
+    kind: equation
+    role: Opaque-bottom disk plus atmospheric blocked area, divided by pi.
+    quantities:
+      R0: R0
+      R_top: R_top
+      R_tr_sq: R_tr_sq
+      b: b
+      tau_chord: tau_chord
+  - id: normalized_radius
+    equation:
+      id: planetlib.radiation.spherical_transmission.normalized_radius
+      revision: '1'
+    kind: equation
+    role: Transit-radius normalization used independently of stellar size.
+    quantities:
+      A: A
+      R0: R0
+      R_tr_sq: R_tr_sq
+  - id: transit_depth
+    equation:
+      id: planetlib.radiation.spherical_transmission.transit_depth
+      revision: '1'
+    kind: equation
+    role: Conversion to the transit depth for a uniform stellar disk.
+    quantities:
+      D: D
+      R_star: R_star
+      R_tr_sq: R_tr_sq
+assessments:
+- id: planetlib.radiation.spherical_transmission.mathematical_consistency.initial
+  kind: evidence_support
+  claim: planetlib.radiation.spherical_transmission.mathematical_consistency
+  claim_revision: '1'
+  subject: planetlib.radiation.spherical_transmission.definition
+  context: planetlib.radiation.spherical_transmission.initial_review
+  method:
+    id: planetlib.radiation.spherical_transmission.initial_review
+    revision: '1'
+    description: Keep mathematical consistency, source correspondence and physical applicability as separate review
+      targets.
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.radiation.spherical_transmission.source
+  reasons:
+  - No archived scoped review is assigned to this new definition by its initial extraction.
+- id: planetlib.radiation.spherical_transmission.source_correspondence.initial
+  kind: evidence_support
+  claim: planetlib.radiation.spherical_transmission.source_correspondence
+  claim_revision: '1'
+  subject: planetlib.radiation.spherical_transmission.definition
+  context: planetlib.radiation.spherical_transmission.initial_review
+  method:
+    id: planetlib.radiation.spherical_transmission.initial_review
+    revision: '1'
+    description: Keep mathematical consistency, source correspondence and physical applicability as separate review
+      targets.
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.radiation.spherical_transmission.source
+  reasons:
+  - No archived scoped review is assigned to this new definition by its initial extraction.
+- id: planetlib.radiation.spherical_transmission.physical_applicability.initial
+  kind: evidence_support
+  claim: planetlib.radiation.spherical_transmission.physical_applicability
+  claim_revision: '1'
+  subject: planetlib.radiation.spherical_transmission.definition
+  context: planetlib.radiation.spherical_transmission.initial_review
+  method:
+    id: planetlib.radiation.spherical_transmission.initial_review
+    revision: '1'
+    description: Keep mathematical consistency, source correspondence and physical applicability as separate review
+      targets.
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.radiation.spherical_transmission.source
+  reasons:
+  - No archived scoped review is assigned to this new definition by its initial extraction.

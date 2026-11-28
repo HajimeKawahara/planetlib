@@ -7,8 +7,8 @@ and partial models. The relationship is analogous to mathlib and Lean at the
 level of responsibilities. Inclusion does not prove a physical model or its
 equivalence to numerical code.
 
-This prototype contains shared relations extracted from local ExoFamily records
-on 2026-11-27, together with symbolic consistency checks. It has no numerical
+This prototype contains shared relations extracted from ExoFamily records and
+implementations, together with symbolic consistency checks. It has no numerical
 solver or runtime Python package. Numerical providers need neither Planetlib
 nor MCEG at runtime.
 
@@ -71,6 +71,36 @@ reviewed `supported` Assessments, with model digests and hashes of the test code
 and run record. Their initial `unknown` Assessments are retained. These judgments
 support the stated conditional identities; they do not establish provider
 equivalence, empirical applicability or a formal proof certificate.
+
+## Spectral forward-model components
+
+Five further partial models describe reusable relations needed by the initial
+ExoJAX model inventory. Their definitions start at revision `1`; existing
+definitions and recorded reviews retain their identities. The extraction pins
+ExoJAX source `38cb2e44f153ad6d729e3253e235702de52920cf` and distinguishes
+implementation inspection from inspection of original literature.
+
+| Definition | Shared content | External choices and limits |
+| --- | --- | --- |
+| [LTE lines](catalog/spectroscopy/lte_lines.yaml) | Reference-temperature line-strength scaling, Doppler standard deviation, Gaussian/Lorentz profiles, Voigt convolution and per-absorber line sum | Partition functions, line lists, pressure broadening, line-wing policies and numerical acceleration remain supplied choices. |
+| [Atmospheric columns](catalog/atmosphere/columns.yaml) | Cross section times column, geometric and pressure columns, mass/number mixing conversion, CIA and inverse-square hydrostatic balance | Constant layer gravity/composition for the pressure-column approximation; radial profiles and a boundary for hydrostatic integration. |
+| [Pure absorption](catalog/radiation/pure_absorption.yaml) | Ray transfer, transmission, homogeneous-layer solution and outgoing angular flux | Physical specific intensity; thermal closure, incoming boundary, angular quadrature and source interpolation remain external. |
+| [Spherical transmission](catalog/radiation/spherical_transmission.yaml) | Spherical chord depth, blocked area, bottom-radius normalization and stellar transit depth | Spherical pure absorption, an opaque bottom and specified top; quadrature, refraction and limb-dependent stellar illumination require their own models. |
+| [Observation operators](catalog/spectroscopy/observation.yaml) | Gaussian velocity kernel, nonrelativistic RV sampling, quadratic limb darkening, normalized rotation and convolution | Constant local spectrum for the rotational kernel; finite grids, interpolation, edge policies and exposure integration remain provider choices. |
+
+Spectral cross sections use a per-absorber basis. Column relations provide the
+explicit normalization needed for optical depth. Physical intensity and
+hemispheric flux remain different quantities; an implementation's internal
+pi-scaled intensity needs an explicit adopter mapping. Similarly, a squared
+radius normalized by the atmospheric bottom becomes a transit depth only after
+the separate stellar-radius conversion.
+
+The symbolic definitions leave physical constants as parameters. An adopter
+must identify the actual constants used by its implementation, including any
+rounded prefactors. None of these entries endorses a spectral database, solver,
+grid, atmosphere or empirical application. ExoJAX retains its own bindings,
+numerical comparisons and assessments. Catalog expressions remain the only
+maintained shared formula source.
 
 ## Inspect and check
 

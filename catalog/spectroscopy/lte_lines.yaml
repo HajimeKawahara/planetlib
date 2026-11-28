@@ -1,0 +1,819 @@
+schema_version: '0.6'
+model:
+  id: planetlib.spectroscopy.lte_lines
+  name: LTE molecular line strength and normalized Voigt profile
+  description: One isolated transition per absorber, ordinary spectroscopic wavenumber in cm^-1, LTE strength scaling
+    and a normalized Voigt profile. The total line cross section is the sum of such contributions. The Lorentz width
+    is supplied externally; pressure-broadening prescriptions, line truncation, line lists and partition-function
+    data are not chosen.
+  implementation: &id001
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:1
+    entry_points:
+    - catalog/spectroscopy/lte_lines.yaml
+assumptions:
+- statement: T, T_ref, w0, Q_ratio, sigma_D, gamma_L and absorber mass are positive; the Gaussian width is a standard
+    deviation and the Lorentz width is a half width at half maximum.
+  evidence:
+  - planetlib.spectroscopy.lte_lines.source
+- statement: Q_ratio means Q(T)/Q(T_ref), using the same absorber and partition-function convention as S_ref. E_lower
+    is expressed as a wavenumber, not an energy in erg.
+  evidence:
+  - planetlib.spectroscopy.lte_lines.source
+- statement: The untruncated profile integrates over the whole real wavenumber offset. Absorber counting and isotopic
+    abundance conventions belong to the supplied S_ref.
+  evidence:
+  - planetlib.spectroscopy.lte_lines.source
+domains:
+- kind: scientific_applicability
+  status: unknown
+  description: The definition is a conditional partial model, with no adopted empirical validation.
+  conditions: []
+  evidence:
+  - planetlib.spectroscopy.lte_lines.source
+limitations:
+- statement: One isolated transition per absorber, ordinary spectroscopic wavenumber in cm^-1, LTE strength scaling
+    and a normalized Voigt profile. The total line cross section is the sum of such contributions. The Lorentz width
+    is supplied externally; pressure-broadening prescriptions, line truncation, line lists and partition-function
+    data are not chosen.
+  evidence:
+  - planetlib.spectroscopy.lte_lines.source
+- statement: Numerical algorithms, fitted data, discretization choices and floating-point accuracy remain provider
+    responsibilities.
+  evidence:
+  - planetlib.spectroscopy.lte_lines.source
+claims:
+- id: planetlib.spectroscopy.lte_lines.mathematical_consistency
+  revision: '1'
+  kind: theoretical
+  statement: At the reference temperature and unit partition-function ratio, S equals S_ref; the Gaussian and Lorentz
+    densities are normalized, their convolution is normalized, each line integral is S, and the finite line sum
+    is additive.
+  scope: Conditional mathematical checks only; neither provider equivalence nor physical applicability is inferred.
+  mathematical_models:
+  - id: planetlib.spectroscopy.lte_lines.model
+    revision: '1'
+- id: planetlib.spectroscopy.lte_lines.source_correspondence
+  revision: '1'
+  kind: theoretical
+  statement: The shared definitions preserve the selected conventions of the inspected implementation.
+  scope: The source supplied the extraction target; a separate correspondence review is required.
+  mathematical_models:
+  - id: planetlib.spectroscopy.lte_lines.model
+    revision: '1'
+- id: planetlib.spectroscopy.lte_lines.physical_applicability
+  revision: '1'
+  kind: physical_validation
+  statement: The selected relations have adequate accuracy for a specified physical target.
+  scope: No target, empirical error criterion or independent observation is selected by this library entry.
+  mathematical_models:
+  - id: planetlib.spectroscopy.lte_lines.model
+    revision: '1'
+evidence:
+- id: planetlib.spectroscopy.lte_lines.source
+  kind: implementation
+  summary: Mathematical conventions extracted from immutable ExoJAX source.
+  sources:
+  - https://github.com/HajimeKawahara/exojax/blob/38cb2e44f153ad6d729e3253e235702de52920cf/src/exojax/database/core/line_strength.py
+  - https://github.com/HajimeKawahara/exojax/blob/38cb2e44f153ad6d729e3253e235702de52920cf/src/exojax/database/core/broadening.py
+  - https://github.com/HajimeKawahara/exojax/blob/38cb2e44f153ad6d729e3253e235702de52920cf/src/exojax/opacity/lpf/lpf.py
+  scope: The cited source implementations were inspected. This is not a new inspection of their original literature
+    or a transferred provider assessment.
+  provenance:
+    role: implementation
+    location: The functions and conventions identified by the immutable source paths.
+    inspection: inspected
+    note: Shared mathematical definitions are distinct from numerical approximation and physical applicability.
+subjects:
+- id: planetlib.spectroscopy.lte_lines.definition
+  implementation: *id001
+  selected_files:
+    catalog/spectroscopy/lte_lines.yaml: null
+contexts:
+- id: planetlib.spectroscopy.lte_lines.initial_review
+  scope: Initial shared-definition extraction; test executions and reviewed support are recorded independently.
+quantities:
+- id: planetlib.spectroscopy.lte_lines.quantity.S
+  revision: '1'
+  latex: S
+  description: Integrated line strength per absorber at T.
+  unit: cm
+  domain: Finite real value within the stated scope.
+- id: planetlib.spectroscopy.lte_lines.quantity.S_ref
+  revision: '1'
+  latex: S_{ref}
+  description: Integrated line strength for the same transition and absorber at T_ref.
+  unit: cm
+  domain: Finite real value within the stated scope.
+- id: planetlib.spectroscopy.lte_lines.quantity.Q_ratio
+  revision: '1'
+  latex: Q_{ratio}
+  description: Partition-function ratio Q(T)/Q(T_ref).
+  unit: '1'
+  domain: Positive.
+- id: planetlib.spectroscopy.lte_lines.quantity.c2
+  revision: '1'
+  latex: c_{2}
+  description: Second radiation constant h c / k_B in matching cgs units.
+  unit: cm K
+  domain: Positive.
+- id: planetlib.spectroscopy.lte_lines.quantity.E_lower
+  revision: '1'
+  latex: E_{lower}
+  description: Lower-level energy divided by h c in the same line-list energy zero.
+  unit: cm^-1
+  domain: Nonnegative.
+- id: planetlib.spectroscopy.lte_lines.quantity.T
+  revision: '1'
+  latex: T
+  description: Local kinetic and excitation temperature.
+  unit: K
+  domain: Positive.
+- id: planetlib.spectroscopy.lte_lines.quantity.T_ref
+  revision: '1'
+  latex: T_{ref}
+  description: Reference temperature for the supplied line strength.
+  unit: K
+  domain: Positive.
+- id: planetlib.spectroscopy.lte_lines.quantity.w0
+  revision: '1'
+  latex: w_{0}
+  description: Transition center spectroscopic wavenumber.
+  unit: cm^-1
+  domain: Positive.
+- id: planetlib.spectroscopy.lte_lines.quantity.sigma_D
+  revision: '1'
+  latex: \sigma_{D}
+  description: Gaussian Doppler standard deviation in wavenumber.
+  unit: cm^-1
+  domain: Positive.
+- id: planetlib.spectroscopy.lte_lines.quantity.k_B
+  revision: '1'
+  latex: k_{B}
+  description: Boltzmann constant.
+  unit: erg K^-1
+  domain: Positive.
+- id: planetlib.spectroscopy.lte_lines.quantity.m_abs
+  revision: '1'
+  latex: m_{abs}
+  description: Mass of one absorbing particle in grams.
+  unit: g
+  domain: Positive.
+- id: planetlib.spectroscopy.lte_lines.quantity.c
+  revision: '1'
+  latex: c
+  description: Vacuum speed of light.
+  unit: cm s^-1
+  domain: Positive.
+- id: planetlib.spectroscopy.lte_lines.quantity.x
+  revision: '1'
+  latex: x
+  description: Wavenumber offset from the transition center.
+  unit: cm^-1
+  domain: Finite real value within the stated scope.
+- id: planetlib.spectroscopy.lte_lines.quantity.y
+  revision: '1'
+  latex: y
+  description: Integration offset in the Voigt convolution.
+  unit: cm^-1
+  domain: Finite real value within the stated scope.
+- id: planetlib.spectroscopy.lte_lines.quantity.gamma_L
+  revision: '1'
+  latex: \gamma_{L}
+  description: Externally supplied Lorentz half width at half maximum.
+  unit: cm^-1
+  domain: Positive.
+- id: planetlib.spectroscopy.lte_lines.quantity.G
+  revision: '1'
+  latex: G
+  description: Normalized Gaussian density per wavenumber offset.
+  unit: cm
+  domain: Finite real value within the stated scope.
+  coordinates:
+  - id: planetlib.spectroscopy.lte_lines.quantity.x
+    revision: '1'
+- id: planetlib.spectroscopy.lte_lines.quantity.L
+  revision: '1'
+  latex: L
+  description: Normalized Lorentz density per wavenumber offset.
+  unit: cm
+  domain: Finite real value within the stated scope.
+  coordinates:
+  - id: planetlib.spectroscopy.lte_lines.quantity.x
+    revision: '1'
+- id: planetlib.spectroscopy.lte_lines.quantity.phi
+  revision: '1'
+  latex: \phi
+  description: Normalized Voigt density per wavenumber offset.
+  unit: cm
+  domain: Finite real value within the stated scope.
+  coordinates:
+  - id: planetlib.spectroscopy.lte_lines.quantity.x
+    revision: '1'
+- id: planetlib.spectroscopy.lte_lines.quantity.sigma_abs
+  revision: '1'
+  latex: \sigma_{abs}
+  description: Single-transition absorption cross section per absorber at offset x.
+  unit: cm^2
+  domain: Finite real value within the stated scope.
+  coordinates:
+  - id: planetlib.spectroscopy.lte_lines.quantity.x
+    revision: '1'
+- id: planetlib.spectroscopy.lte_lines.quantity.w
+  revision: '1'
+  latex: w
+  description: Spectroscopic wavenumber at which the finite line list is evaluated.
+  unit: cm^-1
+  domain: Positive.
+- id: planetlib.spectroscopy.lte_lines.quantity.i
+  revision: '1'
+  latex: i
+  description: Line index in the finite selected line list.
+  unit: '1'
+  domain: Integer from 1 through N_lines.
+- id: planetlib.spectroscopy.lte_lines.quantity.N_lines
+  revision: '1'
+  latex: N_{lines}
+  description: Number of selected transitions.
+  unit: '1'
+  domain: Positive integer.
+- id: planetlib.spectroscopy.lte_lines.quantity.S_line
+  revision: '1'
+  latex: S_{line}
+  description: Per-absorber integrated strengths for the selected transitions.
+  unit: cm
+  domain: Nonnegative, with a common absorber and abundance convention.
+  coordinates:
+  - id: planetlib.spectroscopy.lte_lines.quantity.i
+    revision: '1'
+- id: planetlib.spectroscopy.lte_lines.quantity.w_line
+  revision: '1'
+  latex: w_{line}
+  description: Line-center wavenumbers in the same selected list.
+  unit: cm^-1
+  domain: Positive.
+  coordinates:
+  - id: planetlib.spectroscopy.lte_lines.quantity.i
+    revision: '1'
+- id: planetlib.spectroscopy.lte_lines.quantity.phi_line
+  revision: '1'
+  latex: \phi_{line}
+  description: Per-line normalized profiles evaluated at line index and wavenumber offset.
+  unit: cm
+  domain: Each supplied profile integrates to one over the offset.
+  coordinates:
+  - id: planetlib.spectroscopy.lte_lines.quantity.i
+    revision: '1'
+  - id: planetlib.spectroscopy.lte_lines.quantity.x
+    revision: '1'
+- id: planetlib.spectroscopy.lte_lines.quantity.sigma_total
+  revision: '1'
+  latex: \sigma_{total}
+  description: Absorption cross section per common absorber from the finite line list.
+  unit: cm^2
+  domain: Finite real value within the stated scope.
+  coordinates:
+  - id: planetlib.spectroscopy.lte_lines.quantity.w
+    revision: '1'
+equations:
+- id: planetlib.spectroscopy.lte_lines.strength_temperature
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Symbol('S', real=True), Mul(Pow(Symbol('Q_ratio', real=True), Integer(-1)), Symbol('S_ref',
+      real=True), Add(Integer(1), Mul(Integer(-1), exp(Mul(Integer(-1), Pow(Symbol('T', real=True), Integer(-1)),
+      Symbol('c2', real=True), Symbol('w0', real=True))))), Pow(Add(Integer(1), Mul(Integer(-1), exp(Mul(Integer(-1),
+      Pow(Symbol('T_ref', real=True), Integer(-1)), Symbol('c2', real=True), Symbol('w0', real=True))))), Integer(-1)),
+      exp(Mul(Integer(-1), Symbol('E_lower', real=True), Symbol('c2', real=True), Add(Mul(Integer(-1), Pow(Symbol('T_ref',
+      real=True), Integer(-1))), Pow(Symbol('T', real=True), Integer(-1)))))))
+  description: LTE temperature scaling with stimulated-emission correction.
+  scope: One isolated transition per absorber, ordinary spectroscopic wavenumber in cm^-1, LTE strength scaling
+    and a normalized Voigt profile. The total line cross section is the sum of such contributions. The Lorentz width
+    is supplied externally; pressure-broadening prescriptions, line truncation, line lists and partition-function
+    data are not chosen.
+  assumptions: &id002
+  - T, T_ref, w0, Q_ratio, sigma_D, gamma_L and absorber mass are positive; the Gaussian width is a standard deviation
+    and the Lorentz width is a half width at half maximum.
+  - Q_ratio means Q(T)/Q(T_ref), using the same absorber and partition-function convention as S_ref. E_lower is
+    expressed as a wavenumber, not an energy in erg.
+  - The untruncated profile integrates over the whole real wavenumber offset. Absorber counting and isotopic abundance
+    conventions belong to the supplied S_ref.
+  symbols:
+    E_lower:
+      latex: E_{lower}
+      description: Lower-level energy divided by h c in the same line-list energy zero.
+      unit: cm^-1
+    Q_ratio:
+      latex: Q_{ratio}
+      description: Partition-function ratio Q(T)/Q(T_ref).
+      unit: '1'
+    S:
+      latex: S
+      description: Integrated line strength per absorber at T.
+      unit: cm
+    S_ref:
+      latex: S_{ref}
+      description: Integrated line strength for the same transition and absorber at T_ref.
+      unit: cm
+    T:
+      latex: T
+      description: Local kinetic and excitation temperature.
+      unit: K
+    T_ref:
+      latex: T_{ref}
+      description: Reference temperature for the supplied line strength.
+      unit: K
+    c2:
+      latex: c_{2}
+      description: Second radiation constant h c / k_B in matching cgs units.
+      unit: cm K
+    w0:
+      latex: w_{0}
+      description: Transition center spectroscopic wavenumber.
+      unit: cm^-1
+  evidence:
+  - planetlib.spectroscopy.lte_lines.source
+- id: planetlib.spectroscopy.lte_lines.doppler_width
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Symbol('sigma_D', real=True), Mul(Pow(Symbol('c', real=True), Integer(-1)), Symbol('w0',
+      real=True), Pow(Mul(Symbol('T', real=True), Symbol('k_B', real=True), Pow(Symbol('m_abs', real=True), Integer(-1))),
+      Rational(1, 2))))
+  description: Thermal Doppler standard deviation.
+  scope: One isolated transition per absorber, ordinary spectroscopic wavenumber in cm^-1, LTE strength scaling
+    and a normalized Voigt profile. The total line cross section is the sum of such contributions. The Lorentz width
+    is supplied externally; pressure-broadening prescriptions, line truncation, line lists and partition-function
+    data are not chosen.
+  assumptions: *id002
+  symbols:
+    T:
+      latex: T
+      description: Local kinetic and excitation temperature.
+      unit: K
+    c:
+      latex: c
+      description: Vacuum speed of light.
+      unit: cm s^-1
+    k_B:
+      latex: k_{B}
+      description: Boltzmann constant.
+      unit: erg K^-1
+    m_abs:
+      latex: m_{abs}
+      description: Mass of one absorbing particle in grams.
+      unit: g
+    sigma_D:
+      latex: \sigma_{D}
+      description: Gaussian Doppler standard deviation in wavenumber.
+      unit: cm^-1
+    w0:
+      latex: w_{0}
+      description: Transition center spectroscopic wavenumber.
+      unit: cm^-1
+  evidence:
+  - planetlib.spectroscopy.lte_lines.source
+- id: planetlib.spectroscopy.lte_lines.gaussian_profile
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Function('G')(Symbol('x', real=True)), Mul(Rational(1, 2), Pow(Integer(2), Rational(1,
+      2)), Pow(pi, Rational(-1, 2)), Pow(Symbol('sigma_D', real=True), Integer(-1)), exp(Mul(Integer(-1), Rational(1,
+      2), Pow(Symbol('sigma_D', real=True), Integer(-2)), Pow(Symbol('x', real=True), Integer(2))))))
+  description: Normalized Gaussian profile.
+  scope: One isolated transition per absorber, ordinary spectroscopic wavenumber in cm^-1, LTE strength scaling
+    and a normalized Voigt profile. The total line cross section is the sum of such contributions. The Lorentz width
+    is supplied externally; pressure-broadening prescriptions, line truncation, line lists and partition-function
+    data are not chosen.
+  assumptions: *id002
+  symbols:
+    G:
+      latex: G
+      description: Normalized Gaussian density per wavenumber offset.
+      unit: cm
+    sigma_D:
+      latex: \sigma_{D}
+      description: Gaussian Doppler standard deviation in wavenumber.
+      unit: cm^-1
+    x:
+      latex: x
+      description: Wavenumber offset from the transition center.
+      unit: cm^-1
+  evidence:
+  - planetlib.spectroscopy.lte_lines.source
+- id: planetlib.spectroscopy.lte_lines.lorentz_profile
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Function('L')(Symbol('x', real=True)), Mul(Pow(pi, Integer(-1)), Symbol('gamma_L', real=True),
+      Pow(Add(Pow(Symbol('gamma_L', real=True), Integer(2)), Pow(Symbol('x', real=True), Integer(2))), Integer(-1))))
+  description: Normalized Lorentz profile.
+  scope: One isolated transition per absorber, ordinary spectroscopic wavenumber in cm^-1, LTE strength scaling
+    and a normalized Voigt profile. The total line cross section is the sum of such contributions. The Lorentz width
+    is supplied externally; pressure-broadening prescriptions, line truncation, line lists and partition-function
+    data are not chosen.
+  assumptions: *id002
+  symbols:
+    L:
+      latex: L
+      description: Normalized Lorentz density per wavenumber offset.
+      unit: cm
+    gamma_L:
+      latex: \gamma_{L}
+      description: Externally supplied Lorentz half width at half maximum.
+      unit: cm^-1
+    x:
+      latex: x
+      description: Wavenumber offset from the transition center.
+      unit: cm^-1
+  evidence:
+  - planetlib.spectroscopy.lte_lines.source
+- id: planetlib.spectroscopy.lte_lines.voigt_profile
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Function('phi')(Symbol('x', real=True)), Integral(Add(Mul(Function('G')(Mul(Integer(-1),
+      Symbol('y', real=True))), Function('L')(Add(Symbol('x', real=True), Symbol('y', real=True)))), Mul(Function('G')(Symbol('y',
+      real=True)), Function('L')(Add(Symbol('x', real=True), Mul(Integer(-1), Symbol('y', real=True)))))), Tuple(Symbol('y',
+      real=True), Integer(0), oo)))
+  description: Normalized Voigt convolution.
+  scope: One isolated transition per absorber, ordinary spectroscopic wavenumber in cm^-1, LTE strength scaling
+    and a normalized Voigt profile. The total line cross section is the sum of such contributions. The Lorentz width
+    is supplied externally; pressure-broadening prescriptions, line truncation, line lists and partition-function
+    data are not chosen.
+  assumptions: *id002
+  symbols:
+    G:
+      latex: G
+      description: Normalized Gaussian density per wavenumber offset.
+      unit: cm
+    L:
+      latex: L
+      description: Normalized Lorentz density per wavenumber offset.
+      unit: cm
+    phi:
+      latex: \phi
+      description: Normalized Voigt density per wavenumber offset.
+      unit: cm
+    x:
+      latex: x
+      description: Wavenumber offset from the transition center.
+      unit: cm^-1
+    y:
+      latex: y
+      description: Integration offset in the Voigt convolution.
+      unit: cm^-1
+  evidence:
+  - planetlib.spectroscopy.lte_lines.source
+- id: planetlib.spectroscopy.lte_lines.line_cross_section
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Function('sigma_abs')(Symbol('x', real=True)), Mul(Symbol('S', real=True), Function('phi')(Symbol('x',
+      real=True))))
+  description: Cross section of one normalized transition.
+  scope: One isolated transition per absorber, ordinary spectroscopic wavenumber in cm^-1, LTE strength scaling
+    and a normalized Voigt profile. The total line cross section is the sum of such contributions. The Lorentz width
+    is supplied externally; pressure-broadening prescriptions, line truncation, line lists and partition-function
+    data are not chosen.
+  assumptions: *id002
+  symbols:
+    S:
+      latex: S
+      description: Integrated line strength per absorber at T.
+      unit: cm
+    phi:
+      latex: \phi
+      description: Normalized Voigt density per wavenumber offset.
+      unit: cm
+    sigma_abs:
+      latex: \sigma_{abs}
+      description: Single-transition absorption cross section per absorber at offset x.
+      unit: cm^2
+    x:
+      latex: x
+      description: Wavenumber offset from the transition center.
+      unit: cm^-1
+  evidence:
+  - planetlib.spectroscopy.lte_lines.source
+- id: planetlib.spectroscopy.lte_lines.line_sum
+  revision: '1'
+  sympy:
+    format: sympy-srepr-v1
+    expression: Equality(Function('sigma_total')(Symbol('w', real=True)), Sum(Mul(Function('S_line')(Symbol('i',
+      real=True)), Function('phi_line')(Symbol('i', real=True), Add(Symbol('w', real=True), Mul(Integer(-1), Function('w_line')(Symbol('i',
+      real=True)))))), Tuple(Symbol('i', real=True), Integer(1), Symbol('N_lines', real=True))))
+  description: Additive cross section from a finite selected list of normalized transitions.
+  scope: One isolated transition per absorber, ordinary spectroscopic wavenumber in cm^-1, LTE strength scaling
+    and a normalized Voigt profile. The total line cross section is the sum of such contributions. The Lorentz width
+    is supplied externally; pressure-broadening prescriptions, line truncation, line lists and partition-function
+    data are not chosen.
+  assumptions: *id002
+  symbols:
+    N_lines:
+      latex: N_{lines}
+      description: Number of selected transitions.
+      unit: '1'
+    S_line:
+      latex: S_{line}
+      description: Per-absorber integrated strengths for the selected transitions.
+      unit: cm
+    i:
+      latex: i
+      description: Line index in the finite selected line list.
+      unit: '1'
+    phi_line:
+      latex: \phi_{line}
+      description: Per-line normalized profiles evaluated at line index and wavenumber offset.
+      unit: cm
+    sigma_total:
+      latex: \sigma_{total}
+      description: Absorption cross section per common absorber from the finite line list.
+      unit: cm^2
+    w:
+      latex: w
+      description: Spectroscopic wavenumber at which the finite line list is evaluated.
+      unit: cm^-1
+    w_line:
+      latex: w_{line}
+      description: Line-center wavenumbers in the same selected list.
+      unit: cm^-1
+  evidence:
+  - planetlib.spectroscopy.lte_lines.source
+mathematical_models:
+- id: planetlib.spectroscopy.lte_lines.model
+  revision: '1'
+  description: LTE molecular line strength and normalized Voigt profile
+  scope: One isolated transition per absorber, ordinary spectroscopic wavenumber in cm^-1, LTE strength scaling
+    and a normalized Voigt profile. The total line cross section is the sum of such contributions. The Lorentz width
+    is supplied externally; pressure-broadening prescriptions, line truncation, line lists and partition-function
+    data are not chosen.
+  quantities:
+    S:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.S
+        revision: '1'
+      role: derived
+    S_ref:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.S_ref
+        revision: '1'
+      role: input
+    Q_ratio:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.Q_ratio
+        revision: '1'
+      role: input
+    c2:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.c2
+        revision: '1'
+      role: parameter
+    E_lower:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.E_lower
+        revision: '1'
+      role: input
+    T:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.T
+        revision: '1'
+      role: input
+    T_ref:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.T_ref
+        revision: '1'
+      role: input
+    w0:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.w0
+        revision: '1'
+      role: input
+    sigma_D:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.sigma_D
+        revision: '1'
+      role: derived
+    k_B:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.k_B
+        revision: '1'
+      role: parameter
+    m_abs:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.m_abs
+        revision: '1'
+      role: input
+    c:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.c
+        revision: '1'
+      role: parameter
+    x:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.x
+        revision: '1'
+      role: coordinate
+    y:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.y
+        revision: '1'
+      role: coordinate
+    gamma_L:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.gamma_L
+        revision: '1'
+      role: input
+    G:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.G
+        revision: '1'
+      role: derived
+    L:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.L
+        revision: '1'
+      role: derived
+    phi:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.phi
+        revision: '1'
+      role: derived
+    sigma_abs:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.sigma_abs
+        revision: '1'
+      role: derived
+    w:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.w
+        revision: '1'
+      role: coordinate
+    i:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.i
+        revision: '1'
+      role: coordinate
+    N_lines:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.N_lines
+        revision: '1'
+      role: parameter
+    S_line:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.S_line
+        revision: '1'
+      role: input
+    w_line:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.w_line
+        revision: '1'
+      role: input
+    phi_line:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.phi_line
+        revision: '1'
+      role: input
+    sigma_total:
+      quantity:
+        id: planetlib.spectroscopy.lte_lines.quantity.sigma_total
+        revision: '1'
+      role: derived
+  relations:
+  - id: strength_temperature
+    equation:
+      id: planetlib.spectroscopy.lte_lines.strength_temperature
+      revision: '1'
+    kind: equation
+    role: LTE temperature scaling with stimulated-emission correction.
+    quantities:
+      E_lower: E_lower
+      Q_ratio: Q_ratio
+      S: S
+      S_ref: S_ref
+      T: T
+      T_ref: T_ref
+      c2: c2
+      w0: w0
+  - id: doppler_width
+    equation:
+      id: planetlib.spectroscopy.lte_lines.doppler_width
+      revision: '1'
+    kind: equation
+    role: Thermal Doppler standard deviation.
+    quantities:
+      T: T
+      c: c
+      k_B: k_B
+      m_abs: m_abs
+      sigma_D: sigma_D
+      w0: w0
+  - id: gaussian_profile
+    equation:
+      id: planetlib.spectroscopy.lte_lines.gaussian_profile
+      revision: '1'
+    kind: equation
+    role: Normalized Gaussian profile.
+    quantities:
+      G: G
+      sigma_D: sigma_D
+      x: x
+  - id: lorentz_profile
+    equation:
+      id: planetlib.spectroscopy.lte_lines.lorentz_profile
+      revision: '1'
+    kind: equation
+    role: Normalized Lorentz profile.
+    quantities:
+      L: L
+      gamma_L: gamma_L
+      x: x
+  - id: voigt_profile
+    equation:
+      id: planetlib.spectroscopy.lte_lines.voigt_profile
+      revision: '1'
+    kind: equation
+    role: Normalized Voigt convolution.
+    quantities:
+      G: G
+      L: L
+      phi: phi
+      x: x
+      y: y
+  - id: line_cross_section
+    equation:
+      id: planetlib.spectroscopy.lte_lines.line_cross_section
+      revision: '1'
+    kind: equation
+    role: Cross section of one normalized transition.
+    quantities:
+      S: S
+      phi: phi
+      sigma_abs: sigma_abs
+      x: x
+  - id: line_sum
+    equation:
+      id: planetlib.spectroscopy.lte_lines.line_sum
+      revision: '1'
+    kind: equation
+    role: Additive cross section from a finite selected list of normalized transitions.
+    quantities:
+      N_lines: N_lines
+      S_line: S_line
+      i: i
+      phi_line: phi_line
+      sigma_total: sigma_total
+      w: w
+      w_line: w_line
+assessments:
+- id: planetlib.spectroscopy.lte_lines.mathematical_consistency.initial
+  kind: evidence_support
+  claim: planetlib.spectroscopy.lte_lines.mathematical_consistency
+  claim_revision: '1'
+  subject: planetlib.spectroscopy.lte_lines.definition
+  context: planetlib.spectroscopy.lte_lines.initial_review
+  method:
+    id: planetlib.spectroscopy.lte_lines.initial_review
+    revision: '1'
+    description: Keep mathematical consistency, source correspondence and physical applicability as separate review
+      targets.
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.spectroscopy.lte_lines.source
+  reasons:
+  - No archived scoped review is assigned to this new definition by its initial extraction.
+- id: planetlib.spectroscopy.lte_lines.source_correspondence.initial
+  kind: evidence_support
+  claim: planetlib.spectroscopy.lte_lines.source_correspondence
+  claim_revision: '1'
+  subject: planetlib.spectroscopy.lte_lines.definition
+  context: planetlib.spectroscopy.lte_lines.initial_review
+  method:
+    id: planetlib.spectroscopy.lte_lines.initial_review
+    revision: '1'
+    description: Keep mathematical consistency, source correspondence and physical applicability as separate review
+      targets.
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.spectroscopy.lte_lines.source
+  reasons:
+  - No archived scoped review is assigned to this new definition by its initial extraction.
+- id: planetlib.spectroscopy.lte_lines.physical_applicability.initial
+  kind: evidence_support
+  claim: planetlib.spectroscopy.lte_lines.physical_applicability
+  claim_revision: '1'
+  subject: planetlib.spectroscopy.lte_lines.definition
+  context: planetlib.spectroscopy.lte_lines.initial_review
+  method:
+    id: planetlib.spectroscopy.lte_lines.initial_review
+    revision: '1'
+    description: Keep mathematical consistency, source correspondence and physical applicability as separate review
+      targets.
+  status: unknown
+  origin: reviewed
+  evidence:
+  - planetlib.spectroscopy.lte_lines.source
+  reasons:
+  - No archived scoped review is assigned to this new definition by its initial extraction.
