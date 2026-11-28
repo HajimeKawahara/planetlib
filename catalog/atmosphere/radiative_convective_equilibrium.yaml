@@ -1,0 +1,635 @@
+schema_version: '0.6'
+model:
+  id: planetlib.atmosphere.rce.catalog
+  name: Radiative-convective balance and fixed-branch response
+  description: Shared balance, alternative finite stability criteria, fixed-mask reduction and conditional local
+    sensitivity. No transport closure, opacity model, composition dataset, solver, convergence certificate or atmosphere-specific
+    accuracy is supplied.
+  implementation: &id001
+    repository: https://github.com/HajimeKawahara/planetlib
+    revision: definition:1
+    entry_points: [catalog/atmosphere/radiative_convective_equilibrium.yaml]
+assumptions:
+- statement: Static plane-parallel steady energy balance with constant net internal flux; absorbed irradiation is
+    accounted for by net radiative flux. No extra material heating, horizontal transport or storage term is selected.
+  evidence: [planetlib.atmosphere.rce.source]
+- statement: Net radiation is upward positive. Diffuse upward/downward components include thermal and scattered
+    light; the nonnegative downward direct beam is subtracted once.
+  evidence: [planetlib.atmosphere.rce.source]
+- statement: The instability excess is dimensionless and positive when unstable. Gradient and mass-specific entropy
+    criteria have distinct definitions and applicability assumptions; selecting one is the adopter responsibility.
+  evidence: [planetlib.atmosphere.rce.source]
+- statement: Pressure increases downward. Connections join N layer centers and the bottom temperature, whereas fluxes
+    live at N+1 interfaces. Connection k is associated with interface k+1; the top convective flux is zero.
+  evidence: [planetlib.atmosphere.rce.source]
+- statement: Each symbol is a numerical magnitude in its declared unit. Ratios inside logarithms are dimensionless;
+    thermodynamic entropy is in J kg^-1 K^-1 while radiative flux is in cgs units.
+  evidence: [planetlib.atmosphere.rce.source]
+domains:
+- kind: scientific_applicability
+  status: unknown
+  description: Shared balance, alternative finite stability criteria, fixed-mask reduction and conditional local
+    sensitivity. No transport closure, opacity model, composition dataset, solver, convergence certificate or atmosphere-specific
+    accuracy is supplied.
+  conditions: []
+  evidence: [planetlib.atmosphere.rce.source]
+limitations:
+- statement: Neither symbolic consistency nor a converged discrete root certifies pressure-grid or opacity convergence,
+    thermal stability, branch uniqueness, applicability or HMC readiness. CKD rank/comonotonicity, opacity sampling,
+    interpolation, finite angular quadrature and nonlinear globalization are provider choices.
+  evidence: [planetlib.atmosphere.rce.source]
+claims:
+- id: planetlib.atmosphere.rce.mathematical_consistency
+  revision: '1'
+  kind: theoretical
+  statement: The selected balance, complementarity, fixed-mask reduction and local tangent relations have consistent
+    signs and the stated conditional algebraic consequences.
+  scope: Symbolic identities and selected counterexamples on the declared domains; no general root-existence or
+    provider-equivalence claim.
+  mathematical_models:
+  - {id: planetlib.atmosphere.rce.balance, revision: '1'}
+  - {id: planetlib.atmosphere.rce.log_gradient, revision: '1'}
+  - {id: planetlib.atmosphere.rce.entropy, revision: '1'}
+  - {id: planetlib.atmosphere.rce.fixed_mask, revision: '1'}
+  - {id: planetlib.atmosphere.rce.implicit_sensitivity, revision: '1'}
+- id: planetlib.atmosphere.rce.source_correspondence
+  revision: '1'
+  kind: theoretical
+  statement: The extraction preserves the selected pinned ExoJAX quantity conventions and reduced formulation.
+  scope: Requires a separate source-to-definition review. Numerical provider execution and unselected formulations
+    remain outside this claim.
+  mathematical_models:
+  - {id: planetlib.atmosphere.rce.balance, revision: '1'}
+  - {id: planetlib.atmosphere.rce.log_gradient, revision: '1'}
+  - {id: planetlib.atmosphere.rce.entropy, revision: '1'}
+  - {id: planetlib.atmosphere.rce.fixed_mask, revision: '1'}
+  - {id: planetlib.atmosphere.rce.implicit_sensitivity, revision: '1'}
+- id: planetlib.atmosphere.rce.physical_applicability
+  revision: '1'
+  kind: physical_validation
+  statement: The selected partial relations and a justified instability closure describe a specified atmosphere
+    to its required accuracy.
+  scope: No target atmosphere, empirical validation dataset or accepted error budget is specified by this catalog.
+  mathematical_models:
+  - {id: planetlib.atmosphere.rce.balance, revision: '1'}
+  - {id: planetlib.atmosphere.rce.log_gradient, revision: '1'}
+  - {id: planetlib.atmosphere.rce.entropy, revision: '1'}
+  - {id: planetlib.atmosphere.rce.fixed_mask, revision: '1'}
+  - {id: planetlib.atmosphere.rce.implicit_sensitivity, revision: '1'}
+evidence:
+- id: planetlib.atmosphere.rce.source
+  kind: implementation
+  summary: Pinned ExoJAX balance, stability and fixed-branch derivative conventions inspected for extraction.
+  sources: ['https://github.com/HajimeKawahara/exojax/blob/b3e1dc822b4be28f9189910305ae4bb91c666349/src/exojax/atm/rce.py',
+    'https://github.com/HajimeKawahara/exojax/blob/b3e1dc822b4be28f9189910305ae4bb91c666349/src/exojax/atm/rce_device.py',
+    'https://github.com/HajimeKawahara/exojax/blob/b3e1dc822b4be28f9189910305ae4bb91c666349/src/exojax/atm/rce_device_implicit.py',
+    'https://github.com/HajimeKawahara/exojax/blob/b3e1dc822b4be28f9189910305ae4bb91c666349/examples/_rce_entropy.py',
+    'https://github.com/HajimeKawahara/exojax/blob/b3e1dc822b4be28f9189910305ae4bb91c666349/examples/_rce_broadband.py']
+  scope: Only the declared reusable partial model is extracted. The provider implementation, study configurations
+    and historical numerical outcomes remain upstream.
+  provenance: {role: implementation, location: The functions in the immutable source URLs., inspection: partial,
+    note: Source inspection establishes the intended conventions; no provider or literature assessment is inherited.}
+- id: planetlib.atmosphere.rce.symbolic_checks
+  kind: theory
+  summary: Executable checks derive consequences and counterexamples from the stored symbolic definitions.
+  sources: [tests/test_radiative_convective_equilibrium.py]
+  scope: Conditional algebra, finite examples and limits only. Test execution does not automatically promote an
+    assessment or establish physical applicability.
+subjects:
+- id: planetlib.atmosphere.rce.definition
+  implementation: *id001
+  selected_files: {catalog/atmosphere/radiative_convective_equilibrium.yaml: null}
+contexts:
+- {id: planetlib.atmosphere.rce.extraction, scope: 'Initial shared-definition extraction; mathematical, provider-correspondence
+    and physical applicability judgments remain separate.'}
+quantities:
+- {id: planetlib.atmosphere.rce.quantity.F_rad, revision: '1', latex: 'F_{\rm rad}', description: Net upward bolometric
+    radiative flux at the interface associated with one interior connection., unit: erg s^-1 cm^-2, domain: Signed;
+    includes downward incident stellar radiation with a minus sign.}
+- {id: planetlib.atmosphere.rce.quantity.F_up, revision: '1', latex: 'F_{\rm up}', description: 'Upward diffuse
+    bolometric flux at that interface, including thermal and reflected light.', unit: erg s^-1 cm^-2, domain: Nonnegative
+    magnitude; uses the same spectral and angular integration as F_down.}
+- {id: planetlib.atmosphere.rce.quantity.F_down, revision: '1', latex: 'F_{\rm down}', description: 'Downward diffuse
+    bolometric flux at that interface, excluding the direct incident beam.', unit: erg s^-1 cm^-2, domain: Nonnegative
+    magnitude; includes thermal and scattered light.}
+- {id: planetlib.atmosphere.rce.quantity.F_direct, revision: '1', latex: 'F_{\rm direct}', description: Downward
+    direct-beam bolometric flux at that interface., unit: erg s^-1 cm^-2, domain: Nonnegative magnitude; omit from
+    F_down to avoid double counting.}
+- {id: planetlib.atmosphere.rce.quantity.F_conv, revision: '1', latex: 'F_{\rm conv}', description: Upward convective
+    flux at the interface associated with one interior connection., unit: erg s^-1 cm^-2, domain: Nonnegative at
+    an admissible equilibrium; no mixing-length transport law is specified.}
+- {id: planetlib.atmosphere.rce.quantity.F_int, revision: '1', latex: 'F_{\rm int}', description: Prescribed constant
+    net upward internal flux through the whole column., unit: erg s^-1 cm^-2, domain: 'Nonnegative; irradiation
+    is already included in F_rad, not added to this target.'}
+- {id: planetlib.atmosphere.rce.quantity.F_conv_top, revision: '1', latex: 'F_{\rm conv,top}', description: Upward
+    convective flux at the top boundary., unit: erg s^-1 cm^-2, domain: Exactly zero in this selected boundary model.}
+- {id: planetlib.atmosphere.rce.quantity.F_rad_top, revision: '1', latex: 'F_{\rm rad,top}', description: Net upward
+    bolometric radiative flux at the top boundary., unit: erg s^-1 cm^-2, domain: Signed with the same direct-beam
+    convention as F_rad; distinct spatial location.}
+- {id: planetlib.atmosphere.rce.quantity.g, revision: '1', latex: g, description: Caller-selected dimensionless
+    convective instability excess at one connection., unit: '1', domain: Positive is unstable; zero is neutral.
+    The caller supplies and justifies the physical criterion.}
+- {id: planetlib.atmosphere.rce.quantity.g_T, revision: '1', latex: g_T, description: Log-temperature-gradient excess
+    above the supplied neutral gradient., unit: '1', domain: 'Finite-connection criterion, not a universal equilibrium-chemistry
+    entropy gradient.'}
+- {id: planetlib.atmosphere.rce.quantity.g_s, revision: '1', latex: g_s, description: Specific-entropy increase
+    toward higher pressure divided by a positive entropy reference., unit: '1', domain: Finite-connection entropy
+    criterion with a separately justified thermodynamic and buoyancy model.}
+- {id: planetlib.atmosphere.rce.quantity.T_upper, revision: '1', latex: T_u, description: Gas temperature at the
+    shallower endpoint of one connection., unit: K, domain: 'Positive; for N layers, connections join successive
+    centers and then the last center to the bottom.'}
+- {id: planetlib.atmosphere.rce.quantity.T_lower, revision: '1', latex: T_d, description: Gas temperature at the
+    deeper endpoint of the same connection., unit: K, domain: Positive; the final connection endpoint is the lower-boundary
+    temperature.}
+- {id: planetlib.atmosphere.rce.quantity.P_upper, revision: '1', latex: P_u, description: Gas pressure at the shallower
+    temperature node of one connection., unit: bar, domain: 0 < P_upper < P_lower; pressure enters logarithms only
+    through dimensionless ratios.}
+- {id: planetlib.atmosphere.rce.quantity.P_lower, revision: '1', latex: P_d, description: Gas pressure at the deeper
+    temperature node of that connection., unit: bar, domain: Strictly greater than P_upper; the last connection
+    ends at lower-boundary pressure.}
+- {id: planetlib.atmosphere.rce.quantity.nabla_neutral, revision: '1', latex: '\nabla_{\rm neutral}', description: Prescribed
+    neutral logarithmic temperature gradient for the selected connection., unit: '1', domain: 'Positive; may depend
+    on temperature, pressure and parameters. Its derivatives must not be frozen implicitly.'}
+- {id: planetlib.atmosphere.rce.quantity.s_upper, revision: '1', latex: s_u, description: Specific entropy per conserved
+    material mass at the shallower endpoint., unit: J kg^-1 K^-1, domain: 'Uses the same mass denominator, entropy
+    reference and conserved elemental mixture as s_lower.'}
+- {id: planetlib.atmosphere.rce.quantity.s_lower, revision: '1', latex: s_d, description: Specific entropy per the
+    same conserved material mass at the deeper endpoint., unit: J kg^-1 K^-1, domain: Chemistry may equilibrate
+    locally; gas particle number is not assumed conserved.}
+- {id: planetlib.atmosphere.rce.quantity.s_ref, revision: '1', latex: 's_{\rm ref}', description: Fixed positive
+    specific-entropy normalization for the finite entropy criterion., unit: J kg^-1 K^-1, domain: 'Strictly positive
+    and state independent; changes magnitude, not the stability sign.'}
+- {id: planetlib.atmosphere.rce.quantity.m, revision: '1', latex: m, description: Fixed binary convective selection
+    for one interior connection., unit: '1', domain: Exactly zero or one; one selects neutrality. Not a continuously
+    differentiable physical variable.}
+- {id: planetlib.atmosphere.rce.quantity.flux_scale, revision: '1', latex: 'f_{\rm scale}', description: Positive
+    flux normalization for a reduced residual., unit: erg s^-1 cm^-2, domain: 'Strictly positive; may be a numerical
+    tolerance, not a physical flux target.'}
+- {id: planetlib.atmosphere.rce.quantity.stability_scale, revision: '1', latex: 'g_{\rm scale}', description: Positive
+    normalization for the selected instability excess., unit: '1', domain: Strictly positive; does not change the
+    physical neutrality condition.}
+- {id: planetlib.atmosphere.rce.quantity.r, revision: '1', latex: r, description: Dimensionless reduced residual
+    at one interior connection for a fixed mask., unit: '1', domain: Its zero is necessary; complementarity inequalities
+    still require separate admission.}
+- {id: planetlib.atmosphere.rce.quantity.r_top, revision: '1', latex: 'r_{\rm top}', description: Dimensionless
+    top-boundary radiative balance residual., unit: '1', domain: The top has no convective switch and always imposes
+    radiative balance.}
+- {id: planetlib.atmosphere.rce.quantity.i, revision: '1', latex: i, description: 'Row index of the N+1 reduced
+    residuals, including the top row.', unit: '1', domain: Integer from zero through N; zero is top radiative balance.}
+- {id: planetlib.atmosphere.rce.quantity.j, revision: '1', latex: j, description: Index of an N+1-component log-temperature
+    coordinate., unit: '1', domain: Integer from zero through N; the first N are centers and N is the bottom boundary.}
+- {id: planetlib.atmosphere.rce.quantity.a, revision: '1', latex: a, description: Index of one chosen dimensionless
+    normalized input parameter., unit: '1', domain: Within the externally selected finite parameter vector; dimensional
+    parameters require explicit normalization.}
+- {id: planetlib.atmosphere.rce.quantity.N, revision: '1', latex: N, description: Number of atmospheric layers and
+    index of the bottom temperature., unit: '1', domain: Positive integer; there are N+1 temperature nodes and reduced
+    residuals.}
+- {id: planetlib.atmosphere.rce.quantity.A, revision: '1', latex: A, description: Supplied partial Jacobian dR_i/du_j
+    of the dimensionless fixed-mask residual at a root., unit: '1', domain: 'Square and nonsingular; u_j=log(T_j/(1
+    K)), with all opacity and thermodynamic responses included.'}
+- {id: planetlib.atmosphere.rce.quantity.B, revision: '1', latex: B, description: Supplied partial Jacobian dR_i/dtheta_a
+    at fixed log-temperature coordinates and mask., unit: '1', domain: 'The same residual, root and fixed mask as
+    A; theta denotes dimensionless normalized parameters.'}
+- {id: planetlib.atmosphere.rce.quantity.D, revision: '1', latex: D, description: Local implicit response du_j/dtheta_a
+    on the same admitted branch., unit: '1', domain: Only a smooth branch with strict complementarity and nonsingular
+    A; not a derivative through solver iterations.}
+equations:
+- id: planetlib.atmosphere.rce.net_radiative_flux
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''F_rad'', real=True), Add(Mul(Integer(-1), Symbol(''F_direct'',
+      real=True)), Mul(Integer(-1), Symbol(''F_down'', real=True)), Symbol(''F_up'', real=True)))'}
+  description: Net upward radiative-flux convention.
+  scope: One interface with consistently integrated diffuse and direct components; no transport closure or opacity
+    representation is selected.
+  symbols:
+    F_rad: {latex: 'F_{\rm rad}', description: Net upward bolometric radiative flux at the interface associated
+        with one interior connection., unit: erg s^-1 cm^-2}
+    F_up: {latex: 'F_{\rm up}', description: 'Upward diffuse bolometric flux at that interface, including thermal
+        and reflected light.', unit: erg s^-1 cm^-2}
+    F_down: {latex: 'F_{\rm down}', description: 'Downward diffuse bolometric flux at that interface, excluding
+        the direct incident beam.', unit: erg s^-1 cm^-2}
+    F_direct: {latex: 'F_{\rm direct}', description: Downward direct-beam bolometric flux at that interface., unit: erg
+        s^-1 cm^-2}
+  assumptions: []
+  evidence: [planetlib.atmosphere.rce.source]
+- id: planetlib.atmosphere.rce.flux_balance
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Add(Symbol(''F_conv'', real=True), Symbol(''F_rad'', real=True)),
+      Symbol(''F_int'', real=True))'}
+  description: Constant net total flux in steady radiative-convective equilibrium.
+  scope: One interface in a plane-parallel column without an additional material energy source or sink; direct irradiation
+    is already in net radiation.
+  symbols:
+    F_rad: {latex: 'F_{\rm rad}', description: Net upward bolometric radiative flux at the selected interface.,
+      unit: erg s^-1 cm^-2}
+    F_conv: {latex: 'F_{\rm conv}', description: Upward convective flux at the same selected interface., unit: erg
+        s^-1 cm^-2}
+    F_int: {latex: 'F_{\rm int}', description: Prescribed constant net upward internal flux through the whole column.,
+      unit: erg s^-1 cm^-2}
+  assumptions: []
+  evidence: [planetlib.atmosphere.rce.source]
+- id: planetlib.atmosphere.rce.top_convection
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''F_conv_top'', real=True), Integer(0))'}
+  description: No convective energy transport across the top boundary.
+  scope: A chosen boundary condition, not a relation imposed on the bottom temperature or incident radiation.
+  symbols:
+    F_conv_top: {latex: 'F_{\rm conv,top}', description: Upward convective flux at the top boundary., unit: erg
+        s^-1 cm^-2}
+  assumptions: []
+  evidence: [planetlib.atmosphere.rce.source]
+- id: planetlib.atmosphere.rce.complementarity
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'And(GreaterThan(Symbol(''F_conv'', real=True), Integer(0)), LessThan(Symbol(''g'',
+      real=True), Integer(0)), Equality(Mul(Symbol(''F_conv'', real=True), Symbol(''g'', real=True)), Integer(0)))'}
+  description: Convective neutrality and stable radiative connections.
+  scope: 'One interior connection: convection is upward, stable inactive connections have nonpositive excess, and
+    positive convection requires neutrality. Degenerate F_conv=g=0 admits more than one mask.'
+  symbols:
+    F_conv: {latex: 'F_{\rm conv}', description: Upward convective flux at the interface associated with one interior
+        connection., unit: erg s^-1 cm^-2}
+    g: {latex: g, description: Caller-selected dimensionless convective instability excess at one connection., unit: '1'}
+  assumptions: []
+  evidence: [planetlib.atmosphere.rce.source]
+- id: planetlib.atmosphere.rce.gradient_excess
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''g_T'', real=True), Add(Mul(Integer(-1), Symbol(''nabla_neutral'',
+      real=True)), Mul(Pow(log(Mul(Symbol(''P_lower'', real=True), Pow(Symbol(''P_upper'', real=True), Integer(-1)))),
+      Integer(-1)), log(Mul(Symbol(''T_lower'', real=True), Pow(Symbol(''T_upper'', real=True), Integer(-1)))))))'}
+  description: Finite logarithmic temperature-gradient instability excess.
+  scope: One ordered pressure connection using a supplied neutral gradient. The gradient may vary with state and
+    composition; this relation supplies no thermodynamic closure.
+  symbols:
+    g_T: {latex: g_T, description: Log-temperature-gradient excess above the supplied neutral gradient., unit: '1'}
+    T_upper: {latex: T_u, description: Gas temperature at the shallower endpoint of one connection., unit: K}
+    T_lower: {latex: T_d, description: Gas temperature at the deeper endpoint of the same connection., unit: K}
+    P_upper: {latex: P_u, description: Gas pressure at the shallower temperature node of one connection., unit: bar}
+    P_lower: {latex: P_d, description: Gas pressure at the deeper temperature node of that connection., unit: bar}
+    nabla_neutral: {latex: '\nabla_{\rm neutral}', description: Prescribed neutral logarithmic temperature gradient
+        for the selected connection., unit: '1'}
+  assumptions: [Temperatures are positive and 0 < P_upper < P_lower.]
+  evidence: [planetlib.atmosphere.rce.source]
+- id: planetlib.atmosphere.rce.entropy_excess
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''g_s'', real=True), Mul(Pow(Symbol(''s_ref'', real=True),
+      Integer(-1)), Add(Symbol(''s_lower'', real=True), Mul(Integer(-1), Symbol(''s_upper'', real=True))), Pow(log(Mul(Symbol(''P_lower'',
+      real=True), Pow(Symbol(''P_upper'', real=True), Integer(-1)))), Integer(-1))))'}
+  description: Finite mass-specific entropy-gradient instability excess.
+  scope: A separately selected entropy-based criterion. The same conserved material mixture and entropy convention
+    are used at both endpoints; composition-dependent and phase responses belong to the supplied entropy model.
+    This is not asserted equal to the logarithmic temperature excess.
+  symbols:
+    g_s: {latex: g_s, description: Specific-entropy increase toward higher pressure divided by a positive entropy
+        reference., unit: '1'}
+    s_upper: {latex: s_u, description: Specific entropy per conserved material mass at the shallower endpoint.,
+      unit: J kg^-1 K^-1}
+    s_lower: {latex: s_d, description: Specific entropy per the same conserved material mass at the deeper endpoint.,
+      unit: J kg^-1 K^-1}
+    s_ref: {latex: 's_{\rm ref}', description: Fixed positive specific-entropy normalization for the finite entropy
+        criterion., unit: J kg^-1 K^-1}
+    P_upper: {latex: P_u, description: Gas pressure at the shallower temperature node of one connection., unit: bar}
+    P_lower: {latex: P_d, description: Gas pressure at the deeper temperature node of that connection., unit: bar}
+  assumptions: [s_ref is fixed and positive; 0 < P_upper < P_lower., 'Use as a buoyancy criterion requires a separate
+      physical justification; no double-diffusive, rainout or compositional-stability model is supplied.']
+  evidence: [planetlib.atmosphere.rce.source]
+- id: planetlib.atmosphere.rce.fixed_mask_residual
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''r'', real=True), Add(Mul(Symbol(''g'', real=True),
+      Symbol(''m'', real=True), Pow(Symbol(''stability_scale'', real=True), Integer(-1))), Mul(Pow(Symbol(''flux_scale'',
+      real=True), Integer(-1)), Add(Integer(1), Mul(Integer(-1), Symbol(''m'', real=True))), Add(Mul(Integer(-1),
+      Symbol(''F_int'', real=True)), Symbol(''F_rad'', real=True)))))'}
+  description: Dimensionless reduced residual for a fixed interior convective selection.
+  scope: For m=1 neutrality is selected; for m=0 radiative balance is selected. This is a residual definition at
+    arbitrary trial states, not an assertion of a solution or complementarity admission.
+  symbols:
+    r: {latex: r, description: Dimensionless reduced residual at one interior connection for a fixed mask., unit: '1'}
+    m: {latex: m, description: Fixed binary convective selection for one interior connection., unit: '1'}
+    g: {latex: g, description: Caller-selected dimensionless convective instability excess at one connection., unit: '1'}
+    stability_scale: {latex: 'g_{\rm scale}', description: Positive normalization for the selected instability excess.,
+      unit: '1'}
+    F_rad: {latex: 'F_{\rm rad}', description: Net upward bolometric radiative flux at the interface associated
+        with one interior connection., unit: erg s^-1 cm^-2}
+    F_int: {latex: 'F_{\rm int}', description: Prescribed constant net upward internal flux through the whole column.,
+      unit: erg s^-1 cm^-2}
+    flux_scale: {latex: 'f_{\rm scale}', description: Positive flux normalization for a reduced residual., unit: erg
+        s^-1 cm^-2}
+  assumptions: [m is binary and both normalization scales are positive.]
+  evidence: [planetlib.atmosphere.rce.source]
+- id: planetlib.atmosphere.rce.top_residual
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''r_top'', real=True), Mul(Pow(Symbol(''flux_scale'',
+      real=True), Integer(-1)), Add(Mul(Integer(-1), Symbol(''F_int'', real=True)), Symbol(''F_rad_top'', real=True))))'}
+  description: Top radiative energy-balance residual.
+  scope: The first reduced equation is always radiative; its zero follows from total flux balance and the zero top
+    convective flux.
+  symbols:
+    r_top: {latex: 'r_{\rm top}', description: Dimensionless top-boundary radiative balance residual., unit: '1'}
+    F_rad_top: {latex: 'F_{\rm rad,top}', description: Net upward bolometric radiative flux at the top boundary.,
+      unit: erg s^-1 cm^-2}
+    F_int: {latex: 'F_{\rm int}', description: Prescribed constant net upward internal flux through the whole column.,
+      unit: erg s^-1 cm^-2}
+    flux_scale: {latex: 'f_{\rm scale}', description: Positive flux normalization for a reduced residual., unit: erg
+        s^-1 cm^-2}
+  assumptions: [flux_scale is positive.]
+  evidence: [planetlib.atmosphere.rce.source]
+- id: planetlib.atmosphere.rce.convective_flux_recovery
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Symbol(''F_conv'', real=True), Mul(Symbol(''m'', real=True),
+      Add(Symbol(''F_int'', real=True), Mul(Integer(-1), Symbol(''F_rad'', real=True)))))'}
+  description: Recover candidate convective flux from a selected fixed mask.
+  scope: At arbitrary trials this candidate may be negative. The recovered value must separately pass complementarity
+    before equilibrium is accepted; inactive connections recover zero.
+  symbols:
+    F_conv: {latex: 'F_{\rm conv}', description: Upward convective flux at the interface associated with one interior
+        connection., unit: erg s^-1 cm^-2}
+    m: {latex: m, description: Fixed binary convective selection for one interior connection., unit: '1'}
+    F_int: {latex: 'F_{\rm int}', description: Prescribed constant net upward internal flux through the whole column.,
+      unit: erg s^-1 cm^-2}
+    F_rad: {latex: 'F_{\rm rad}', description: Net upward bolometric radiative flux at the interface associated
+        with one interior connection., unit: erg s^-1 cm^-2}
+  assumptions: [m is binary.]
+  evidence: [planetlib.atmosphere.rce.source]
+- id: planetlib.atmosphere.rce.implicit_tangent
+  revision: '1'
+  sympy: {format: sympy-srepr-v1, expression: 'Equality(Sum(Mul(Function(''A'')(Symbol(''i'', integer=True, nonnegative=True),
+      Symbol(''j'', integer=True, nonnegative=True)), Function(''D'')(Symbol(''j'', integer=True, nonnegative=True),
+      Symbol(''a'', integer=True, nonnegative=True))), Tuple(Symbol(''j'', integer=True, nonnegative=True), Integer(0),
+      Symbol(''N'', integer=True, nonnegative=True))), Mul(Integer(-1), Function(''B'')(Symbol(''i'', integer=True,
+      nonnegative=True), Symbol(''a'', integer=True, nonnegative=True))))'}
+  description: Implicit parameter response of an admitted fixed-mask root.
+  scope: For each residual row i and normalized parameter a, A and B are the supplied partial derivatives of the
+    same reduced residual. This relation computes neither those derivatives nor an RCE root.
+  symbols:
+    A: {latex: A, description: Supplied partial Jacobian dR_i/du_j of the dimensionless fixed-mask residual at a
+        root., unit: '1'}
+    B: {latex: B, description: Supplied partial Jacobian dR_i/dtheta_a at fixed log-temperature coordinates and
+        mask., unit: '1'}
+    D: {latex: D, description: Local implicit response du_j/dtheta_a on the same admitted branch., unit: '1'}
+    i: {latex: i, description: 'Row index of the N+1 reduced residuals, including the top row.', unit: '1'}
+    j: {latex: j, description: Index of an N+1-component log-temperature coordinate., unit: '1'}
+    a: {latex: a, description: Index of one chosen dimensionless normalized input parameter., unit: '1'}
+    N: {latex: N, description: Number of atmospheric layers and index of the bottom temperature., unit: '1'}
+  assumptions: [The root is converged and physically admitted with a fixed mask and strict complementarity., The
+      residual is continuously differentiable locally and its square log-temperature Jacobian A is nonsingular.,
+    'Opacity, source, chemistry and thermodynamic derivatives belong to A and B; mask switches and nonsmooth physics
+      are excluded.']
+  evidence: [planetlib.atmosphere.rce.source]
+mathematical_models:
+- id: planetlib.atmosphere.rce.balance
+  revision: '1'
+  description: Open steady RCE balance and admissibility.
+  scope: One interior connection plus the distinct top boundary of an N-layer plane-parallel column. There are N
+    center temperatures and one bottom temperature, N connections and N+1 interfaces. Connection k uses convective
+    flux at interface k+1. Radiation, the instability criterion, chemistry, geometry, opacity and the lower boundary
+    are externally supplied; the graph does not establish existence, uniqueness, convergence or applicability.
+  quantities:
+    F_up:
+      quantity: {id: planetlib.atmosphere.rce.quantity.F_up, revision: '1'}
+      role: input
+    F_down:
+      quantity: {id: planetlib.atmosphere.rce.quantity.F_down, revision: '1'}
+      role: input
+    F_direct:
+      quantity: {id: planetlib.atmosphere.rce.quantity.F_direct, revision: '1'}
+      role: input
+    g:
+      quantity: {id: planetlib.atmosphere.rce.quantity.g, revision: '1'}
+      role: input
+    F_rad_top:
+      quantity: {id: planetlib.atmosphere.rce.quantity.F_rad_top, revision: '1'}
+      role: input
+    F_int:
+      quantity: {id: planetlib.atmosphere.rce.quantity.F_int, revision: '1'}
+      role: parameter
+    F_rad:
+      quantity: {id: planetlib.atmosphere.rce.quantity.F_rad, revision: '1'}
+      role: derived
+    F_conv:
+      quantity: {id: planetlib.atmosphere.rce.quantity.F_conv, revision: '1'}
+      role: unknown
+    F_conv_top:
+      quantity: {id: planetlib.atmosphere.rce.quantity.F_conv_top, revision: '1'}
+      role: unknown
+  relations:
+  - id: planetlib.atmosphere.rce.relation.net_radiative_flux
+    equation: {id: planetlib.atmosphere.rce.net_radiative_flux, revision: '1'}
+    kind: equation
+    role: Radiative sign and component convention
+    quantities: {F_rad: F_rad, F_up: F_up, F_down: F_down, F_direct: F_direct}
+  - id: planetlib.atmosphere.rce.relation.flux_balance
+    equation: {id: planetlib.atmosphere.rce.flux_balance, revision: '1'}
+    kind: equation
+    role: Interior steady energy balance
+    quantities: {F_rad: F_rad, F_conv: F_conv, F_int: F_int}
+  - id: planetlib.atmosphere.rce.relation.complementarity
+    equation: {id: planetlib.atmosphere.rce.complementarity, revision: '1'}
+    kind: constraint
+    role: Interior convective admissibility
+    quantities: {F_conv: F_conv, g: g}
+  - id: planetlib.atmosphere.rce.relation.top_convection
+    equation: {id: planetlib.atmosphere.rce.top_convection, revision: '1'}
+    kind: equation
+    role: Top boundary condition
+    quantities: {F_conv_top: F_conv_top}
+  - id: planetlib.atmosphere.rce.relation.top_balance
+    equation: {id: planetlib.atmosphere.rce.flux_balance, revision: '1'}
+    kind: equation
+    role: Top steady energy balance
+    quantities: {F_rad: F_rad_top, F_conv: F_conv_top, F_int: F_int}
+- id: planetlib.atmosphere.rce.log_gradient
+  revision: '1'
+  description: Supplied-neutral-gradient stability variant.
+  scope: One finite pressure connection. This partial model defines g_T; an adopter must explicitly select it as
+    the instability excess in an RCE balance or residual model. It is not identified with the entropy variant.
+  quantities:
+    g_T:
+      quantity: {id: planetlib.atmosphere.rce.quantity.g_T, revision: '1'}
+      role: derived
+    T_upper:
+      quantity: {id: planetlib.atmosphere.rce.quantity.T_upper, revision: '1'}
+      role: input
+    T_lower:
+      quantity: {id: planetlib.atmosphere.rce.quantity.T_lower, revision: '1'}
+      role: input
+    P_upper:
+      quantity: {id: planetlib.atmosphere.rce.quantity.P_upper, revision: '1'}
+      role: input
+    P_lower:
+      quantity: {id: planetlib.atmosphere.rce.quantity.P_lower, revision: '1'}
+      role: input
+    nabla_neutral:
+      quantity: {id: planetlib.atmosphere.rce.quantity.nabla_neutral, revision: '1'}
+      role: input
+  relations:
+  - id: planetlib.atmosphere.rce.relation.gradient_excess
+    equation: {id: planetlib.atmosphere.rce.gradient_excess, revision: '1'}
+    kind: equation
+    role: Selected finite gradient criterion
+    quantities: {g_T: g_T, T_upper: T_upper, T_lower: T_lower, P_upper: P_upper, P_lower: P_lower, nabla_neutral: nabla_neutral}
+- id: planetlib.atmosphere.rce.entropy
+  revision: '1'
+  description: Supplied mass-specific entropy stability variant.
+  scope: One finite pressure connection with the same conserved material mixture. This partial model defines g_s;
+    an adopter must explicitly select it as the instability excess. Entropy values and the validity of this buoyancy
+    criterion are externally supplied.
+  quantities:
+    g_s:
+      quantity: {id: planetlib.atmosphere.rce.quantity.g_s, revision: '1'}
+      role: derived
+    s_upper:
+      quantity: {id: planetlib.atmosphere.rce.quantity.s_upper, revision: '1'}
+      role: input
+    s_lower:
+      quantity: {id: planetlib.atmosphere.rce.quantity.s_lower, revision: '1'}
+      role: input
+    s_ref:
+      quantity: {id: planetlib.atmosphere.rce.quantity.s_ref, revision: '1'}
+      role: parameter
+    P_upper:
+      quantity: {id: planetlib.atmosphere.rce.quantity.P_upper, revision: '1'}
+      role: input
+    P_lower:
+      quantity: {id: planetlib.atmosphere.rce.quantity.P_lower, revision: '1'}
+      role: input
+  relations:
+  - id: planetlib.atmosphere.rce.relation.entropy_excess
+    equation: {id: planetlib.atmosphere.rce.entropy_excess, revision: '1'}
+    kind: equation
+    role: Selected finite entropy criterion
+    quantities: {g_s: g_s, s_upper: s_upper, s_lower: s_lower, s_ref: s_ref, P_upper: P_upper, P_lower: P_lower}
+- id: planetlib.atmosphere.rce.fixed_mask
+  revision: '1'
+  description: Reduced residual and candidate flux at a fixed mask.
+  scope: Residual construction at arbitrary trial states, with one interior connection and the separate top row.
+    The N+1 reduced residuals must vanish and the recovered fluxes must pass the balance model inequalities for
+    an equilibrium. Fixed masks are not differentiated as continuous variables.
+  quantities:
+    F_rad:
+      quantity: {id: planetlib.atmosphere.rce.quantity.F_rad, revision: '1'}
+      role: input
+    F_rad_top:
+      quantity: {id: planetlib.atmosphere.rce.quantity.F_rad_top, revision: '1'}
+      role: input
+    g:
+      quantity: {id: planetlib.atmosphere.rce.quantity.g, revision: '1'}
+      role: input
+    F_int:
+      quantity: {id: planetlib.atmosphere.rce.quantity.F_int, revision: '1'}
+      role: parameter
+    m:
+      quantity: {id: planetlib.atmosphere.rce.quantity.m, revision: '1'}
+      role: parameter
+    flux_scale:
+      quantity: {id: planetlib.atmosphere.rce.quantity.flux_scale, revision: '1'}
+      role: parameter
+    stability_scale:
+      quantity: {id: planetlib.atmosphere.rce.quantity.stability_scale, revision: '1'}
+      role: parameter
+    r:
+      quantity: {id: planetlib.atmosphere.rce.quantity.r, revision: '1'}
+      role: derived
+    r_top:
+      quantity: {id: planetlib.atmosphere.rce.quantity.r_top, revision: '1'}
+      role: derived
+    F_conv:
+      quantity: {id: planetlib.atmosphere.rce.quantity.F_conv, revision: '1'}
+      role: derived
+  relations:
+  - id: planetlib.atmosphere.rce.relation.fixed_mask_residual
+    equation: {id: planetlib.atmosphere.rce.fixed_mask_residual, revision: '1'}
+    kind: equation
+    role: Interior fixed-mask residual
+    quantities: {r: r, m: m, g: g, stability_scale: stability_scale, F_rad: F_rad, F_int: F_int, flux_scale: flux_scale}
+  - id: planetlib.atmosphere.rce.relation.top_residual
+    equation: {id: planetlib.atmosphere.rce.top_residual, revision: '1'}
+    kind: equation
+    role: Top radiative residual
+    quantities: {r_top: r_top, F_rad_top: F_rad_top, F_int: F_int, flux_scale: flux_scale}
+  - id: planetlib.atmosphere.rce.relation.convective_flux_recovery
+    equation: {id: planetlib.atmosphere.rce.convective_flux_recovery, revision: '1'}
+    kind: equation
+    role: Candidate convective flux, before admissibility
+    quantities: {F_conv: F_conv, m: m, F_int: F_int, F_rad: F_rad}
+- id: planetlib.atmosphere.rce.implicit_sensitivity
+  revision: '1'
+  description: Local implicit tangent on a smooth fixed branch.
+  scope: A supplied, admitted N+1-dimensional reduced root with log-temperature coordinates and dimensionless normalized
+    parameters. The derivative matrices are external inputs, not generated by this model. Singular roots, active-set
+    transitions, opacity kinks and failed primal solves are outside the stated derivative domain.
+  quantities:
+    i:
+      quantity: {id: planetlib.atmosphere.rce.quantity.i, revision: '1'}
+      role: coordinate
+    j:
+      quantity: {id: planetlib.atmosphere.rce.quantity.j, revision: '1'}
+      role: coordinate
+    a:
+      quantity: {id: planetlib.atmosphere.rce.quantity.a, revision: '1'}
+      role: coordinate
+    N:
+      quantity: {id: planetlib.atmosphere.rce.quantity.N, revision: '1'}
+      role: parameter
+    A:
+      quantity: {id: planetlib.atmosphere.rce.quantity.A, revision: '1'}
+      role: input
+    B:
+      quantity: {id: planetlib.atmosphere.rce.quantity.B, revision: '1'}
+      role: input
+    D:
+      quantity: {id: planetlib.atmosphere.rce.quantity.D, revision: '1'}
+      role: unknown
+  relations:
+  - id: planetlib.atmosphere.rce.relation.implicit_tangent
+    equation: {id: planetlib.atmosphere.rce.implicit_tangent, revision: '1'}
+    kind: equation
+    role: Fixed-branch implicit response
+    quantities: {A: A, B: B, D: D, i: i, j: j, a: a, N: N}
+assessments:
+- id: planetlib.atmosphere.rce.mathematical_consistency.initial
+  kind: evidence_support
+  claim: planetlib.atmosphere.rce.mathematical_consistency
+  claim_revision: '1'
+  subject: planetlib.atmosphere.rce.definition
+  context: planetlib.atmosphere.rce.extraction
+  method: {id: planetlib.atmosphere.rce.initial_review, revision: '1', description: 'Record distinct mathematical,
+      source-correspondence and physical-applicability questions.'}
+  status: unknown
+  origin: reviewed
+  evidence: [planetlib.atmosphere.rce.symbolic_checks]
+  reasons: [The extraction and structural checks do not by themselves constitute a recorded support judgment.]
+- id: planetlib.atmosphere.rce.source_correspondence.initial
+  kind: evidence_support
+  claim: planetlib.atmosphere.rce.source_correspondence
+  claim_revision: '1'
+  subject: planetlib.atmosphere.rce.definition
+  context: planetlib.atmosphere.rce.extraction
+  method: {id: planetlib.atmosphere.rce.initial_review, revision: '1', description: 'Record distinct mathematical,
+      source-correspondence and physical-applicability questions.'}
+  status: unknown
+  origin: reviewed
+  evidence: [planetlib.atmosphere.rce.source]
+  reasons: [The extraction and structural checks do not by themselves constitute a recorded support judgment.]
+- id: planetlib.atmosphere.rce.physical_applicability.initial
+  kind: evidence_support
+  claim: planetlib.atmosphere.rce.physical_applicability
+  claim_revision: '1'
+  subject: planetlib.atmosphere.rce.definition
+  context: planetlib.atmosphere.rce.extraction
+  method: {id: planetlib.atmosphere.rce.initial_review, revision: '1', description: 'Record distinct mathematical,
+      source-correspondence and physical-applicability questions.'}
+  status: unknown
+  origin: reviewed
+  evidence: [planetlib.atmosphere.rce.source]
+  reasons: [The extraction and structural checks do not by themselves constitute a recorded support judgment.]
+follow_ups:
+- {id: planetlib.atmosphere.rce.review.mathematical_consistency, target_kind: assessment, target: planetlib.atmosphere.rce.mathematical_consistency.initial,
+  completion: Append a separate assessment with pinned evidence; preserve the original unknown judgment., action: 'Review
+    the stated algebraic consequences, execute the symbolic checks and record a separate pinned execution judgment.'}
+- {id: planetlib.atmosphere.rce.review.source_correspondence, target_kind: assessment, target: planetlib.atmosphere.rce.source_correspondence.initial,
+  completion: Append a separate assessment with pinned evidence; preserve the original unknown judgment., action: 'Review
+    each selected provider-to-definition mapping, including signs, endpoint indexing, units and the fixed-branch
+    derivative domain.'}
+- {id: planetlib.atmosphere.rce.review.physical_applicability, target_kind: assessment, target: planetlib.atmosphere.rce.physical_applicability.initial,
+  completion: Append a separate assessment with pinned evidence; preserve the original unknown judgment., action: 'Specify
+    the atmosphere, closure choices and accuracy criteria; obtain independent physical evidence and grid/opacity
+    convergence before adoption.'}
